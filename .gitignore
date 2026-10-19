@@ -65,3 +65,4 @@ kokoro-82m/
 
 # whisper.cpp is downloaded by whoever builds (see README.md) - not vendored in the repo
 ext/whisper.cpp/
+PushToGitHub.bat
