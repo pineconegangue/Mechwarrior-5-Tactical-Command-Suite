@@ -12844,6 +12844,48 @@ void WhisperQueue(ISpRecoResult *, bool, bool) {}
 // and parser. Every miss is written to RoundTrip_report.tsv with what Whisper wrote, and a suggested
 // fix to HeardAs.suggested.txt - suggestions only: nothing is added to HeardAs.txt by itself.
 // The names: RoundTripNames.txt beside the exe (one per line, # comments), or the file given.
+// 2026-10-19: outside the round-trip #if - the game test (GtLoad) uses it in every build, so a build
+// without whisper.cpp / sherpa-onnx failed to compile.
+// The lines of a text file beside the exe (UTF-8, # comments and blank lines left out).
+static bool RtReadLines(const std::wstring &path, std::vector<std::wstring> &out)
+{
+    FILE *f = nullptr;
+    if (_wfopen_s(&f, path.c_str(), L"rb") != 0 || !f)
+        return false;
+    std::string raw;
+    char buf[4096];
+    size_t got;
+    while ((got = fread(buf, 1, sizeof(buf), f)) > 0)
+        raw.append(buf, got);
+    fclose(f);
+    if (raw.size() >= 3 && raw.compare(0, 3, "\xEF\xBB\xBF") == 0)
+        raw.erase(0, 3);
+    // (its own UTF-8 conversion: Widen() exists only in Whisper builds)
+    std::wstring w;
+    if (!raw.empty())
+    {
+        const int n = MultiByteToWideChar(CP_UTF8, 0, raw.c_str(), (int)raw.size(), nullptr, 0);
+        w.assign((size_t)(n > 0 ? n : 0), L'\0');
+        if (n > 0)
+            MultiByteToWideChar(CP_UTF8, 0, raw.c_str(), (int)raw.size(), &w[0], n);
+    }
+    size_t i = 0;
+    while (i <= w.size())
+    {
+        size_t j = w.find(L'\n', i);
+        if (j == std::wstring::npos)
+            j = w.size();
+        std::wstring l = w.substr(i, j - i);
+        i = j + 1;
+        while (!l.empty() && (l.back() == L'\r' || l.back() == L' ' || l.back() == L'\t'))
+            l.pop_back();
+        while (!l.empty() && (l[0] == L' ' || l[0] == L'\t'))
+            l.erase(0, 1);
+        if (!l.empty() && l[0] != L'#')
+            out.push_back(l);
+    }
+    return true;
+}
 #if defined(VC_HAVE_WHISPER) && defined(VC_HAVE_TTS)
 int RoundTrip(const std::wstring &listArg)
 {
@@ -13114,38 +13156,6 @@ static bool RtJudge(const std::wstring &ex, const std::vector<SpokenAction> &act
     if (got.empty())
         got = L"nothing";
     return ok;
-}
-// The lines of a text file beside the exe (UTF-8, # comments and blank lines left out).
-static bool RtReadLines(const std::wstring &path, std::vector<std::wstring> &out)
-{
-    FILE *f = nullptr;
-    if (_wfopen_s(&f, path.c_str(), L"rb") != 0 || !f)
-        return false;
-    std::string raw;
-    char buf[4096];
-    size_t got;
-    while ((got = fread(buf, 1, sizeof(buf), f)) > 0)
-        raw.append(buf, got);
-    fclose(f);
-    if (raw.size() >= 3 && raw.compare(0, 3, "\xEF\xBB\xBF") == 0)
-        raw.erase(0, 3);
-    const std::wstring w = Widen(raw.c_str());
-    size_t i = 0;
-    while (i <= w.size())
-    {
-        size_t j = w.find(L'\n', i);
-        if (j == std::wstring::npos)
-            j = w.size();
-        std::wstring l = w.substr(i, j - i);
-        i = j + 1;
-        while (!l.empty() && (l.back() == L'\r' || l.back() == L' ' || l.back() == L'\t'))
-            l.pop_back();
-        while (!l.empty() && (l[0] == L' ' || l[0] == L'\t'))
-            l.erase(0, 1);
-        if (!l.empty() && l[0] != L'#')
-            out.push_back(l);
-    }
-    return true;
 }
 int RoundTrip2(const std::wstring &listArg)
 {

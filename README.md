@@ -30,10 +30,19 @@ Everything needed is in this repository except whisper.cpp:
 - Open the folder; the CMake configuration `x64-Debug` (`CMakeSettings.json`) builds **Release** with the
   static runtime into `out\build\poc-x64-Debug\`. It configures with `-DCMKR_SKIP_GENERATION=ON`:
   `CMakeLists.txt` is maintained by hand (keep `cmake.toml` in step).
-- Vendored: `ext/uevr`, `ext/minhook`, `ext/miniz`, `ext/sig`, `ext/glm` (a git submodule - run
-  `git submodule update --init` if it is empty), `ext/sherpa-onnx` (prebuilt Windows package).
-- **whisper.cpp is not included**: download [whisper.cpp](https://github.com/ggml-org/whisper.cpp) **v1.9.x**
-  and put its contents in `ext\whisper.cpp\` (so `ext\whisper.cpp\CMakeLists.txt` exists) before configuring.
+- Clone with submodules: `git clone --recursive <this repo>` (or `git submodule update --init` afterwards) -
+  `ext/glm` and `ext/minhook` are submodules. Vendored: `ext/uevr`, `ext/miniz`, `ext/sig`, `ext/sherpa-onnx`
+  (prebuilt Windows package).
+- **whisper.cpp is not included.** Put [whisper.cpp](https://github.com/ggml-org/whisper.cpp) at commit
+  `6e4ab854f67f743900934a703d5603419384c961` (2026-09-28, "v1.9.4-182"; the tested version - tagged releases
+  differ) in `ext\whisper.cpp\`:
+
+      git clone https://github.com/ggml-org/whisper.cpp ext/whisper.cpp
+      git -C ext/whisper.cpp checkout 6e4ab854f67f743900934a703d5603419384c961
+
+  Without it VoiceCommand still builds, but with the fixed Windows phrases only (no free speech).
+- Optional: the [Vulkan SDK](https://vulkan.lunarg.com/) lets Whisper run on the graphics card
+  (`VC_WHISPER_VULKAN`, on by default when the SDK is found); without it Whisper is CPU only.
 
 ## Packaging
 
