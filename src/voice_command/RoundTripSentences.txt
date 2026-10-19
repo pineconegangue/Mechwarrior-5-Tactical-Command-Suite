@@ -1,0 +1,64 @@
+# RoundTripSentences.txt - VoiceCommand.exe --roundtrip2 (RoundTrip2.bat): whole sentences, Kokoro says, Whisper hears,
+# HandleSpoken judges (push-to-talk key held). <expect> | <sentence>, {X} = each unit name from the names file.
+# expect: attack, where, unithow, isdown, cansee, patch, whofiring, howmany, howbad, status, move, fallback,
+# same (2026-10-11: understood exactly as the typed sentence is - any order or question)
+voices = bm_george, bm_lewis, bm_daniel, bm_fable, bf_isabella, bf_alice, am_michael, am_fenrir, af_bella, af_nicole
+names = RoundTripNames15.txt
+
+attack | Attack the {X}.
+where | Where's the {X}?
+attack | Two, engage that {X}.
+attack | Lance, focus fire on the {X}.
+attack | Take down the {X}.
+where | Where did the {X} go?
+unithow | Status on the {X}.
+isdown | Is the {X} down?
+cansee | Can you see the {X}?
+patch | Patch in the {X}.
+whofiring | Taking fire, can anyone see where it's coming from?
+whofiring | Who's firing those LRMs?
+howmany | Any contacts?
+howbad | How bad is it?
+status | Three, what's your status?
+move | Four, move 300 metres north.
+fallback | Everyone, fall back to me.
+
+# 2026-10-11: today's commands - judged "same" as typed
+same | Two, get his legs.
+same | Three, take out his left torso.
+same | Four, aim for the cockpit.
+same | Two, go for the {X}'s right arm.
+same | Three, knock out his arms.
+same | Four, shoot his right leg.
+same | Lance, cancel called shot.
+same | Two, move to your 2 o'clock, 750 metres.
+same | Three, move to my 10 o'clock, 300.
+same | Four, set heading 3-5-0, move 400 metres.
+same | Two, bearing 2-4-0, mark 600.
+same | Three, move 2 klicks north.
+same | Lance, fall back to your 6 o'clock 300.
+same | Two, heading 045, 500, and hold.
+same | Which way is the {X} facing?
+same | Can anyone see the {X}?
+same | How's Two?
+same | Three, how's your heat?
+same | Four, keep the lights busy.
+same | Three, go for the heavies.
+same | Two, engage at will.
+same | Lance, hold position.
+same | Four, stay close.
+same | Two, check fire.
+same | Good kill, Three.
+same | Two, PPCs only.
+same | Three, LRMs only.
+same | Four, run cool.
+same | Lance, weapons free.
+same | Two, indirect fire only.
+same | Three, attack the closest contact.
+same | Lance, attack my target.
+same | Four, engage the {X}.
+same | Is the {X} down?
+same | Where's the {X}?
+same | Anyone low on ammo?
+same | Sound off.
+same | Activate enhanced imaging.

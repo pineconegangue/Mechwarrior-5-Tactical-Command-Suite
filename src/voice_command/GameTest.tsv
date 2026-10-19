@@ -1,0 +1,165 @@
+﻿# IN-GAME TEST of every voice order (2026-10-10). Run: GameTest.bat (VoiceCommand.exe --gametest), in a mission,
+# with insane allies on and TestPilot running. Close the normal VoiceCommand first. Lancemates = slots 2, 3, 4.
+# who	utterance	checks	timeout s
+!	section setup
+!	pilot stop
+!	wait 2
+all	Lance, form on me.	order=follow reply=order_follow	12
+all	Reset fire orders.	disc=0 heat=0 mask=255 reply=fire_reset	8
+!	section MOVES (from you; my = your heading, c = compass, your = the lancemate's own facing)
+2	Two, move 200 metres north.	order=move move=200@c0 walk reply=order_move	25
+3	Three, move east 300.	order=move move=300@c90 walk	25
+4	Four, move forward 150.	order=move move=150@my0	15
+2	Two, push up.	order=move move=100@my0	15
+3	Three, move left 200.	order=move move=200@my270	15
+4	Four, move back 100.	order=move move=100@my180	15
+2	Two, move north east 250.	order=move move=250@c45	15
+3	Three, move to my 2 o'clock 750 metres.	order=move move=750@my60 walk	25
+4	Four, move to your 10 o'clock, 300.	order=move move=300@your300	15
+2	Two, set heading 3-5-0, move 400 metres.	order=move move=400@c350	15
+3	Three, set bearing 2-4-0, mark 600.	order=move move=600@c240	15
+4	Four, bearing 090, 1.5 k.	order=move move=1500@c90	15
+2	Two, heading two forty, 800 metres.	order=move move=800@c240	15
+3	Three, move 2 klicks north.	order=move move=2000@c0	15
+4	Four, move 3 kilometres east.	order=move move=2000@c90	15
+all	Lance, form on me.	order=follow	12
+!	wait 10
+!	section HOLDS (weapons stay live)
+2	Two, hold position.	order=hold mode=hold disc=0 reply=order_hold	12
+3	Three, hold here.	order=hold mode=hold disc=0	12
+4	Four, stay there.	order=hold mode=hold	12
+2	Two, dig in.	order=hold mode=hold	12
+3	Three, stand by.	order=hold mode=hold	12
+4	Four, stay back.	order=hold mode=hold	12
+2	Two, hold here and don't push.	order=hold mode=hold	12
+3	Three, move 200 north and hold.	order=hold mode=hold move=200@c0	15
+4	Four, heading 045, 300, and hold.	order=hold mode=hold move=300@c45	15
+!	section FOLLOW
+all	Lance, follow me.	order=follow mode=free	12
+2	Two, stay close.	order=follow	12
+3	Three, stick with me.	order=follow	12
+4	Four, tighten up.	order=follow	12
+all	Lance, regroup.	order=follow	12
+!	wait 8
+!	section CONTACT (TestPilot closes in and locks)
+!	pilot approach
+!	wait 45
+!	pilot lock
+!	lockwait 60
+!	section ATTACKS
+all	Lance, attack my target.	lock order=attackmy target=lock reply=order_attack	20
+2	Two, engage my target.	lock order=attackmy target=lock	20
+3	Three, focus fire on my target.	lock order=attackmy target=lock	20
+4	Four, take it down.	lock order=attackmy target=lock	20
+2	Two, attack the {enemy}.	order=attack target={enemy} reply=order_attack_named	20
+3	Three, engage that {enemy}.	order=attack target={enemy}	20
+4	Four, attack the closest contact.	order=attack reply=order_attack_nearest	20
+2	Two, engage the nearest enemy.	order=attack	20
+3	Three, go for the heavies.	order=attack class=2	20
+4	Four, keep the lights busy.	order=attack class=0	20
+2	Two, engage at will.	order=attack disc=0	20
+3	Three, attack the Zorblax.	noorder reply=say_again	8
+!	section CALLED SHOTS (insane allies: volleys aim at the part's aim point)
+!	pilot lock
+!	lockwait 30
+2	Two, get his legs.	lock order=attack target=lock log=slot_{s}_-_legs_on aim=calf reply=order_called_shot	30
+3	Three, take out his left torso.	lock order=attack log=slot_{s}_-_left_torso_on aim=clavicle_left	30
+4	Four, aim for the cockpit.	lock order=attack log=slot_{s}_-_head_on aim=cockpit	30
+2	Two, go for his right arm.	lock log=slot_{s}_-_right_arm_on aim=forearm_right	30
+3	Three, knock out his arms.	lock log=slot_{s}_-_arms_on aim=forearm	30
+4	Four, go for his side torsos.	lock log=slot_{s}_-_side_torsos_on aim=clavicle	30
+2	Two, shoot his left leg.	lock log=slot_{s}_-_left_leg_on aim=calf_left	30
+3	Three, hit his center torso.	lock log=slot_{s}_-_centre_torso_on aim=torso_center	30
+4	Four, get his right side torso.	lock log=slot_{s}_-_right_torso_on aim=clavicle_right	30
+2	Two, take out the {enemy}'s right leg.	order=attack log=slot_{s}_-_right_leg_on aim=calf_right reply=order_called_shot_named	30
+all	Lance, cancel called shot.	log=slot_{s}_-_cancelled reply=order_called_cancel	8
+2	Two, attack my target.	lock order=attackmy aim=spread	30
+!	section FIRE SETTINGS
+2	Two, hold fire.	disc=2 reply=fire_hold	8
+2	Two, weapons free.	disc=0 reply=fire_weapons_free	8
+3	Three, return fire.	disc=1 reply=fire_return_fire	8
+3	Three, open fire.	disc=0	8
+4	Four, cease firing.	disc=2	8
+4	Four, fire at will.	disc=0	8
+2	Two, run cool.	heat=1 reply=heat_cool	8
+3	Three, watch your heat.	heat=1	8
+4	Four, run hot.	heat=2 reply=heat_hot	8
+2	Two, alpha strike.	heat=3 reply=heat_alpha	8
+3	Three, everything you've got.	heat=3	8
+4	Four, normal heat.	heat=0 reply=heat_normal	8
+2	Two, lasers only.	mask=1 reply=weapons_only	8
+3	Three, missiles only.	mask=24	8
+4	Four, ballistics only.	mask=4	8
+2	Two, PPCs only.	mask=2	8
+3	Three, LRMs only.	mask=8	8
+4	Four, just SRMs.	mask=16	8
+2	Two, switch to machine guns.	mask=32	8
+all	Lance, all weapons.	mask=255 reply=weapons_all	8
+3	Three, hold lasers.	mask=254 reply=weapons_hold	8
+3	Three, hold missiles.	mask=230	8
+2	Two, weapons free and run cool.	disc=0 heat=1	8
+all	Reset fire orders.	disc=0 heat=0 mask=255	8
+!	section INDIRECT FIRE
+2	Two, indirect fire only.	order=indirect mode=indirect reply=order_indirect	12
+3	Three, artillery only.	order=indirect mode=indirect	12
+4	Four, hold for indirect fire.	order=indirect mode=indirect	12
+all	Lance, form on me.	order=follow mode=free	12
+!	section FALL BACK (faces the enemy)
+!	pilot lock
+!	lockwait 20
+2	Two, fall back.	order=fallback mode=fallback face reply=order_fall_back	25
+3	Three, fall back to me.	order=fallback mode=fallback face	25
+4	Four, pull back.	order=fallback mode=fallback face	25
+2	Two, withdraw.	order=fallback	15
+3	Three, bug out.	order=fallback	15
+4	Four, fall back 200 metres south.	order=fallback move=200@c180 face	25
+2	Two, fall back to your 6 o'clock 300.	order=fallback move=300@your180	20
+all	Lance, retreat.	order=fallback	15
+all	Lance, get back here.	order=follow mode=free	12
+!	section REMARKS AND CORRECTIONS
+2	Two, check fire.	noorder disc=0 reply=reply_check_fire	8
+3	Three, watch your fire.	noorder reply=reply_check_fire	8
+-	Good kill, Two.	noorder reply=reply_thanks	8
+-	Nice shot.	noorder reply=reply_thanks	8
+2	Two, move 200 north.	order=move	12
+2	Two, belay that.	reply=reply_cancel	10
+3	Three, move 300 east.	order=move move=300@c90	12
+3	Actually, 400.	order=move move=400@c90 reply=reply_correction	12
+all	Lance, form on me.	order=follow	12
+!	section QUESTIONS
+-	Lance, status.	reply=status	20
+2	Two, sitrep.	reply=status	15
+3	Three, how are you holding up?	reply=status	15
+-	Sound off.	reply=checkin	20
+-	Where are you?	reply=answer_where	12
+-	Where's the {enemy}?	reply=answer_where	12
+-	What do you see?	reply=answer_what	12
+-	How many contacts?	reply=answer_how_many	12
+-	Any heavies?	reply=answer_class	12
+-	Who's closest?	reply=answer_closest	12
+-	Two, what are you targeting?	reply=answer_target	12
+-	Can anyone see the {enemy}?	reply=answer_see	12
+-	Is the {enemy} down?	reply=answer_down	12
+-	Which way is the {enemy} facing?	reply=answer_facing	12
+-	Who's hitting you?	reply=answer_who_hits	12
+-	Any air contacts?	reply=answer_air	12
+-	I'm taking fire, who's shooting at me?	reply=answer_firing	12
+-	How's Two?	reply=answer_unit_how	12
+-	Two, how bad is it?	reply=answer_how_bad|hurt|answer_hurt	12
+-	Is anyone hurt?	reply=answer_hurt|hurt	12
+-	How's your ammo, Four?	reply=status	12
+-	Anyone low on ammo?	reply=status|hurt	12
+-	Three, how's your heat?	reply=status_heat	12
+-	Patch it through.	reply=answer_patch	12
+-	Say again.	reply=answer_repeat|resume	12
+!	section NAV POINTS (only if the mission has them)
+2	Two, move to Nav Alpha.	order=move reply=order_nav_move	15
+3	Three, hold at Nav Alpha.	order=hold mode=hold reply=order_nav_hold	15
+4	Four, fall back to Nav Alpha.	order=fallback reply=order_nav_fall_back	15
+2	Two, advance to Nav Alpha.	order=advance reply=order_nav_advance	15
+3	Three, indirect fire at Nav Alpha.	order=indirect reply=order_nav_indirect	15
+all	Lance, form on me.	order=follow	12
+!	section YOUR OWN MECH
+-	Activate enhanced imaging.	vision=1	5
+-	Deactivate enhanced imaging.	vision=0	5
+!	pilot stop

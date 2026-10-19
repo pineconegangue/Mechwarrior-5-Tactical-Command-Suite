@@ -1,0 +1,225 @@
+# Reference: https://build-cpp.github.io/cmkr/cmake-toml
+# to build:
+# > cmake -B build
+# > cmake --build build --config Release
+# 2026-10-08 release cleanup: the HeadAim, MechShakerBridge, HUD, Cameras and LidarDisplay targets are retired (source in _to_delete/cleanup_2026-10-08)
+[project]
+name = "MW5-UEVR-Plugins"
+cmake-before="""
+add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
+"""
+cmake-after = """
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+
+set(ASMJIT_STATIC ON CACHE BOOL "" FORCE)
+
+if ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MT")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MT")
+
+    # Statically compile runtime
+    string(REGEX REPLACE "/MD" "/MT" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    string(REGEX REPLACE "/MD" "/MT" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+    string(REGEX REPLACE "/MD" "/MT" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+    string(REGEX REPLACE "/MD" "/MT" CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
+
+    message(NOTICE "Building in Release mode")
+endif()
+
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+"""
+
+[template.plugin]
+type = "shared"
+compile-features = ["cxx_std_23"]
+include-directories = ["include/", "ext/uevr/include/", "ext/glm/", "ext/openxr/include/", "ext/minhook/include/", "ext/spdlog/include/", "ext/sig/include"]
+
+
+[target.LidarExport]
+type = "plugin"
+sources = ["src/lidar_export/**.cpp", "src/lidar_export/**.c", "ext/minhook/src/**.c"]
+headers = ["src/lidar_export/**.hpp", "src/lidar_export/**.h", "ext/minhook/src/**.h", "include/**.h"]
+
+# The external MFD screen exporter: it replaces, from outside, everything our fork used to
+# change inside src/hud. With this built and loaded, src/hud and include/Log.h are
+# byte-identical to upstream - which is the point of this branch. It publishes its own MMF
+# (MechWarriorVR_HUDExport_POC) so it cannot collide with the modified HUD.dll still
+# deployed in the live plugins folder; the POC HUDDisplay reads that name.
+[target.ScreenExport]
+type = "plugin"
+sources = ["src/screen_export/**.cpp", "src/screen_export/**.c", "ext/minhook/src/**.c"]
+headers = ["src/screen_export/**.hpp", "src/screen_export/**.h", "ext/minhook/src/**.h", "include/**.h"]
+
+# The game's own (vanilla) HUD elements moved onto HUDDisplay screens - no MWVR needed. Makes its
+# own off-screen widget components, puts the live HUD elements in them, and shares their render
+# targets through MW5_VanillaHUDExport (include/VanillaHudShared.h). Nothing it changes persists.
+# Since vanillahud-103 it does ONLY that: cameras and the overlay are CameraCapture, the lance is
+# LanceControl.
+[target.VanillaHud]
+type = "plugin"
+sources = ["src/vanilla_hud/**.cpp", "src/vanilla_hud/**.c", "ext/minhook/src/**.c"]
+headers = ["src/vanilla_hud/**.hpp", "src/vanilla_hud/**.h", "ext/minhook/src/**.h", "include/**.h"]
+
+# Split out of VanillaHud (vanillahud-103): HUDDisplay's Targeting depth camera, the CAP zoom camera
+# and the TacOps overlay. Driven by the player cockpit's tick, so it works under MWVR too. Shares
+# MW5_VanillaHUDExport with VanillaHud and LanceControl (each writes its own part).
+[target.CameraCapture]
+type = "plugin"
+sources = ["src/camera_capture/**.cpp", "src/camera_capture/**.c", "ext/minhook/src/**.c"]
+headers = ["src/camera_capture/**.hpp", "src/camera_capture/**.h", "ext/minhook/src/**.h", "include/**.h"]
+
+# 2026-10-08: the Enhanced Imaging vision mode rendered inside the game (HUDDisplay's 3D page hosted on the
+# plugin's own D3D11 device and thread). Shares the view code with HUDDisplay.
+[target.EnhancedImaging]
+type = "plugin"
+sources = ["src/enhanced_imaging/**.cpp", "src/hud_display/Topo3DView.cpp", "src/hud_display/LidarView.cpp", "src/hud_display/ThreatAlarm.cpp"]
+headers = ["src/hud_display/**.h", "include/**.h"]
+link-libraries = ["winmm"]
+
+# Split out of VanillaHud (vanillahud-103): TacOps orders and the lance map, autopilot and torso,
+# holds, insane allies, fire settings, missile arc / range checks, the lance status feed
+# (MW5_LanceStatus) and the probes (ai_probe.log). Driven by the player cockpit's tick.
+[target.LanceControl]
+type = "plugin"
+sources = ["src/lance_control/**.cpp", "src/lance_control/**.c", "ext/minhook/src/**.c"]
+headers = ["src/lance_control/**.hpp", "src/lance_control/**.h", "ext/minhook/src/**.h", "include/**.h"]
+
+[target.HUDDisplay]
+type = "executable"
+# include/ is needed for LidarShared.h - the LIDAR scope is hosted here as a view now.
+sources = ["src/hud_display/**.cpp"]
+# Only LidarShared.h from include/ - the glob would drag every engine header into the project.
+headers = ["src/hud_display/**.h", "include/LidarShared.h", "include/TerrainShared.h", "include/VanillaHudShared.h", "include/GlobalSettings.h"]
+include-directories = ["include/"]
+# winmm: the threat alarm owns a dedicated waveOut device rather than sharing the
+# process-global PlaySound channel. d2d1/dwrite still come in via #pragma comment.
+link-libraries = ["winmm"]
+
+# The settings window for GlobalSettings.ini - everything shared by every window and app (2026-10-07f).
+[target.GlobalSettings]
+type = "executable"
+sources = ["src/global_settings/**.cpp", "src/hud_display/ThreatAlarm.cpp", "src/common/PaperdollExtract.cpp", "ext/miniz/miniz.c"]
+headers = ["include/GlobalSettings.h", "src/hud_display/ThreatAlarm.h", "src/common/PaperdollExtract.h"]
+include-directories = ["include/", "ext/miniz/"] # 2026-10-17: PAPERDOLLS page (extractor + miniz)
+compile-features = ["cxx_std_17"]
+link-libraries = ["winmm"] # the alarm TEST button (ThreatAlarm's waveOut)
+properties = { WIN32_EXECUTABLE = true }
+
+# Fixed-command voice prototype: its own program. Windows speech (SAPI) in and out; sends the same
+# orders as the TacOps page through MW5_VanillaHUDExport. A console window (it logs what it heard).
+[target.VoiceCommand]
+type = "executable"
+sources = ["src/voice_command/**.cpp"]
+headers = ["include/VanillaHudShared.h", "include/LidarShared.h", "include/LanceStatusShared.h", "include/GlobalSettings.h"]
+include-directories = ["include/"]
+link-libraries = ["ole32", "sapi"]
+# Free speech: whisper.cpp from a local checkout (hand-copied into CMakeLists.txt, which is
+# configured with CMKR_SKIP_GENERATION=ON).
+cmake-after = """
+# Free speech (VoiceCommand stage 3): whisper.cpp built from a local checkout, CPU only, linked
+# statically into VoiceCommand.exe. Point WHISPER_CPP_DIR elsewhere to move it; without it,
+# VoiceCommand still builds (fixed phrases only).
+set(WHISPER_CPP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ext/whisper.cpp" CACHE PATH "whisper.cpp source (VoiceCommand free speech) - vendored in ext/ since the 2026-10-08 release prep")
+if(EXISTS "${WHISPER_CPP_DIR}/CMakeLists.txt")
+	set(CMAKE_POLICY_DEFAULT_CMP0077 NEW) # the options below win over whisper.cpp's defaults
+	set(CMAKE_POLICY_DEFAULT_CMP0091 NEW) # and it gets our static runtime (CMAKE_MSVC_RUNTIME_LIBRARY), Debug too
+	set(BUILD_SHARED_LIBS OFF)
+	set(WHISPER_BUILD_TESTS OFF)
+	set(WHISPER_BUILD_EXAMPLES OFF)
+	set(WHISPER_BUILD_SERVER OFF)
+	set(GGML_CUDA OFF)
+	set(GGML_OPENMP OFF) # its own thread pool: no OpenMP runtime DLL next to the exe
+	# The CPU instruction set, fixed rather than detected: ggml's MSVC detection (GGML_NATIVE) ran
+	# test programs the compiler reduces to "return 0", so it "found" AVX-512 on a CPU without it
+	# (Ryzen 7 5800X3D) and the build died at start-up with an illegal instruction (0xC000001D).
+	# AVX2 + FMA + F16C + BMI2: every Intel since Haswell (2013), every Ryzen.
+	set(GGML_NATIVE OFF)
+	set(GGML_AVX ON)
+	set(GGML_AVX2 ON)
+	set(GGML_FMA ON)
+	set(GGML_F16C ON)
+	set(GGML_BMI2 ON)
+	set(GGML_AVX512 OFF)
+	# 2026-10-14 (user): Whisper on the graphics card through Vulkan ([voice] whisper_gpu, off by default; the
+	# round trip always uses it). Building it needs the Vulkan SDK (glslc + vulkan-1.lib, VULKAN_SDK set by its
+	# installer - restart Visual Studio after installing); players need only their GPU driver. Without the SDK:
+	# CPU only, as before. vulkan-1.dll is delay-loaded below, so the exe still starts without a Vulkan driver.
+	option(VC_WHISPER_VULKAN "VoiceCommand: Whisper may use the graphics card (Vulkan SDK needed to build)" ON)
+	set(GGML_VULKAN OFF)
+	if(VC_WHISPER_VULKAN)
+		find_package(Vulkan COMPONENTS glslc QUIET)
+		if(Vulkan_FOUND AND Vulkan_glslc_FOUND)
+			set(GGML_VULKAN ON)
+		else()
+			message(STATUS "VoiceCommand: Vulkan SDK not found - Whisper CPU only")
+		endif()
+	endif()
+	# Optimised even in Debug builds (an unoptimised Whisper is 10x+ slower); the copies of these
+	# flags whisper.cpp's directory takes are the only ones changed.
+	set(VC_SAVED_C_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
+	set(VC_SAVED_CXX_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+	if(MSVC)
+		set(CMAKE_C_FLAGS_DEBUG "/O2 /Ob2 /DNDEBUG")
+		set(CMAKE_CXX_FLAGS_DEBUG "/O2 /Ob2 /DNDEBUG")
+	endif()
+	add_subdirectory("${WHISPER_CPP_DIR}" "${CMAKE_BINARY_DIR}/whisper.cpp" EXCLUDE_FROM_ALL)
+	set(CMAKE_C_FLAGS_DEBUG "${VC_SAVED_C_DEBUG}")
+	set(CMAKE_CXX_FLAGS_DEBUG "${VC_SAVED_CXX_DEBUG}")
+	unset(BUILD_SHARED_LIBS) # only for whisper.cpp
+	target_link_libraries(VoiceCommand PRIVATE whisper)
+	target_compile_definitions(VoiceCommand PRIVATE VC_HAVE_WHISPER=1)
+	if(GGML_VULKAN)
+		target_compile_definitions(VoiceCommand PRIVATE VC_HAVE_WHISPER_GPU=1)
+		target_link_options(VoiceCommand PRIVATE "/DELAYLOAD:vulkan-1.dll")
+		target_link_libraries(VoiceCommand PRIVATE delayimp)
+		message(STATUS "VoiceCommand: Whisper GPU (Vulkan) built in")
+	endif()
+	message(STATUS "VoiceCommand: free speech with whisper.cpp from ${WHISPER_CPP_DIR}")
+else()
+	message(STATUS "VoiceCommand: whisper.cpp not found at ${WHISPER_CPP_DIR} - fixed phrases only")
+endif()
+
+# Kokoro voices (VoiceCommand): sherpa-onnx's SHARED package (win-x64-shared-MT-Release), kept in
+# the project at ext/sherpa-onnx/ - c-api.h + sherpa-onnx-c-api.lib (import lib) + the DLLs, which
+# are copied beside VoiceCommand.exe after each build. The shared package replaced the static one:
+# linking every static .lib (onnxruntime & co.) failed when one (espeak-ng.lib) went missing. The
+# Kokoro MODEL is not here - VoiceCommand.ini's kokoro_dir points at it (kokoro-82m/...).
+# Without the package, VoiceCommand still builds (the Windows voices speak, radio filter included).
+option(VC_KOKORO_TTS "VoiceCommand: Kokoro voices through sherpa-onnx" ON)
+set(SHERPA_ONNX_PKG "${CMAKE_CURRENT_SOURCE_DIR}/ext/sherpa-onnx/sherpa-onnx-v1.13.6-win-x64-shared-MT-Release" CACHE PATH "sherpa-onnx shared package (VoiceCommand Kokoro voices)")
+if(VC_KOKORO_TTS AND EXISTS "${SHERPA_ONNX_PKG}/include/sherpa-onnx/c-api/c-api.h" AND EXISTS "${SHERPA_ONNX_PKG}/lib/sherpa-onnx-c-api.lib")
+	target_include_directories(VoiceCommand PRIVATE "${SHERPA_ONNX_PKG}/include")
+	target_link_libraries(VoiceCommand PRIVATE "${SHERPA_ONNX_PKG}/lib/sherpa-onnx-c-api.lib")
+	target_compile_definitions(VoiceCommand PRIVATE VC_HAVE_TTS=1)
+	foreach(dll sherpa-onnx-c-api.dll onnxruntime.dll onnxruntime_providers_shared.dll)
+		add_custom_command(TARGET VoiceCommand POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${SHERPA_ONNX_PKG}/lib/${dll}" "$<TARGET_FILE_DIR:VoiceCommand>")
+	endforeach()
+	message(STATUS "VoiceCommand: Kokoro voices with sherpa-onnx from ${SHERPA_ONNX_PKG}")
+else()
+	message(STATUS "VoiceCommand: Kokoro voices off (VC_KOKORO_TTS=${VC_KOKORO_TTS}) or sherpa-onnx not found at ${SHERPA_ONNX_PKG} - the Windows voices speak")
+endif()
+"""
+
+# =======================================================================================
+# PROOF-OF-CONCEPT BRANCH: NOTHING IS DEPLOYED FROM HERE.
+#
+# Upstream's cmake-after block copied every built DLL straight into
+# %APPDATA%/UnrealVRMod/MechWarrior-Win64-Shipping/plugins. That is exactly right for the
+# real project and exactly wrong for this one: there is only ONE plugins folder, so a
+# full-solution build here would silently overwrite the live LidarExport.dll, HUD.dll,
+# HUDDisplay.exe and shaders with binaries from this experimental tree. Those copies are
+# deliberately deleted rather than commented out, so no one can re-enable them by accident.
+#
+# Everything lands in build/Release/ instead. Move DLLs across by hand when you want to
+# test, and keep a backup of the HUD.dll you replace.
+#
+# The two set_target_properties calls are kept: they make the display executables windowed
+# rather than console apps, which is a property of the binary, not a deployment step.
+# =======================================================================================
+cmake-after="""
+set_target_properties(HUDDisplay PROPERTIES WIN32_EXECUTABLE TRUE)
+set_target_properties(LidarDisplay PROPERTIES WIN32_EXECUTABLE TRUE)
+"""

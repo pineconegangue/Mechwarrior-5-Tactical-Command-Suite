@@ -1,0 +1,99 @@
+﻿utterance	expected	category
+Lance, focus fire on my target.	All three lancemates switch to the mech I have locked and shoot it	attack
+Two, hit that Atlas.	Lancemate Two targets the nearest/visible Atlas and engages it	attack
+Everyone on the Hunchback, now!	Whole lance switches to the Hunchback and focuses it	attack
+Kill the Jenner, it's flanking us.	Lance targets the Jenner that is moving around our side	attack
+Three, take out that Catapult before it rains on us again.	Lancemate Three engages the Catapult with priority	attack
+Guys, go for the legs on the Atlas.	Lance aims at the Atlas's legs to cripple it	attack
+Four, engage at will.	Lancemate Four picks its own targets freely	attack
+Weapons free, everybody.	Lance fires at any hostile without waiting for orders	weapons
+Light 'em up!	Lance opens fire on all enemies in range	attack
+Kill the turrets first.	Lance prioritises base turrets over mechs	attack
+Take out the vehicles, the tanks, whatever's rolling.	Lance targets ground vehicles	attack
+Three, attack my target. No wait, the one behind it, the Shadow Hawk.	Three ignores my locked target and goes for the Shadow Hawk behind it	attack
+Finish him off, he's almost down.	Lance focuses the badly damaged enemy to kill it	attack
+Somebody get that Raven off me!	Nearest lancemate engages the Raven attacking me	attack
+Two and Three, focus the Marauder; Four, keep the lights busy.	Two and Three attack the Marauder, Four engages light mechs	attack
+Hit the closest guy.	Lance engages the nearest enemy	attack
+Go after the one that's shooting me.	Lance targets whoever is currently damaging me	attack
+Lance, form up on me.	Lancemates return to my position and follow in formation	formation
+Regroup, regroup on my position.	Lance pulls back to me and bunches up	formation
+Spread out, you're bunched up for the arty.	Lancemates increase spacing between each other	formation
+Tighten it up, guys.	Lance closes formation around me	formation
+Line abreast on me.	Lance forms a horizontal line beside me	formation
+Follow me.	Lance follows my mech	formation
+Stay close, don't wander off.	Lance stays near me instead of chasing targets	formation
+Two, you're on my left. Three, my right.	Two positions on my left flank, Three on my right	formation
+Move to nav Alpha.	Lance travels to nav point Alpha	nav
+Lance, head to nav point Bravo and hold there.	Lance moves to Bravo and holds at it	nav
+Everyone go to the next waypoint.	Lance moves to the next objective waypoint	nav
+Go to my target.	Lance moves toward my targeted location/enemy	move
+Move to where I'm looking.	Lance moves to the spot I'm aiming at	move
+Push forward.	Lance advances toward the enemy	move
+Advance, slowly, don't run into their whole lance.	Lance advances cautiously	move
+Two, move up a hundred meters.	Two advances about 100 m forward	move
+Three, go north, about two hundred.	Three moves roughly 200 m north	move
+Four, flank left around that ridge.	Four swings around the left side of the ridge	move
+Flank 'em right, I'll keep their attention.	Lance moves around the enemy's right side while I engage head on	move
+Get up on that hill.	Lance moves to high ground I'm pointing at	move
+Take cover behind the buildings.	Lance moves behind nearby buildings out of fire	move
+Find some cover, you're getting shredded.	Lancemates seek cover	move
+Get out of the open!	Lance leaves exposed ground and seeks cover	move
+Charge! Close the distance!	Lance rushes the enemy to close range	move
+Two, scout ahead.	Two moves ahead to spot enemies	move
+Hold position.	Lance stops and stays where it is	hold
+Hold the line here.	Lance holds current position and fights from it	hold
+Stay put, Three.	Three stops moving	hold
+Hold here and don't push.	Lance holds and does not advance	hold
+Hold position, only use indirect fire.	Lance stays put and fires LRMs only, no line of sight pushes	hold
+Wait here till I call you.	Lance waits at current position	hold
+Stop, stop, everyone stop.	Lance halts immediately	hold
+Fall back!	Lance retreats toward me	fallback
+Fall back to me, now.	Lance retreats to my position	fallback
+Pull back, we're outgunned.	Lance withdraws from the fight	fallback
+Four, get out of there, you're red.	Damaged Four retreats out of combat	fallback
+Retreat to the dropship.	Lance falls back to the dropship/extraction	fallback
+Back off a bit, let 'em come to us.	Lance withdraws slightly to draw enemies in	fallback
+Disengage, disengage.	Lance stops fighting and pulls out	fallback
+Hold fire.	Lance stops shooting	weapons
+Cease fire, you're hitting me!	Lance stops firing because of friendly fire	weapons
+Watch your fire, Three, I'm right in front of you.	Three avoids shooting through me	weapons
+Fire at will.	Lance resumes free firing	weapons
+LRMs only, stay back.	Lance uses long range missiles from distance	weapons
+Switch to lasers, save your ammo.	Lance prefers energy weapons over ballistics/missiles	weapons
+Alpha strike that thing!	Lance fires everything at the target	weapons
+Watch your heat.	Lance manages heat, avoids overheating	heat
+Two, you're running hot, cool down.	Two stops firing until heat drops	heat
+Don't shut down on me, guys.	Lance avoids heat shutdown	heat
+Everybody vent and reset.	Lance pauses fire to cool down	heat
+Defend the base.	Lance protects the base structures	defend
+Protect the convoy.	Lance escorts and shields the convoy	defend
+Cover me, I'm going in.	Lance gives covering fire as I advance	defend
+Guard the dropship.	Lance defends the dropship area	defend
+Protect me, I'm hurting.	Lance stays around me and engages my attackers	defend
+Three, watch my back.	Three stays behind me and covers my rear	defend
+Keep them off the generators.	Lance intercepts enemies attacking the generators	defend
+Status report.	Each lancemate reports damage, ammo, heat	status
+Lance, sound off.	Each lancemate reports in	status
+Two, how you holding up?	Two reports its damage state	status
+How's your ammo, Four?	Four reports remaining ammunition	status
+Anyone low on ammo?	Lancemates low on ammo report it	status
+Who's hurt bad?	Most damaged lancemate reports condition	status
+Three, what's your armor like?	Three reports armor/structure state	status
+Where are they?	Lance reports enemy locations/bearings	question-enemy
+How many hostiles left?	Lancemate reports remaining enemy count	question-enemy
+Who's shooting at me?	Lancemate identifies the enemy attacking me	question-enemy
+Anybody see that Atlas?	Lancemate reports the Atlas's position	question-enemy
+Contacts, where's the contacts?	Lance reports nearest enemy bearing and range	question-enemy
+What's the biggest thing out there?	Lancemate reports the heaviest enemy	question-enemy
+Where are you, Four?	Four reports its position relative to me	question-ally
+Incoming missiles, get to cover!	Lance breaks line of sight and takes cover	threat
+Artillery! Move, move, move!	Lance leaves the artillery strike zone	threat
+Air strike inbound, scatter!	Lance spreads out away from the strike	threat
+Watch out, reinforcements coming in from the east.	Lance turns to face and engage eastern reinforcements	threat
+Try not to core him, I want that mech.	Lance aims for legs/pilot to preserve salvage	objective
+Objective's the comm tower, hit the tower.	Lance targets the comm tower objective	objective
+Copy that.	Acknowledgement, no action	ack-cancel
+Belay that.	Cancel the last order	ack-cancel
+Never mind, as you were.	Cancel current order and resume normal behaviour	ack-cancel
+Good kill, Two.	Lancemate acknowledges praise	other

@@ -1,0 +1,1910 @@
+# ---- replies to orders: who answers + the order's reply ----
+
+# A reply from ONE lancemate. {callsign} = who, {reply} = the order's reply (the order_ / fire_ / heat_ / weapons_ groups). {@pool_ack} = an acknowledgement
+[reply_single]
+{@pool_intro} {@pool_ack}, {reply}.
+{@pool_intro} {reply}.
+{@pool_ack}, {reply}.
+{@pool_ack}. {reply}.
+{callsign} here, {reply}.
+{callsign}. {@pool_ack}, {reply}.
+{@pool_ack}, {callsign}, {reply}.
+{callsign} copies, {reply}.
+{@pool_intro} {@pool_ack}. {reply}.
+{reply}, {callsign}.
+
+# A reply when SEVERAL were ordered (said once, by the first). {reply} as above
+[reply_lance]
+{@pool_lance_ack}, {reply}.
+{@pool_lance_ack}. {reply}.
+Lance, {@pool_ack}, {reply}.
+
+# Pool: an acknowledgement, used by reply_single as {@pool_ack}
+[pool_ack]
+copy
+copy that
+roger
+roger that
+understood
+acknowledged
+wilco
+affirmative
+got it
+you got it
+will do
+on it
+solid copy
+loud and clear
+heard and understood
+(copy|roger), (commander|lead|boss)
+
+# Pool: the lance acknowledging together, used by reply_lance as {@pool_lance_ack}
+[pool_lance_ack]
+lance copies
+all units copy
+copy all
+lance acknowledges
+the lance copies
+we copy
+lance hears you
+(all|whole lance) (copy|acknowledge)
+lance, (roger|wilco)
+
+# Pool: how a CALM line opens (answers, replies, status - not the urgent callouts), used as {@pool_intro} (2026-10-13)
+[pool_intro]
+{callsign},
+{callsign} here,
+This is {callsign},
+{callsign} reporting in,
+
+# Pool: going somewhere ({@pool_go})
+[pool_go]
+moving
+heading out
+on my way
+en route
+underway
+moving out
+making my way
+heading over
+on the move
+
+# Pool: where to ({@pool_dest})
+[pool_dest]
+to the marker
+to that position
+to your mark
+to the new position
+to the waypoint
+to that spot
+over there
+to the point
+to the designated position
+to the marked spot
+
+# Pool: how quickly ({@pool_fast})
+[pool_fast]
+now
+right away
+on the double
+double time
+at speed
+quick as I can
+full throttle
+at best speed
+immediately
+
+# Pool: the target you gave ({@pool_tgt})
+[pool_tgt]
+your target
+the target
+that target
+your mark
+your lock
+the one you've locked
+the marked target
+that one
+your designated target
+the target you called
+
+# Pool: the nearest enemy ({@pool_near})
+[pool_near]
+the nearest contact
+the closest hostile
+the nearest hostile
+the closest target
+the nearest enemy
+whoever's closest
+the closest one
+the nearest one
+
+# Pool: attacking ({@pool_engage})
+[pool_engage]
+engaging
+attacking
+going after
+hitting
+taking on
+closing on
+moving on
+firing on
+targeting
+
+# Pool: here ({@pool_here})
+[pool_here]
+here
+right here
+on this spot
+at this position
+where I am
+
+# Reply to form on me / follow me
+[order_follow]
+forming on you
+(forming up|falling in) (on you|with you|on your position)
+(following|tailing|sticking with) you
+(on|right on) your (six|wing|flank)
+(moving|coming) (up|in) on your (six|wing|flank|position)
+(I'm|I am) (with you|on you|right behind you)
+(falling in|forming up) (behind you|at your side|on your wing)
+(sticking|staying) (close|tight|with you)
+(keeping|staying) (on|at) your (six|wing|side)
+following, (lead|commander|boss)
+(joining|rejoining) (formation|you|up)
+(on|) your wing, (moving|coming) (up|in)
+(taking|holding) (position|station) (on|at) your (wing|six|flank)
+(lead the way|you lead), I'm (with you|behind you|on you)
+(moving|coming) (up|in) (to|on) (you|your position)( {@pool_fast}|)
+(staying|sticking) on (your six|your wing|you)
+(forming up|in formation)( {@pool_fast}|)
+(I've got|got) your (six|back|wing)
+(right behind you|right with you)
+(tucking in|slotting in) (behind you|on your wing|on your flank)
+(where you go, I go|wherever you go, I follow)
+(closing up|closing in) on (you|your position|your wing)
+
+# Reply to attack my target
+[order_attack]
+engaging your target
+{@pool_engage} {@pool_tgt}( {@pool_fast}|)
+(weapons on|guns on) {@pool_tgt}
+(moving on|going after|closing on) {@pool_tgt}
+(your target|your mark|the marked target|your lock), (engaging|attacking|on it|going in)
+(putting|bringing) (fire|rounds|everything I've got) on {@pool_tgt}
+(target acquired|got it locked|got the target), (engaging|attacking|opening fire)
+(lighting up|hammering|hitting) {@pool_tgt}
+(I'm on|on) {@pool_tgt}( {@pool_fast}|)
+(switching|shifting) fire to {@pool_tgt}
+going in on {@pool_tgt}
+(attacking|engaging) (now|as ordered|as directed)
+(that one's|it's) mine
+(taking|bringing) (the fight|it) to {@pool_tgt}
+(sighting|lining up) on {@pool_tgt}
+(focusing|concentrating) fire on {@pool_tgt}
+(weapons|guns) (hot|free), (engaging|going after) {@pool_tgt}
+(I see it|eyes on it|I've got eyes on it), (engaging|moving in)
+(opening up|opening fire) on {@pool_tgt}
+(on the way|moving in), (weapons|guns) (hot|ready)
+(pressing|pushing) (the attack|in) on {@pool_tgt}
+(going hunting|going after it)
+(let's|time to) (take it down|put it down|bring it down)
+(taking|bringing) it down( {@pool_fast}|)
+
+# Reply to a called shot on your target (2026-10-10). {part} = legs, left torso, cockpit ...
+[order_called_shot]
+going for the {part}
+(aiming|going) for the {part}
+(targeting|working on) the {part}
+the {part}, (copy|on it|got it)
+(copy|got it), (aiming for|going for) the {part}
+
+# Reply to a called shot on a named unit (2026-10-10). {part}, {enemy}
+[order_called_shot_named]
+going for the {enemy}'s {part}
+(aiming for|working on|going for) the {enemy}'s {part}
+the {enemy}'s {part}, (copy|on it|got it)
+(copy|got it), (taking out|going for) the {enemy}'s {part}
+
+# A called shot on your lock when that is not a mech - a vehicle, turret or VTOL (2026-10-12). {part}
+[order_called_not_mech]
+that target doesn't have {part}, Commander!
+(negative|can't do that), Commander - that (thing|target) (doesn't have|hasn't got) {part}!
+Commander, that's no mech - (there's no|no) {part} to (aim for|shoot at)!
+(uh, Commander|Commander), (that one|that target) (doesn't have|has no) {part}.
+(that's|it's) not a mech, Commander - no {part} on it!
+
+# Reply to cancelling a called shot (2026-10-10)
+[order_called_cancel]
+(copy|got it), (aiming|shooting) anywhere
+(copy|got it), picking my own shots
+called shot (cancelled|off), (copy|got it)
+
+# An attack order ended: no lancemate can see its target any more (lancecontrol-34, 2026-10-11). {enemy}
+[callout_attack_dropped]
+{callsign}, lost the {enemy}, engaging other threats.
+{callsign}, (no eyes on the|lost sight of the) {enemy}. Engaging other threats.
+{callsign}, {enemy}'s (gone|out of sight), (engaging other threats|moving to other threats).
+{callsign}, lost (visual|contact) on the {enemy}. (Engaging other threats|Shifting to other threats).
+
+# ... no lancemate ever got eyes on its target (1 s). {enemy}
+[callout_attack_dropped_never]
+{callsign}, can't find the {enemy}, engaging other threats.
+{callsign}, no sign of the {enemy}. (Engaging other threats|Shifting to other threats).
+
+# Reply to attack the closest / nearest target
+[order_attack_nearest]
+engaging the nearest contact
+{@pool_engage} {@pool_near}( {@pool_fast}|)
+(picking|grabbing|taking) the closest (one|target|hostile)
+(hitting|attacking) whatever's (closest|nearest)
+(closest|nearest) (target|contact|hostile), (engaging|on it|going in)
+(putting|bringing) (fire|guns) on {@pool_near}
+(finding|picking out) the (nearest|closest) (contact|target) and (engaging|attacking)
+(weapons|guns) on {@pool_near}
+(I'll|I will) (take|hit) {@pool_near}
+(on|engaging) the (nearest|closest) (one|threat)
+(targeting|locking up) {@pool_near}
+(going for|heading for) {@pool_near}
+
+# Attack the nearest target with no enemy on the scope
+[problem_no_contacts]
+No contacts, commander.
+(Scope's|Board's|Radar's) (clean|empty|clear), (commander|lead|nothing to hit).
+(Nothing|No hostiles|No targets) (on my scope|on the board|in range).
+
+# Reply to hold position
+[order_hold]
+holding here
+(holding|holding position|holding my position)( {@pool_here}|)
+(staying|stopping) (put|here|right here)
+(digging in|planting my feet)( {@pool_here}|)
+(standing|holding) (fast|firm|my ground)
+(all stop|full stop), (holding|standing by)
+(parked|planted)( right here|)
+(I'll|I will) (hold|stay) (here|right here|put)
+(holding|keeping) (this|my) (spot|position|ground)
+(not moving|staying put|going nowhere)( {@pool_here}|)
+(stopping|halting) (here|now|right here)
+(holding|standing by) (until you say otherwise|until further orders|for orders)
+(anchoring|setting up) (here|on this spot|right here)
+(I'm|I am) (holding|staying put|stopped)( {@pool_here}|)
+(rooted|planted) (here|right here|to the spot)
+(position held|holding station)
+(staying|keeping) right here( and watching|, eyes open|)
+
+# Reply to indirect fire only
+[order_indirect]
+holding, indirect fire only
+(holding|staying put|holding here), (indirect|indirect fire) only
+(indirect fire only|indirect only), (holding here|staying put|holding position)
+(holding|standing) (back|position) and (lobbing|sending|dropping) (missiles|rounds) (over|in)
+(holding here|staying put), (I'll|I will) (lob|drop|send) them over
+(staying back|holding back), (indirect|arcing) fire only
+(indirect|arcing) fire (from here|from this position|only), (holding|not moving)
+(holding|keeping) (my|this) position, (firing|shooting) indirect( only|)
+(keeping out of|staying out of) line of sight, indirect (fire|only)
+(holding here|staying put) and (spotting|waiting) for (locks|targets), indirect only
+(support|artillery) (role|mode), (holding here|staying put)
+(lobbing|dropping|sending) (missiles|them) (over|from here), (holding|not moving)
+
+# Reply to fall back / fall back to me
+[order_fall_back_to_me]
+falling back to you
+(pulling|falling|coming) back to (you|your position)( {@pool_fast}|)
+(coming|heading) (to you|your way|to your position)( {@pool_fast}|)
+(on my way|en route) (to you|to your position)
+(closing|regrouping) on (you|your position)( {@pool_fast}|)
+(falling|pulling) back on (you|your position)
+(I'm|I am) coming (to you|back to you|your way)( {@pool_fast}|)
+(regrouping|rallying) (on you|at your position|on your mech)
+(breaking off|disengaging), (coming|heading) (to you|back to you|your way)
+(heading|moving) back to (you|your side|your position)( {@pool_fast}|)
+(I'll|I will) (be|meet you) (at your side|on your position|with you) (shortly|in a moment|soon)
+falling in on you
+(pulling|falling) back, (heading|moving) your way
+(coming|moving) in to (you|your position)
+(rejoining|joining) (you|up with you)( {@pool_fast}|)
+(making my way|heading straight) back to you
+(heading|coming) back (to|toward) (you|lead|the boss)
+
+# Reply to fall back <distance> <direction>
+[order_fall_back]
+falling back
+(pulling|falling|moving) back( {@pool_fast}|)
+(backing|easing) off( {@pool_fast}|)
+giving (ground|some ground)( {@pool_fast}|)
+(disengaging|breaking contact) and (falling back|pulling back)
+(withdrawing|retreating)( {@pool_dest}|)( {@pool_fast}|)
+(pulling out|getting out of here)( {@pool_fast}|)
+(opening|putting some) distance( now|between us and them|)
+(heading|moving) back to the (new|fallback|rally) (position|point)
+(falling back|pulling back) (as ordered|as directed|like you said)
+(backing up|walking it back)( {@pool_fast}|)
+(I'm|I am) (falling|pulling) back( {@pool_fast}|)
+(stepping|moving) back (out of it|from the fight|from the line)
+(going|heading) (to|for) the (fallback|rally) (point|position)
+(falling|pulling) back, (keeping|I'll keep) my (guns|weapons|front) on them
+(breaking off|pulling out), (heading|moving) (back|out)
+(reversing|backing out), (moving|heading) back
+(getting|moving) (clear|out of range)( {@pool_fast}|)
+(relocating|repositioning) (back|rearward)( {@pool_fast}|)
+(taking|moving to) the fallback position
+(pulling|falling) back (to|toward) (the|that) (mark|point|spot)
+
+# Reply to make a run for it / get out of there (a beeline 200 m behind you)
+[order_run]
+(copy|roger), (getting|pulling) out( {@pool_fast}|)
+(breaking|pulling) (off|out)( now|)
+making a run for it
+(on it|copy), (heading|running) for your (six|rear)
+(getting clear|clearing out)( now|), Commander
+
+# Reply to "Two, go give Four some support": attacking Four's target. {who} = the lancemate supported, {enemy}
+[order_support]
+(moving to support|on my way to support|backing up) {who}
+(on|going for) {who}'s target( {@pool_fast}|)
+(helping|giving) {who} (a hand|some help)( with the {enemy}|)
+{who}, (I've got your back|coming to help)
+
+# The same, when {who} has no target: attacking whoever last hit {who}. {who} {enemy}
+[order_support_attacker]
+(going after|engaging) whoever's (on|hitting) {who}
+(taking|getting) the {enemy} off {who}'s back
+{who}, (I've got your back|coming to help) - (hitting|engaging) the {enemy}
+
+# "Support" said to the lancemate itself
+[problem_support_self]
+(uh, Commander|Commander), that's me.
+I can't (support|back up) myself, Commander.
+
+# Support, but {who} is down or not in the field. {who}
+[problem_support_gone]
+(negative|no can do), {who}'s (down|not out here).
+{who}'s (gone|not on the field), Commander.
+
+# Support, but {who} has no target and nobody has hit {who} lately. {who}
+[problem_support_nothing]
+{who}'s not (engaged|in a fight), (Commander|nothing to hit).
+(nobody|no one)'s on {who} (right now|at the moment), Commander.
+
+# HIGH GROUND (2026-10-14): "get up on that hill" - 3-4 hilltops marked as nav points; the question. {count} = how many ("three"), {list} = "Echo, 2 o'clock, 400 metres. Foxtrot, 11 o'clock, 650 metres, the highest"
+[hill_ask]
+Which hill, commander? I've marked {count}. {list}.
+(Marked|Got) {count} (hills|hilltops) for you, commander. {list}. Which one?
+High ground marked, commander. {list}. Your call?
+
+# HIGH GROUND: no hilltop qualifies 150-800 m around you (or no terrain yet)
+[hill_none]
+No (good|) high ground (nearby|around here), commander.
+(Can't see|Nothing) (any|) high ground (worth taking|close by), commander.
+
+# HIGH GROUND near a nav point ("take the high ground near nav Foxtrot"): no hilltop within 400 m of it - the pilot offers to just go there ("yes" / the nav's name sends them). {nav}
+[hill_none_nav]
+No high ground near {nav}, commander. (Want me to|Should I) (just head there|move there anyway)?
+{nav}'s (flat|all low ground), commander. (Head there anyway|Still want me there)?
+
+# HIGH GROUND: every nav point is in use (16)
+[hill_full]
+(Nav computer's full|Can't mark any more nav points), commander.
+
+# HIGH GROUND: "never mind" / "none of them" - the marks go
+[hill_cancel]
+Copy, clearing the hill marks.
+(Understood|Roger), (marks cleared|dropping the hill marks).
+
+# HIGH GROUND: no answer in 30 s - the marks go
+[hill_expired]
+No call on the hill, clearing the marks.
+(Dropping|Clearing) the hill marks, commander.
+
+# Reply to "take out the turrets / tanks / VTOLs" (TARGET CLASSES, 2026-10-14): {enemy} = turrets / tanks / VTOLs
+[order_attack_class]
+(going after|hunting) the {enemy}
+(on the|taking out the) {enemy}( {@pool_fast}|)
+{enemy} first, (copy|understood)
+
+# TARGET CLASSES: none of that kind on the scan. {enemy}
+[problem_class_none]
+No {enemy} on (scan|the scope), commander.
+(I don't see|Can't find) any {enemy}, commander.
+
+# TARGET CLASSES: the last of that kind is down - the sweep ends. {enemy}
+[class_done]
+{enemy} (are down|cleared), commander.
+(That's the last of the|No more) {enemy}, commander.
+
+# Reply to a move / fall back / run order over 2 km: it is cut to 2 km (2026-10-15)
+[order_move_capped]
+(two klicks|two kilometres) is as far as (I'll|I will) go, (moving|heading out|on my way)
+(that's|that is) (too far|a long way), (going|heading|moving) two klicks
+(capping|cutting) that (at|to) two klicks, (moving|on my way)
+(two klicks|two kilometres) (max|tops), (moving|heading out)
+
+# Reply to move <distance> <direction>
+[order_move]
+moving
+{@pool_go} {@pool_dest}( {@pool_fast}|)
+{@pool_go}( {@pool_fast}|)
+(relocating|repositioning)( {@pool_dest}|)( {@pool_fast}|)
+on my way( {@pool_dest}|)
+(heading|moving) (over|across|out)( {@pool_fast}|)
+(shifting|changing) position( {@pool_fast}|)
+(taking|moving into) the new position
+(new position|that spot|the waypoint|your mark), (heading there|on my way|moving)( {@pool_fast}|)
+(moving|heading|walking) to the (new|marked|designated) (position|point|spot)
+going where you (want|need) me
+(rolling|stepping) (out|off)( {@pool_fast}|)
+(I'll|I will) be there (shortly|in a moment|in a few|before you know it)
+(on the move|underway|en route)( {@pool_dest}|)
+(moving|heading) (out|over) there( {@pool_fast}|)
+(that position|the new spot|the mark), (consider it done|on it), (moving|heading over)
+(moving|heading) to (it|the spot|the mark)( now|)
+(throttle up|throttling up), (moving|heading) (out|over)
+(breaking off|pulling out) and (repositioning|moving|relocating)
+(setting off|setting out)( {@pool_dest}|)
+(making tracks|making my way over)( {@pool_fast}|)
+one (position change|relocation|move), coming (up|right up)
+(I'm|I am) (moving|heading out|on my way)( {@pool_fast}|)
+(going|heading) (over|out) (to|toward) (the|that) (mark|spot|point)
+(moving up|moving across|moving over) to (the|your) (mark|waypoint)
+(repositioning|relocating) as (ordered|requested|directed)
+(headed that way|headed for the mark|bound for the waypoint|bound for the mark)
+(stepping|walking|striding) (over|out) to (it|the mark|the spot)
+(moving|heading) (out|over), (keep me posted|eyes open)
+(on the way|on my way) (over|out)( {@pool_fast}|)
+
+# Reply to weapons free
+[fire_weapons_free]
+weapons free
+(weapons|guns) (free|hot)( now|)
+(free|clear) to (engage|fire)
+(engaging|firing) (at will|on anything hostile|on any hostile|on anything that moves)
+(gloves|safeties) (off|are off)
+(weapons|guns) free, (engaging|firing) at will
+(cleared hot|cleared to engage|open season)
+(shooting|firing) at (will|anything hostile)
+(I'll|I will) (shoot|fire) at (will|anything hostile)
+(all weapons|every gun) (free|hot)
+going in weapons free
+(taking|picking) (any|every) shot I (get|can)
+
+# Reply to return fire
+[fire_return_fire]
+return fire only
+(returning|only returning) fire
+(I'll|I will) (only shoot|only fire|shoot) (back|if fired upon|when shot at)
+(holding|weapons tight) (until|unless) (fired upon|they shoot first)
+(weapons tight|guns tight), (returning fire|return fire) only
+(firing|shooting)( only|) when (fired upon|shot at|they shoot first)
+(defensive|return) fire only
+(not starting anything|won't start it), (but I'll|I'll) (finish it|answer back|shoot back)
+(only|) if they (fire|shoot) first
+they shoot, I shoot
+
+# Reply to hold fire
+[fire_hold]
+holding fire
+(holding|ceasing) fire( now|)
+(weapons|guns) (cold|tight|safe)
+(not|no) (shooting|firing)( until you say|)
+(fingers off|finger off) the (trigger|triggers)
+(holding|keeping) (my weapons|my guns|fire) (quiet|cold|in check)
+(going quiet|going cold)
+(checking|holding) fire
+(staying|keeping) quiet( until you say|until you give the word|)
+(I'll|I will) hold (my fire|fire)( until you say|until ordered|)
+(safeties|safeties are) on
+(weapons|guns) (cold|safe), (holding|not firing)
+
+# Reply to normal heat
+[heat_normal]
+normal heat
+(back to|running) normal heat
+(normal|standard) heat (management|discipline|limits)
+(watching|managing) (my|the) heat (as usual|like normal|normally)
+(heat|heat limits) back to (normal|standard)
+(standard|normal) (firing|heat) (rules|discipline)
+(running|keeping) heat (normal|steady|in check)
+(back to|returning to) (the|my) (usual|normal) heat (routine|limits)
+
+# Reply to run cool
+[heat_cool]
+running cool
+(running|keeping it|keeping things) (cool|cold)
+(watching|minding|managing) (my|the) heat( closely|carefully|)
+(keeping|holding) (heat|my heat) (low|down|in the green)
+(easing|backing) off the (trigger|triggers) to (stay cool|keep cool|keep heat down)
+(not|no) (riding|running) (hot|the red)
+(staying|keeping) (in the green|cool|under the limit)
+(conserving|saving) heat
+(cool and steady|nice and cool|cool and careful)
+(heat discipline|temperature down), (running|staying) cool
+
+# Reply to run hot
+[heat_hot]
+running hot
+(running|pushing|riding) (hot|the heat|the red|it hot)
+(not worrying about|ignoring) (the|my) heat( for now|a bit|)
+(pushing|cranking) (the heat|my heat) (up|high)
+(letting|going to let) (it|the heat) (climb|build|run)
+running (hot and heavy|hot and fast)
+(forget the heat|never mind the heat)
+(trading|pushing) heat for (damage|firepower)
+(firing faster|firing harder), (watching the gauge|letting the heat climb)
+(redlining|riding the redline)
+
+# Reply to alpha strike
+[heat_alpha]
+alpha strikes, ignoring heat
+(alpha|full alpha) (strikes|strike), (ignoring the heat|forget the heat)
+(everything|all guns|every weapon) (at once|together|in one go)( now|)
+(alpha|full alpha) (striking|strikes)( now|)
+(dumping|unloading) everything (at once|together|on them)
+(all weapons|every gun) (together|at once), heat or not
+(full|maximum) (alpha|salvo|volley)(, heat or not|, ignoring the heat|)
+(firing|letting fly with) everything( at once|together|)
+going all in( on alpha strikes|, ignoring heat|)
+(full volleys|alpha volleys), (heat warnings|shutdown risk) (ignored|noted)
+
+# Reply to <weapons> only
+[weapons_only]
+restricting weapons
+(restricting|limiting) (my weapons|fire|my loadout)( as ordered|as requested|)
+(only|just) (those|the ones you called|those weapons)( from now on|now|)
+(switching|going) to (those|the ones you called) only
+(firing|using) (only|just) (those|what you called)( from now on|)
+(weapons|loadout) (restricted|limited)( as ordered|)
+(holding|keeping) (the rest|everything else) (cold|quiet|offline)
+(sticking|keeping) to (those|what you said)( only|)
+(noted|logged), (only|just) (those|those weapons)
+(changing|setting) (my weapon groups|my loadout) (to match|accordingly|as ordered)
+
+# Reply to hold <weapons>
+[weapons_hold]
+holding those
+(holding|keeping) (those|that) (cold|offline|quiet|back)
+(not|won't be) (using|firing) (those|that)( for now|)
+(those stay|that stays) (cold|offline|on hold)( for now|)
+(taking|pulling) (those|that) (offline|off the line)
+(holding back|holding off) (on|with) (those|that)
+(safing|switching off) (those|that)( for now|)
+(those|that) (weapons|weapon group) (holding|on hold|safe)
+
+# Reply to all weapons
+[weapons_all]
+all weapons
+(all|every) (weapons|systems) (back online|available|free|hot)
+(everything|every weapon)( back|) (in play|online|on the line)
+(full|whole) (loadout|arsenal) (back|online|available)
+(lifting|clearing) (the|all) (weapon|weapons) (restrictions|limits)
+(using|firing) everything (I've got|I have|again)
+(back to|returning to) (all weapons|every weapon|the full loadout)
+no more (weapon|weapons) (restrictions|limits)
+
+# Reply to reset fire orders
+[fire_reset]
+standard fire orders
+(back to|returning to|resuming) (standard|normal|default) (fire|firing) (orders|rules|discipline)
+(resetting|clearing) (my|all|the) (fire|firing) (orders|settings|restrictions)
+(standard|normal) (rules|procedure|orders)( again|from here|)
+(everything|all) back to (standard|normal|default)
+(default settings restored|standard orders back in effect|standard rules back in effect)
+(fire|firing) orders (reset|cleared|back to normal)
+
+# ---- when an order cannot be carried out ----
+
+# An order given to your own number (the lance voice)
+[problem_is_you]
+That's you, commander.
+(Commander|Lead), that's (you|your own mech).
+That one's you, commander.
+You're (talking to|calling) yourself, commander.
+
+# Attack my target with nothing locked
+[problem_no_lock]
+No target locked, commander.
+(Need|I need) a (lock|target), (commander|lead).
+(Nothing|No target) (locked|designated)( on your end|), (commander|lead).
+
+# Nobody with that number. {callsign} = the number asked for (the lance voice)
+[problem_no_answer]
+No one answers on {callsign}.
+{callsign} (isn't answering|doesn't answer|is silent).
+No (reply|answer) from {callsign}.
+Nothing back from {callsign}, commander.
+
+# An order to the lance with no lancemate left (the lance voice)
+[problem_no_lancemates]
+No lancemates to order.
+(No one|Nobody) left to (order|give that to).
+There's no lance to (order|command), commander.
+
+# No lance data from the game (the lance voice)
+[problem_no_lance_data]
+No lance data. Is the mission running?
+(No lance data|Nothing from the lance) yet. Is the mission (running|up)?
+Can't read the lance. Are we in a mission?
+
+# Your position could not be read (the lance voice)
+[problem_no_position]
+Can't find your position.
+(No fix on|Can't get a fix on) your position, commander.
+Your position's not (coming through|showing), commander.
+
+# The game plugin is not running (the lance voice)
+[problem_no_link]
+No link to the game plugin.
+(Lost|No) link to the (game|game plugin).
+Can't reach the game plugin. Is LanceControl loaded?
+
+# Praise from the commander ("Good kill, Two", "nice shot") - a thank-you, no order (2026-10-10)
+[reply_thanks]
+Thanks, boss.
+(Thanks|Appreciate it|Cheers)(, commander|, lead|, boss|).
+(Just doing my job|All in a day's work)(, commander|, lead|).
+(One less to worry about|Scratch one)(, commander|, lead|).
+Copy that, (thanks|cheers).
+
+# The commander says the pilot's fire is too close ("watch your fire, Three", "you're hitting me") - no order (2026-10-10)
+[reply_check_fire]
+Sorry, (boss|commander|lead)! Checking fire.
+(Copy|Understood), checking (my fire|fire|my lines).
+(My bad|Apologies)(, commander|, lead|)! Adjusting.
+(Copy|Roger), I'll (watch my lines|shift my aim|reposition for a clear shot).
+
+# Whisper heard an order it was not sure of
+[say_again]
+Say again, commander?
+(Say again|Repeat that|Come again)(, commander|, lead|)?
+(Didn't|Did not) (catch|get) that(, commander|, lead|).
+(You're|You are) (breaking up|garbled), say again.
+
+# ---- callouts ----
+
+# A lancemate was destroyed - said by ANOTHER lancemate. {callsign} = the one that went down
+[callout_down]
+{callsign} is down!
+(We lost|We've lost|Lost) {callsign}!
+{callsign}'s (down|gone|out)!
+{callsign} (is down|went down)(, {callsign} is down|)!
+(Man down|Mech down), {callsign}'s (down|out)!
+
+# Its target died
+[callout_kill]
+{callsign}, target down.
+{callsign}, (target|hostile|contact) (down|destroyed|neutralized)!
+{callsign}, (got|scratch) (one|him|that one)!
+{callsign}, (that one's|he's) (done|down|finished).
+{callsign}, (splash|scratch) one.
+{callsign}, (kill confirmed|confirmed kill).
+{callsign}, (one|another) (down|less)!
+
+# Past 95 % heat
+[callout_overheat]
+{callsign}, I'm overheating!
+{callsign}, (heat|temperature)'s (critical|in the red|maxed)!
+{callsign}, (I'm about to|gonna) (shut down|overheat)!
+{callsign}, (too|way too) hot, (backing off|need to cool)!
+
+# A weapon out of ammo. {weapon}
+[callout_ammo_empty]
+{callsign}, out of {weapon} ammo.
+{callsign}, {weapon}'s (dry|empty|Winchester).
+{callsign}, (I'm|) (dry|out) on {weapon}.
+{callsign}, no more {weapon} (rounds|ammo).
+
+# A weapon down to a quarter of its ammo. {weapon}
+[callout_ammo_low]
+{callsign}, running low on {weapon} ammo.
+{callsign}, {weapon} (ammo's|rounds are) (running low|getting low|nearly gone).
+{callsign}, (low|getting low) on {weapon}.
+
+# A weapon destroyed. {weapon}
+[callout_weapon_lost]
+{callsign}, lost a {weapon}.
+{callsign}, (my|one) {weapon}'s (gone|destroyed|been knocked out).
+{callsign}, (they took out|lost) (my|a) {weapon}.
+
+# Enemies now see it
+[callout_spotted]
+{callsign}, I've been spotted.
+{callsign}, (they've|they have) (spotted|seen|got eyes on) me.
+{callsign}, (I'm|) (spotted|made|lit up).
+{callsign}, (they know|enemy knows) (I'm here|where I am).
+
+# It was hit
+[callout_taking_fire]
+{callsign}, taking fire!
+{callsign}, (taking|under) (fire|hits)!
+{callsign}, (I'm|) (hit|getting hit|being shot at)!
+{callsign}, (contact|incoming), (taking|I'm taking) fire!
+
+# It reached its hold point
+[callout_in_position]
+{callsign}, in position.
+{callsign}, (in position|on station|set|holding at the mark).
+{callsign}, (I'm|) (in position|there|on the mark).
+{callsign}, (arrived|made it), (holding|standing by).
+
+# It held a shot: YOU are in its line of fire
+[callout_you_in_line]
+{callsign}, you're in my line of fire, commander.
+{callsign}, (you're|you are) (blocking my shot|in my way|in my line of fire), (commander|lead).
+{callsign}, (can't|cannot) shoot, (you're|you are) in the way.
+{callsign}, (clear my line|move aside|shift over), (commander|lead).
+
+# It held a shot: another friendly in its line of fire
+[callout_friendly_in_line]
+{callsign}, friendly in my line of fire.
+{callsign}, (friendly|friendlies|blue) in (my line|the way), holding (fire|my shot).
+{callsign}, (can't|cannot) (shoot|fire), (friendly|friendlies) in the way.
+{callsign}, (no shot|holding), (friendly|friendlies) (in my line|in front).
+
+# You launched a UAV - answered by a lancemate picked at random
+[uav_launched]
+{@pool_intro} UAV's up, commander.
+{@pool_intro} eyes in the sky.
+{@pool_intro} UAV deployed, I've got the picture.
+{@pool_intro} (UAV|drone)'s (up|airborne|deployed)( commander|, nice|).
+{@pool_intro} (got|have) (eyes up|the feed|the picture)( now|).
+{@pool_intro} (UAV|drone) (feed|link) (coming in|is live|up).
+
+# Added after uav_launched when it was your last UAV
+[uav_last]
+That was our last UAV.
+Last UAV, make it count.
+That's the last one.
+(That's|That was) (our|the) last (one|UAV|drone).
+(No more|Out of) (UAVs|drones) after that one.
+
+# ---- status report: intro + damage + ammo + extras ----
+
+# Status report: how it starts
+[status_intro]
+{callsign} here.
+{callsign} (reporting|checking in).
+{@pool_intro} (status|sitrep) (follows|coming up).
+{@pool_intro} here's my (status|sitrep|rundown).
+This is {callsign}.
+(Status|Sitrep) from {callsign}.
+{@pool_intro} (quick|short) (status|rundown).
+{callsign} on (comms|the line).
+
+# Status report: no data from the game
+[status_no_systems]
+Can't read my systems, commander.
+(Diagnostics|My diagnostics|Systems) (aren't responding|are down|are dark).
+No (readout|systems readout|telemetry) on my end.
+Can't get a (read|readout) on (anything|my systems).
+
+# Damage: in good shape
+[status_damage_none]
+(Armour's|Armour is) (good|solid|intact|holding fine|in good shape).
+Barely a scratch.
+(Mech's|My mech's|She's) in (good|fine|great|decent) (shape|condition|order).
+(Not a|No) (scratch|dent|mark) on me.
+(All green|Green across the board|Green board).
+(Clean|Spotless|Pristine), (no damage|not a scratch|nothing to report).
+(No damage|Zero damage|Nothing hit me) (so far|yet|to speak of|).
+(Fully|Completely) (intact|operational|combat ready).
+(Good as new|Fresh as the day she rolled out|Like new).
+(Paint's|Paintwork's) (not even|barely) (scratched|scuffed).
+(Undamaged|Unharmed|Untouched)(, all systems green|, ready for more|).
+(Hull|Frame|Chassis) (intact|solid|sound), (no damage|no complaints).
+(Mech's|I'm) (fine|good|solid), (nothing|no damage) to report.
+(Haven't been|Not been) (hit|touched|scratched) (yet|so far|at all).
+(Systems|Everything) (nominal|green|good)( across the board|).
+
+# Damage: some armour gone
+[status_damage_some]
+Taking some damage, armour's holding.
+(Some|A little|A bit of) (armour|plating) (gone|missing|stripped)(, nothing serious|, still solid|, holding up|).
+(Scratched up|Scuffed up|Banged up a bit|Dinged up), (still solid|still in it|still fighting|nothing serious).
+(Taken|Took) (a few|some) (hits|knocks|rounds)(, armour's holding|, nothing critical|, still good|).
+(Armour's|Plating's) (thinned out|dented|pitted) (but holding|in places|a little).
+(Light|Minor|Superficial) (damage|scoring)(, nothing serious|, nothing critical|, still in the fight|).
+(A bit|A little) (worse for wear|roughed up)(, still good to go|, holding together|).
+(Some|A few) (dents|holes|scorch marks)(, nothing structural|, nothing that matters|).
+(Still|) in fighting shape, (just|) (some|a few) (scratches|dents).
+(Armour|Plating) (holding|absorbing it)( fine|, so far|).
+(No|Nothing) structural(, just armour|, armour took it|).
+
+# Damage: added when one part's armour is gone. {part}
+[status_armour_gone]
+{part} armour's gone.
+(My|) {part} (armour's|plating's) (gone|stripped|shot off).
+(No|Zero) armour left on (my|the) {part}.
+{part}'s (bare|exposed|open)( now|).
+{part} (armour|plating) (is gone|is stripped|is history).
+(Lost|Lost all) the armour on (my|the) {part}.
+(Careful,|Heads up,|) (my|) {part}'s (exposed|open).
+
+# Damage: structure showing. {part} = the worst part
+[status_damage_heavy]
+Badly damaged, {part} structure's showing.
+(I've taken|Taken|Took) a (beating|pounding|hammering), {part} (structure's showing|internals are exposed).
+Heavy damage, {part} (structure's showing|is down to structure|internals exposed).
+(Hurting|Hurting bad), {part}'s down to (structure|the frame|the bones).
+{part}'s (down to|showing) (structure|internals|the frame)(, I'm in trouble|, not good|).
+(Lots|Plenty|A lot) of damage, (worst|the worst) (is|is on) (my|the) {part}.
+(Armour's|Plating's) (shredded|torn up|in pieces), {part}'s (open|bare|exposed) to the frame.
+(Mech's|I'm) (in rough shape|beat up|hurting), {part} (internals showing|structure exposed).
+(Took|Taken) (heavy|serious) (hits|damage), (mostly|worst) (to|on) the {part}.
+{part}'s (been hit hard|taking a beating|barely holding).
+
+# Damage: critical (followed by one of the three status_critical_ groups)
+[status_damage_critical]
+I'm in bad shape(, commander|).
+(I'm|) hurting (bad|real bad).
+Critical damage(, commander|).
+(Mech's|I'm) (barely|only just) (holding together|in one piece|standing).
+(I'm|Mech's) in (real|) trouble here.
+(One|Another) (more|good) hit and I'm (done|out|finished).
+(Systems|Everything's) (failing|redlining|in the red).
+(She|My mech) (won't|can't) take much more.
+(Critical|Severe) (damage|condition), (barely|just) (holding on|hanging on).
+
+# Critical: the centre torso
+[status_critical_centre_torso]
+Centre torso's almost gone.
+Centre torso's (hanging by a thread|about to go|nearly gone|almost breached).
+(Core|Reactor housing) (is|'s) (exposed|almost breached|about to give).
+(One|A) (more|good) hit (to|on) the (centre torso|core) and I'm (done|finished|gone).
+(Engine|Reactor) shielding is (nearly|almost) gone.
+
+# Critical: the head
+[status_critical_head]
+Cockpit's barely holding.
+(Cockpit|Canopy) (is|'s) (cracked|cracking|barely holding|about to go).
+(One|A) (more|good) hit to the (head|cockpit) and (I'm|that's) (done|it).
+(Head|Cockpit) (armour's|section's) (gone|almost gone|nearly gone).
+(Smoke's|Smoke is) (coming into|filling) the cockpit.
+
+# Critical: a leg
+[status_critical_leg]
+A leg's about to go.
+(One of my legs|A leg) (is|'s) (about to go|failing|nearly gone|buckling).
+(Leg|Knee) (actuator|joint)'s (failing|shot|grinding).
+(I'm|) (limping|about to lose a leg).
+(One|A) more hit (to my|on the) (legs|leg) and I'm (down|on the ground|not walking).
+
+# Damage: parts destroyed. {part} = e.g. "left arm and right torso"
+[status_lost_parts]
+Lost my {part}.
+(I've|I have) lost (my|the) {part}.
+(They took|They blew off|They shot off) my {part}.
+{part} (destroyed|gone|lost).
+(My|) {part}, (gone|destroyed|blown off).
+
+# Damage could not be read
+[status_no_damage_read]
+Can't get a damage read.
+No damage read from here.
+(Damage|My damage) (sensors|readouts) (are|) (down|dead|not responding).
+(Can't|Unable to) (read|assess) (my|the) damage.
+(No|I've got no) (damage|condition) (data|readout).
+
+# Ammo: every type above half
+[status_ammo_good]
+Ammo's good.
+Plenty of ammo.
+Ammo's fine.
+(Ammo|Magazines|Ammo bins) (good|full|healthy|topped up|in good shape).
+(Plenty|Lots|Loads) of (ammo|rounds|reloads)( left|).
+(Bins|Racks|Magazines) (are|) (full|mostly full|well stocked|still heavy).
+(Good|Plenty) on ammo.
+(No worries|No problems|No concerns) (on|with) ammo.
+(Rounds|Ammo) to spare.
+(Ammo|Ammo state)'s (good|fine|solid|green).
+(Still|) (got|carrying) (plenty|lots) of (ammo|rounds|reloads).
+
+# Ammo: one type below half (one line per type). {weapon} {percent}
+[status_ammo_low]
+{weapon} ammo at {percent} percent.
+{weapon} (ammo's|is) (down to|at) {percent} percent.
+{percent} percent (left|remaining) on (my|the) {weapon}( ammo|).
+(Down to|Only|Just) {percent} percent on (my|the) {weapon}.
+{weapon} (bins|ammo|rounds) (at|down to) {percent} percent.
+(Getting low|Running low|Low) on {weapon}, {percent} percent( left|).
+
+# Ammo: one type empty (one line per type). {weapon}
+[status_ammo_out]
+Out of {weapon} ammo.
+({weapon} is|{weapon}'s) (dry|empty|out|done|Winchester).
+(No|Zero) {weapon} (ammo|rounds) (left|remaining).
+(I'm|) (dry|out|empty) on {weapon}( ammo|).
+{weapon} (rounds|ammo) (gone|spent|expended).
+{weapon} (bins|racks) (are|) empty.
+
+# Ammo: no ammo weapons at all
+[status_all_energy]
+All energy, no ammo worries.
+Energy weapons, no ammo to worry about.
+(All|Pure) energy (loadout|build), (no ammo concerns|ammo's not an issue|nothing to run out of).
+(No ammo|Nothing) to run out of(, all energy|).
+(Energy|Beam) weapons only, (ammo's|reloads are) not (a concern|an issue|my problem).
+(As long as|Long as) the reactor's (running|up), I've got (shots|firepower).
+
+# Added at 70 % heat or more
+[status_running_hot]
+Running hot.
+Heat's high.
+I'm running warm.
+(Heat's|Heat is|Temperature's) (up|high|climbing|in the red|getting up there).
+(Running|Riding) (hot|warm|near the red|close to the red).
+(It's|Getting) (hot|toasty|warm) in here.
+(Heat gauge is|Heat gauge's) (climbing|in the yellow|near the red).
+(Need|Could use) (to cool down|a breather|some cooling)( soon|).
+
+# Added when one weapon is destroyed
+[status_lost_weapon]
+Lost a weapon.
+(Lost|I've lost) (a weapon|a gun|one of my weapons).
+(One|A) (weapon|gun) (down|destroyed|gone).
+(Down|Short) (a|one) (weapon|gun).
+
+# Added when several are destroyed. {count}
+[status_lost_weapons]
+Lost {count} weapons.
+({count} weapons|{count} guns) (down|destroyed|gone).
+(I've lost|Lost|Down) {count} (weapons|guns).
+(Short|Missing) {count} (weapons|guns).
+
+# ---- situation callouts (game state: who hit whom, contacts, targets) ----
+
+# Reply to attack my target, when the target is known. {enemy} = its chassis or type
+[order_attack_named]
+engaging the {enemy}
+{@pool_engage} (the|that) {enemy}( {@pool_fast}|)
+(weapons on|guns on) (the|that) {enemy}
+(moving on|going after|closing on) (the|that) {enemy}
+(the|that) {enemy}, (engaging|on it|going in)
+(putting|bringing) (fire|rounds|everything I've got) on (the|that) {enemy}
+(lighting up|hammering|hitting) (the|that) {enemy}
+(switching|shifting) fire to (the|that) {enemy}
+(that|the) {enemy} is (mine|going down)
+(sighting|lining up) on (the|that) {enemy}
+(focusing|concentrating) fire on (the|that) {enemy}
+(opening up|opening fire) on (the|that) {enemy}
+(taking|bringing) the fight to (the|that) {enemy}
+
+# Hit, and the attacker is known (light damage). {enemy}
+[callout_taking_fire_from]
+{callsign}, taking fire from a {enemy}!
+{callsign}, (that|a) {enemy} is (shooting at|firing on|hitting) me!
+{callsign}, (contact|incoming), (that|a) {enemy} is on me!
+{callsign}, (got|I've got) a {enemy} (shooting at|firing on) me!
+{callsign}, (under fire|taking hits), a {enemy}!
+
+# Hit hard: a few percent of its mech gone in seconds. {enemy}
+[callout_hit_hard]
+{callsign}, (that|the) {enemy} is (hitting me hard|pounding me|hammering me)!
+{callsign}, (taking|eating) (heavy|serious) (fire|hits) from (that|the) {enemy}!
+{callsign}, (that|the) {enemy} has (got my range|found me|zeroed in on me)!
+{callsign}, (need|could use) (some help|support) with (that|this) {enemy}!
+{callsign}, (that|this) {enemy} is (chewing into me|tearing me up)!
+
+# Hit hard, attacker unknown
+[callout_hit_hard_anon]
+{callsign}, taking (heavy|serious) (fire|hits)!
+{callsign}, (they've|they have) (got my range|zeroed in on me)!
+{callsign}, (getting|I'm getting) (pounded|hammered) (here|out here)!
+{callsign}, (heavy|serious) (fire|damage), (need|could use) (support|some help)!
+
+# Hit very hard: a tenth of its mech gone in seconds. {enemy}
+[callout_shredded]
+{callsign}, (that|the) {enemy} is (ripping|tearing) me (apart|to shreds|to pieces)!
+{callsign}, (that|the) {enemy} is (killing|wrecking|shredding) me!
+{callsign}, (get|somebody get) (that|this) {enemy} off me!
+{callsign}, (I can't|can't) take much more (from|of) (that|this) {enemy}!
+{callsign}, (that|the) {enemy} is (gutting|carving up) my mech!
+
+# Hit very hard, attacker unknown
+[callout_shredded_anon]
+{callsign}, (I'm getting|getting) (ripped|torn) (apart|to shreds)!
+{callsign}, (they're|they are) (tearing|ripping) me (apart|to pieces)!
+{callsign}, (heavy|massive) damage, (I need help|get them off me)!
+
+# A part destroyed. {part} {enemy}
+[callout_part_lost]
+{callsign}, (lost|I've lost) my {part} to (that|the) {enemy}!
+{callsign}, (that|the) {enemy} (took|blew off|shot off) my {part}!
+{callsign}, {part}'s (gone|destroyed), (that|the) {enemy} (got it|took it)!
+
+# A part destroyed, attacker unknown. {part}
+[callout_part_lost_anon]
+{callsign}, (lost|I've lost) my {part}!
+{callsign}, {part}'s (gone|destroyed|blown off)!
+{callsign}, (they took|they've taken|they blew off) my {part}!
+
+# Critical (centre torso / head / a leg nearly gone). {enemy}
+[callout_critical]
+{callsign}, (I'm going down|I'm done for|I'm about to go), (that|the) {enemy} is (killing|finishing) me!
+{callsign}, (critical damage|I'm critical), (that|the) {enemy} is (on me|all over me)!
+{callsign}, one more hit and I'm (done|gone|out), (get|somebody get) (that|the) {enemy}!
+
+# Critical, attacker unknown
+[callout_critical_anon]
+{callsign}, (I'm going down|I'm critical|critical damage)!
+{callsign}, (one|another) more hit and I'm (done|gone|out)!
+{callsign}, barely holding together, (need|I need) (help|cover)!
+
+# Hit hard by a turret. {enemy}
+[callout_turrets]
+{callsign}, (someone|somebody) take out (those|that) (turrets|turret)!
+{callsign}, (turrets are|that turret's) (chewing|tearing) me up!
+{callsign}, (taking a hammering from|getting hammered by|getting pounded by) (a|that) turret!
+{callsign}, (need|I need) (that turret|those turrets) (down|gone|silenced)!
+
+# Another lancemate went critical. {ally} = who
+[callout_ally_trouble]
+{callsign}, {ally}'s in (trouble|bad shape|a bad way)!
+{callsign}, {ally}'s (going down|about to drop), (somebody|someone) cover (them|{ally})!
+{callsign}, (watch|eyes on) {ally}, (they're|they are) (hurting|critical)!
+
+# Its target died, and we know what it was (a mech). {enemy}
+[callout_kill_named]
+{callsign}, {enemy} down!
+{callsign}, (that|the) {enemy} is (done|finished|down|scrap)!
+{callsign}, (scratch|splash) one {enemy}!
+{callsign}, (got|dropped) (the|that) {enemy}!
+{callsign}, (that|the) {enemy} (won't be getting up|is out of the fight|is down for good)!
+{callsign}, (target|hostile) {enemy}, (destroyed|down)!
+
+# Its target died - a vehicle, turret or VTOL. {enemy}
+[callout_kill_vehicle]
+{callsign}, {enemy} (down|destroyed|out)!
+{callsign}, (got|took out|knocked out) (the|that) {enemy}!
+{callsign}, (scratch|splash) one {enemy}!
+{callsign}, (that|the) {enemy} is (scrap|toast|gone)!
+
+# Added after a kill at 3, 5, 7 and 10 kills (chatter 2+). {count}
+[callout_kill_tally]
+That's {count} for me.
+(That's|Makes it) {count}( for me|, keep them coming|).
+{count} (kills|down) (now|so far)( for me|).
+
+# A new heavy or assault mech on the scope, with a bearing from your cockpit. {enemy} {class} = heavy / assault, {clock} = "5 o'clock", {range} = "500 metres"
+[callout_contact_heavy]
+{callsign}, (contact|new contact), {enemy}, {range} out at your {clock}!
+{callsign}, (picking up|I'm picking up|I've got) a {class} signature, (your|) {clock}, {range}( out|)!
+{callsign}, {class} (inbound|closing|moving in), {clock}, {range}. (Reads as|Looks like|Profile says) a {enemy}.
+{callsign}, {enemy} at your {clock}, {range}( and closing| out|)!
+{callsign}, (heads up|eyes up|watch it), {class} (contact|signature) at {clock}, {range}, (it's|that's|looks like) a {enemy}!
+{callsign}, (big|heavy) (one|contact|signature) (bearing|at) your {clock}, {range}( out|)!
+{callsign}, (got|I've got) a {enemy} on the scope, {range}, your {clock}.
+{callsign}, {clock}, {range}, {class} {enemy}( inbound|)!
+{callsign}, (be advised|advise), {enemy} {range} out, (bearing|at) your {clock}.
+{callsign}, (incoming|inbound) {class}, your {clock}, {range}, (looks like|reads as) a {enemy}.
+{callsign}, (scope's got|sensors have) a {enemy}, {clock}, {range}( and closing|).
+
+# A new heavy or assault mech, position unknown. {enemy} {class}
+[callout_contact_heavy_noloc]
+{callsign}, (contact|new contact), {enemy}!
+{callsign}, (picking up|I'm picking up) a {class} signature, (looks like|reads as) a {enemy}.
+{callsign}, {class} (inbound|on the scope), a {enemy}!
+{callsign}, (heads up|eyes up), {enemy} (on the scope|inbound)!
+
+# Another heavy after a few were called out (said briefly, lower priority). {enemy} {class} {clock} {range}
+[callout_contact_more]
+{callsign}, another {class}, {clock}.
+{callsign}, (one more|another one|more company), {enemy}, {clock}.
+{callsign}, {enemy}, {clock}, {range}.
+{callsign}, (and|plus) a {enemy} at {clock}.
+{callsign}, another {enemy}, (your|) {clock}, {range}.
+
+# Several new heavy or assault mechs at once. {count}
+[callout_contact_heavies]
+{callsign}, {count} heavies (inbound|on the scope|incoming)!
+{callsign}, (multiple|several) heavy (contacts|signatures), {count} of them!
+{callsign}, (heads up|eyes up), {count} (big ones|heavy contacts) (closing|inbound)!
+{callsign}, (picking up|I've got) {count} heavy signatures( on the scope|)!
+{callsign}, (company|we've got company), {count} heavies!
+
+# A new VTOL on the scope. {enemy}
+[callout_air_contact]
+{callsign}, (air contact|VTOL inbound|bird inbound)!
+{callsign}, (choppers|VTOLs|air) (overhead|inbound|incoming)!
+{callsign}, (eyes up|look up), (air contact|VTOL)( inbound|)!
+
+# A missile lock on YOU (seen only while HUDDisplay runs - it asks LidarExport for the lock check)
+[callout_missiles_on_you]
+{callsign}, (missiles|incoming missiles) (on you|inbound on you), (commander|lead)!
+{callsign}, (incoming|missiles) on (you|your position)!
+{callsign}, (you've got|you have) missiles (inbound|locked on you), (get to cover|break lock|move)!
+{callsign}, (LRMs|missiles) (on you|inbound), (commander|lead)!
+
+# Your locked target lost a part. {enemy} {part}
+[callout_target_part]
+{callsign}, (your|that) {enemy} (just lost|lost) its {part}!
+{callsign}, (good hit|nice shot), (that|the) {enemy}'s {part} is (gone|off)!
+{callsign}, {part}'s (off|gone) on (that|your) {enemy}!
+{callsign}, (that|the) {enemy} (is missing|has lost) its {part} now!
+
+# Your locked target's centre torso is nearly gone. {enemy}
+[callout_target_ct]
+{callsign}, (that|your) {enemy}'s (centre torso|core) is (open|exposed|cracked), (finish it|put it down)!
+{callsign}, (that|the) {enemy} is (about to drop|almost done|on its last legs), (hit the centre|go for the core)!
+{callsign}, (finish|put down) (that|the) {enemy}, its (core|centre torso)'s (open|gone)!
+
+# Only one hostile left within the scan. {enemy}
+[callout_last_enemy]
+{callsign}, (one|last one) left, the {enemy}!
+{callsign}, (last|one more) (hostile|contact) (on the scope|standing), the {enemy}!
+{callsign}, (just|only) (the|that) {enemy} left, (finish it|let's finish this|bring it down)!
+
+# No hostiles left within the scan (1000 m) after a fight
+[callout_area_clear]
+{callsign}, (scope's|board's|radar's) (clear|clean)( for now|).
+{callsign}, (area|sector) (clear|looks clear)( for now|, no more contacts|).
+{callsign}, (no more|no) (contacts|hostiles) (on the scope|in range)( for now|).
+{callsign}, (that's|looks like that's) all of them( for now|).
+
+# Clearly more hostile mechs than us. {count}
+[callout_outnumbered]
+{callsign}, (we're|we are) outnumbered( here|), (I count|counting) {count} (hostiles|of them)!
+{callsign}, (that's|there's) {count} of them, (we're|we are) (outnumbered|outgunned)!
+{callsign}, {count} (hostiles|contacts) (out there|on the scope), (stay sharp|careful), we're outnumbered!
+
+# You landed hits on an enemy. {enemy}
+[callout_player_hit]
+{callsign}, (good|nice) (hits|shooting|shots) on (that|the) {enemy}(, commander|)!
+{callsign}, (you're|you are) (hurting|hitting) (that|the) {enemy}, (keep it up|keep at it)!
+{callsign}, (that|the) {enemy} is (feeling it|taking it), (good shooting|nice work)!
+
+# An enemy has turned on you (position unknown). {enemy}
+[callout_enemy_on_you]
+{callsign}, (that|the) {enemy} is (coming for you|on you|targeting you), (commander|lead)!
+{callsign}, (watch out|heads up|careful), (that|the) {enemy} (has you|has a bead on you|is lining up on you)!
+{callsign}, (commander|lead), (that|the) {enemy} is (locking onto|lining up on|turning on) you!
+
+# An enemy has turned on you, with its bearing from your cockpit. {enemy} {clock} {range}
+[callout_enemy_on_you_at]
+{callsign}, (commander|lead), {enemy} (on you|lining up on you|targeting you), {range} out at your {clock}!
+{callsign}, (watch|check) your {clock}, (commander|lead), (that|a) {enemy} is on you, {range}!
+{callsign}, {enemy} (has you|is on you), your {clock}, {range}!
+{callsign}, (heads up|watch out), {range} out at your {clock}, {enemy} is locking onto you!
+{callsign}, (commander|lead), (you've got|there's) a {enemy} on you, {clock}, {range}!
+{callsign}, {clock}, (commander|lead), {range}, {enemy} (is coming for you|has a bead on you)!
+{callsign}, (check|watch) your {clock}! {enemy}, {range}, (it's on you|it's targeting you).
+{callsign}, {enemy} (turning on|lining up on) you, (commander|lead), {range} at your {clock}.
+
+# It held a shot: a lancemate in its line of fire. {ally} = who
+[callout_friendly_in_line_named]
+{callsign}, {ally}'s in my (line of fire|way), (holding|holding my shot)!
+{callsign}, (hold|wait), {ally} is in my line!
+{callsign}, {ally}, (move|shift|clear my line)!
+
+# ---- answers to your questions ("where?", "where's the Atlas?", "where are you?", "what is it?", "how bad?") ----
+
+# "Where?" - the unit it reported, where it is now, from your cockpit. {enemy} {clock} {range}
+[answer_where]
+{@pool_intro} your {clock}, {range}.
+{@pool_intro} (that|the) {enemy}? Your {clock}, {range}( out|).
+{@pool_intro} {clock}, {range}( out|).
+{@pool_intro} (bearing|at) your {clock}, {range}.
+{@pool_intro} (check|look to) your {clock}, {range}.
+{@pool_intro} {enemy} is at your {clock}, {range} out.
+{@pool_intro} (got it|got him|still got it) at your {clock}, {range}.
+{@pool_intro} {range} (out|from you), your {clock}.
+
+# "Where?" - it is dead. {enemy}
+[answer_where_dead]
+{@pool_intro} it's down, (commander|lead).
+{@pool_intro} (that|the) {enemy} is (down|scrap|done).
+{@pool_intro} not anymore, it's (down|dead|scrap).
+{@pool_intro} (already|) (dropped|took out) that one.
+
+# "Where?" - out of sight now: its LAST KNOWN position. {enemy} {clock} {range} {ago} = "20 seconds ago"
+[answer_where_last]
+{@pool_intro} lost sight of it. Last known, your {clock}, {range}, {ago}.
+{@pool_intro} (no visual now|it's out of sight), last seen at your {clock}, {range}.
+{@pool_intro} last had it at your {clock}, {range}, {ago}.
+{@pool_intro} (it went|it's gone) quiet. Last known position your {clock}, {range}.
+{@pool_intro} can't see it now. It was at your {clock}, {range}, {ago}.
+{@pool_intro} (that|the) {enemy}? Last seen at your {clock}, {range}, {ago}.
+
+# "Where?" - lost, no position. {enemy}
+[answer_where_unknown]
+{@pool_intro} lost it, (commander|lead).
+{@pool_intro} (it's|) off my scope.
+{@pool_intro} can't see it anymore.
+{@pool_intro} no contact on that {enemy} now.
+
+# "Where?" - nothing reported lately
+[answer_where_none]
+{@pool_intro} where's what, commander?
+{@pool_intro} (nothing|nothing new) to report, (commander|lead).
+{@pool_intro} (no|no new) contacts from me.
+{@pool_intro} not tracking anything right now.
+
+# "Where?" - it never said who, and there is no one attacker
+[answer_where_swarm]
+{@pool_intro} they're all over me, can't pick one out!
+{@pool_intro} (everywhere|all around me), (commander|lead)!
+{@pool_intro} too many to call, they're everywhere!
+{@pool_intro} can't tell, I'm taking fire from all sides!
+
+# "Where's the <name>?" - none of those within the scan. {enemy} = the name you said
+[answer_where_named_none]
+{@pool_intro} no {enemy} on my scope.
+{@pool_intro} (not seeing|I don't see) (a|any) {enemy}, (commander|lead).
+{@pool_intro} (no|haven't got a) {enemy} (in range|on sensors).
+
+# "Where are you?" - from you. {clock} {range}
+[answer_where_me]
+{@pool_intro} (I'm at|at) your {clock}, {range}.
+{@pool_intro} your {clock}, {range} (out|from you).
+{@pool_intro} {range} (out|away), your {clock}.
+{@pool_intro} (look to|check) your {clock}, {range}.
+{@pool_intro} (on|holding at) your {clock}, {range} out.
+
+# "Where are you?" - within 60 m
+[answer_where_me_close]
+{@pool_intro} right (next to you|beside you), (commander|lead).
+{@pool_intro} (on|right on) your (shoulder|wing).
+{@pool_intro} (close|right here), inside fifty metres.
+
+# "What is it?" - a mech. {enemy} {class} = light / medium / heavy / assault
+[answer_what]
+{@pool_intro} (it's|that's) a {enemy}, {class} class.
+{@pool_intro} {class} class, a {enemy}.
+{@pool_intro} (reads as|looks like) a {enemy}, {class} class.
+{@pool_intro} a {enemy}, (commander|lead). {class} class.
+{@pool_intro} {enemy}. ({class}, so watch it|{class} class).
+
+# "What is it?" - a vehicle, turret or VTOL. {enemy}
+[answer_what_vehicle]
+{@pool_intro} (it's|that's) a {enemy}.
+{@pool_intro} (looks like|reads as) a {enemy}.
+{@pool_intro} a {enemy}, (commander|lead).
+
+# "How bad?" / "you okay?" - its damage, briefly. {damage} = the status report's damage part
+[answer_how_bad]
+{callsign}. {damage}
+{callsign} here. {damage}
+(Still in it|Still standing), {callsign}. {damage}
+
+# ---- shadow: "follow it" / "shadow that mech" / "get eyes on the Bane" ----
+
+# Reply to shadow it (going to where it was last seen). {enemy}
+[order_shadow]
+moving to its last known( position|), (I'll find it|I'll get eyes on it|will report)
+(heading for|going to) where (we|I) last saw (the|that) {enemy}
+(on its trail|tracking it now|going hunting)
+(I'll|I will) (find|track down|get eyes on) (that|the) {enemy}
+(moving to|checking) (its|the) last known, (eyes open|weapons ready)
+(going after|chasing down) (that|the) {enemy}( now|), will (call it|report) when I (see|find) it
+(on it|on my way), (last known position|last seen position)
+(shadowing|tailing) (that|the) {enemy}, (will report|stand by)
+
+# Shadow it - but it is in sight already. {enemy} {clock} {range}
+[answer_shadow_in_sight]
+{@pool_intro} (got it already|it's right there|eyes on it now), your {clock}, {range}.
+{@pool_intro} no need, (it's|the {enemy} is) (in sight|in view), your {clock}, {range}.
+{@pool_intro} (still|already) (have|got) (eyes on it|a visual), your {clock}, {range}.
+
+# A lancemate sent to shadow a unit sees it again. {enemy} {clock} {range}
+[callout_found]
+{callsign}, found it, commander! (Confirmed|Visual on the) {enemy}, your {clock}, {range}.
+{callsign}, (contact|eyes on), {enemy} (sighted|confirmed), your {clock}, {range}!
+{callsign}, got it! {enemy} at your {clock}, {range}.
+{callsign}, (target|{enemy}) (reacquired|found), (bearing|at) your {clock}, {range}.
+{callsign}, there you are. {enemy}, your {clock}, {range}, (commander|lead).
+{callsign}, (visual|eyes) on the {enemy}, confirmed at your {clock}, {range}!
+
+# A shadow found nothing in 90 s. {enemy}
+[callout_shadow_failed]
+{callsign}, no sign of the {enemy}, (commander|lead). (Lost the trail|It's gone).
+{callsign}, (nothing|nothing here) at its last known. (Lost it|It moved on).
+{callsign}, (can't find|lost) the {enemy}, (holding here|holding position).
+{callsign}, (trail's cold|it's gone dark), no {enemy} out here.
+
+# The unit being shadowed died first. {enemy}
+[callout_shadow_dead]
+{callsign}, (never mind|scratch that), the {enemy} is down.
+{callsign}, (someone|somebody) got the {enemy}. (Never mind|Standing down).
+{callsign}, {enemy} is (down|scrap), (calling it off|standing down).
+
+# ---- step-on: an urgent line breaking in on someone else's transmission ----
+
+# Said in front of the urgent line by the pilot breaking in (the line follows, with its own callsign)
+[callout_break]
+Break, break!
+Break, break! (Priority traffic|Urgent)!
+
+# The stepped-on pilot picks up again after a finished sentence (the rest of the line follows)
+[resume_continue]
+{@pool_intro} continuing.
+{@pool_intro} as I was saying.
+{callsign} again. Continuing.
+{@pool_intro} picking up where I left off.
+{@pool_intro} back to it.
+{@pool_intro} (continuing|resuming) my (traffic|report).
+
+# The stepped-on pilot was cut mid-sentence and says it again (that sentence and the rest follow)
+[resume_say_again]
+{@pool_intro} I say again.
+{@pool_intro} (I say again|repeating).
+{callsign} here, I say again.
+{@pool_intro} I'll say that again.
+{@pool_intro} (let me|I'll) repeat that.
+
+# ---- more questions (build 2026-10-06a) ----
+
+# "How many?" {count} = how many hostiles, {list} = "four mechs, two vehicles and a turret"
+[answer_how_many]
+{@pool_intro} I count {count}. {list}.
+{@pool_intro} {count} (hostiles|contacts) (on scope|left|still up). {list}.
+{@pool_intro} (counting|I've got) {count}. {list}.
+{@pool_intro} {count} (left|remaining), commander. {list}.
+{@pool_intro} {list}. {count} (total|all told).
+
+# "How many?" when only one is left
+[answer_how_many_one]
+{@pool_intro} just one left. {list}.
+{@pool_intro} (one|a single) (contact|hostile) (left|on scope). {list}.
+{@pool_intro} down to one. {list}.
+
+# "How many?" when none is close enough to identify. {count}
+[answer_how_many_far]
+{@pool_intro} {count} (contacts|hostiles), all (out past the scan|too far to make out).
+{@pool_intro} I count {count}, (none close enough to identify|too far to ID).
+
+# "How many?" - none
+[answer_how_many_none]
+{@pool_intro} (nothing|no hostiles) on (scope|the board).
+{@pool_intro} (scope's clean|board's clear), commander.
+{@pool_intro} I've got nothing. (Area looks clear|Nothing left).
+
+# "Which way is the Atlas facing?" - it faces you (2026-10-11). {enemy}
+[answer_heading_you]
+{@pool_intro} the {enemy}'s facing you.
+{@pool_intro} (it's|the {enemy}'s) (turned|facing) (your way|toward you).
+{@pool_intro} (heads up|watch it), the {enemy}'s (looking right at you|facing you).
+
+# ... it faces a lancemate. {enemy}, {who} = "Two" (or "me")
+[answer_heading_lancemate]
+{@pool_intro} the {enemy}'s turned toward {who}.
+{@pool_intro} it's facing {who}.
+{@pool_intro} (the {enemy}'s|it's) (looking at|squared up on) {who}.
+
+# ... it faces away from you
+[answer_heading_away]
+{@pool_intro} it's facing away, you've got its back.
+{@pool_intro} the {enemy}'s (turned away|facing away). (You've got its back|Rear's open).
+
+# ... side-on to you. {clock} = where it faces, from your cockpit
+[answer_heading_side]
+{@pool_intro} side-on to you, facing your {clock}.
+{@pool_intro} the {enemy}'s side-on, (facing|heading) your {clock}.
+
+# "What are we facing?" {list} = "a Hunchback, two mediums and a turret" (nothing heavy)
+[answer_facing]
+{@pool_intro} (looks like|I'm seeing|we've got) {list}.
+{@pool_intro} {list}. (Nothing heavy|Lighter stuff) so far.
+{@pool_intro} (opposition is|they've got) {list}.
+
+# "What are we facing?" with heavies or assaults among them. {list} = "an Atlas, two heavies and a light"
+[answer_facing_heavy]
+{@pool_intro} (heads up|watch it), (we've got|they've got|I'm seeing) {list}.
+{@pool_intro} {list}. (Heavy metal out there|Big ones out there), commander.
+{@pool_intro} (it's|that's) {list}. (Watch yourself|Careful).
+
+# "What are we facing?" - nothing identified
+[answer_facing_none]
+{@pool_intro} nothing on (scope|the scan) (to tell|right now).
+{@pool_intro} (I can't see anything|can't make anything out) yet.
+
+# "What's closest?" {enemy} {clock} {range}
+[answer_closest]
+{@pool_intro} closest is (a|the) {enemy}, your {clock}, {range}.
+{@pool_intro} nearest (contact|hostile) is (a|the) {enemy}, {range} at your {clock}.
+{@pool_intro} (that'd be|it's) the {enemy}, your {clock}, {range}.
+{@pool_intro} {enemy}, your {clock}, {range}. (Closest one|Nearest).
+
+[answer_closest_none]
+{@pool_intro} nothing close (that I can see|in sight).
+{@pool_intro} (nothing in sight|no eyes on anything) right now.
+
+# "Who's shooting at you?" {enemy} {clock} {range}
+[answer_who_hits]
+{@pool_intro} (it's|that's) (a|the) {enemy}, your {clock}, {range}!
+{@pool_intro} the {enemy}! Your {clock}, {range}.
+{@pool_intro} (taking it from|getting hit by) (a|the) {enemy} at your {clock}, {range}.
+
+[answer_who_hits_noloc]
+{@pool_intro} (it's|that's) the {enemy}!
+{@pool_intro} (a|the) {enemy}, (can't get a bearing|no fix on it).
+
+[answer_who_hits_none]
+{@pool_intro} (no one's|nobody's) (shooting at|on) me (right now|at the moment).
+{@pool_intro} (all quiet|quiet) on my end.
+
+# "What's your target?" {enemy} {clock} {range}
+[answer_target]
+{@pool_intro} (engaging|on|shooting at) (a|the) {enemy}, your {clock}, {range}.
+{@pool_intro} my target's the {enemy}, your {clock}, {range}.
+{@pool_intro} (I'm on|working on) the {enemy}, {range} at your {clock}.
+
+[answer_target_noloc]
+{@pool_intro} (engaging|on) the {enemy}.
+{@pool_intro} my target's the {enemy}.
+{@pool_intro} (working on|shooting at|hammering) the {enemy}.
+{@pool_intro} (I'm on|locked on) the {enemy}, (no bearing on it|can't give you a bearing).
+{@pool_intro} the {enemy}, (that's my target|that's who I'm on).
+
+[answer_target_none]
+{@pool_intro} no target (right now|at the moment).
+{@pool_intro} (I'm not|not) engaging anything.
+{@pool_intro} (no target|nothing locked), (waiting for one|looking for one).
+
+# "Can you see it?" {enemy} {clock} {range}
+[answer_see_yes]
+{@pool_intro} affirmative, eyes on the {enemy}, your {clock}, {range}.
+{@pool_intro} (yeah|yes), I see it. Your {clock}, {range}.
+{@pool_intro} (visual|eyes on), {enemy} at your {clock}, {range}.
+
+# Not in sight now. {enemy} {ago} = "20 seconds ago"
+[answer_see_no]
+{@pool_intro} negative, (lost|no) visual on the {enemy}. Last saw it {ago}.
+{@pool_intro} (no|negative), (not right now|I've lost it). Last eyes on {ago}.
+{@pool_intro} (can't see it|no eyes on it) now. Had it {ago}.
+
+[answer_see_never]
+{@pool_intro} negative, (I haven't seen|never had eyes on) the {enemy}.
+{@pool_intro} no visual on (the|any) {enemy}.
+
+# "Is it down?" {enemy}
+[answer_down_yes]
+{@pool_intro} (affirmative|yeah), the {enemy} is down.
+{@pool_intro} {enemy}'s (down|scrap|done).
+{@pool_intro} (confirmed|kill confirmed), {enemy} (down|destroyed).
+
+[answer_down_no]
+{@pool_intro} negative, the {enemy}'s still (up|in the fight|standing).
+{@pool_intro} (not yet|no), {enemy} is still (up|moving).
+{@pool_intro} {enemy}'s still kicking.
+
+# Still up, but badly hurt
+[answer_down_no_hurt]
+{@pool_intro} not yet, but the {enemy}'s (hurting|in bad shape|close).
+{@pool_intro} (almost|nearly), {enemy}'s (barely standing|on its last legs).
+{@pool_intro} negative, still up, but (it won't last|one more volley should do it).
+
+# "How's the Atlas?" / "target status" - {enemy}'s condition, four levels
+[answer_unit_how_fresh]
+{@pool_intro} the {enemy}'s (barely scratched|still fresh|untouched).
+{@pool_intro} {enemy} looks (fresh|healthy|solid). (Not much damage|Hardly a scratch).
+
+[answer_unit_how_damaged]
+{@pool_intro} {enemy}'s (taken some hits|damaged|starting to hurt).
+{@pool_intro} (some damage on the|we've chewed into the) {enemy}.
+
+[answer_unit_how_bad]
+{@pool_intro} {enemy}'s (hurting|in bad shape|badly damaged).
+{@pool_intro} (we've|we have) (torn up|shredded) that {enemy}. (Keep it up|Keep on it).
+
+[answer_unit_how_dying]
+{@pool_intro} {enemy}'s (about to drop|barely standing|on its last legs)!
+{@pool_intro} one more volley and that {enemy}'s done!
+
+# Added after the condition when it lost a part. {part}
+[answer_unit_how_lost]
+It's lost its {part}.
+(Missing|No more) {part}.
+Its {part}'s gone.
+
+[answer_unit_how_unknown]
+{@pool_intro} can't read the {enemy}'s condition from here.
+{@pool_intro} (no read on|can't see the damage on) the {enemy}.
+{@pool_intro} (too far|out of range) to read the {enemy}'s damage.
+{@pool_intro} (no idea|can't tell) how hurt the {enemy} is (from here|at this range).
+{@pool_intro} the {enemy}'s (damage|condition) isn't (coming through|showing) on my scope.
+
+# "Where's my target?" / "how's my target?" with no lock
+[answer_mytarget_none]
+{@pool_intro} you don't have a lock, commander.
+{@pool_intro} (no lock on your end|you're not locked on anything).
+{@pool_intro} I don't see a lock on your end.
+
+# "Any air?" {count} = "two VTOLs", {clock} {range} = the nearest
+[answer_air]
+{@pool_intro} (affirmative|yeah), {count}, closest at your {clock}, {range}.
+{@pool_intro} (air contact|eyes up), {count}, your {clock}, {range}.
+{@pool_intro} {count} in the air. Nearest your {clock}, {range}.
+
+[answer_air_noloc]
+{@pool_intro} {count} in the air, (no bearing|can't fix them|can't get a fix).
+{@pool_intro} (air contact|eyes up), {count}, (but|though) (no bearing yet|I can't place them).
+{@pool_intro} (I've got|picking up) {count} (up there|in the air). (No bearing|Can't pin them down).
+{@pool_intro} {count} (overhead somewhere|airborne), (no fix|no bearing) (yet|right now).
+
+[answer_air_none]
+{@pool_intro} (negative|no), (skies are clear|nothing in the air).
+{@pool_intro} no air contacts.
+{@pool_intro} (air's clear|clear skies).
+
+# "Who's closest to it?" - the closest lancemate answers. {enemy} {range}
+[answer_closest_me]
+{@pool_intro} that's me. {range} from the {enemy}.
+{@pool_intro} I'm closest, {range} out from the {enemy}.
+{@pool_intro} me, commander. About {range} from it.
+{@pool_intro} (I'm|that'd be me,) {range} (off|from) the {enemy}.
+{@pool_intro} closest is me, (about|roughly) {range} (out|away).
+{@pool_intro} (I've got|I'm in) the best position, {range} from the {enemy}.
+
+# "Say again?" when that pilot has said nothing
+[answer_repeat_none]
+{@pool_intro} nothing to repeat, commander.
+{@pool_intro} I haven't said anything.
+{@pool_intro} nothing from me, commander.
+{@pool_intro} (wasn't me|not me), commander.
+{@pool_intro} (I've been quiet|I've got nothing to repeat)(, commander|).
+{@pool_intro} (nothing|no traffic) from me (yet|so far).
+
+# "Anyone hurt?" - said by one pilot: the intro, then the pieces below as sentences, then hurt_rest_fine
+[answer_hurt_intro]
+{callsign} here.
+{callsign}.
+{@pool_intro} (lance|damage) rundown.
+
+# {who} = a lancemate's callsign
+[hurt_down]
+we lost {who}
+{who}'s down
+{who} is out of the fight
+{who}'s (gone|out)
+(no word from|nothing from) {who}, they're down
+{who} (went down|didn't make it)
+
+[hurt_lost]
+{who}'s missing the {part}
+{who} lost the {part}
+{who}'s down a {part}
+{who}'s {part} is (gone|scrap)
+{who} had the {part} (shot off|blown off)
+{who}'s running without the {part}
+
+[hurt_bad]
+{who}'s in bad shape
+{who}'s hurting bad
+{who} took a beating
+{who}'s (barely holding together|in a bad way|torn up)
+{who}'s (been hit hard|taken a pounding)
+{who} (needs cover|could use some help)
+
+[hurt_some]
+{who}'s (banged up|scratched up)
+{who} took some hits
+{who}'s got some damage
+{who}'s (dinged up|scuffed) but fine
+{who}'s (holding|holding up), some damage
+
+# The same about the speaker itself. {part}
+[hurt_self_lost]
+I lost my {part}
+I'm missing my {part}
+my {part}'s gone
+my {part}'s (scrap|been shot off)
+I'm (down|without) my {part}
+
+[hurt_self_bad]
+I'm in bad shape
+I'm hurting bad
+I've taken a beating
+I'm (barely holding together|torn up)
+I've been (hit hard|pounded)
+I (could use|need) (some cover|help)
+
+[hurt_self_some]
+I'm (banged up|scratched up)
+I've taken some hits
+I've got some damage
+I'm (dinged up|scuffed) but fine
+I'm (holding|holding up), some damage
+
+[hurt_rest_fine]
+Rest of us are fine.
+Everyone else is (good|green).
+The rest are (in one piece|fine).
+
+[answer_hurt_none]
+{@pool_intro} (everyone's|all) (green|in one piece|good).
+{@pool_intro} no one's hurt (bad|to speak of).
+{@pool_intro} (lance is|we're all) (green|fine), commander.
+
+# "Sound off" - each lancemate, by condition
+[checkin_green]
+{@pool_intro} (up|green|good to go).
+{@pool_intro} (in one piece|all green).
+{callsign} here, (good|green).
+
+[checkin_light]
+{@pool_intro} (some scratches|minor damage), still (good|in it).
+{@pool_intro} (banged up|scuffed) but (fine|fighting).
+
+[checkin_hurt]
+{@pool_intro} (hurting|taken some hits), still (in it|fighting).
+{@pool_intro} (damaged|beat up), but I'm (here|up).
+
+[checkin_bad]
+{@pool_intro} (in bad shape|barely holding together)!
+{@pool_intro} (still here|hanging on), but (hurting bad|not for long).
+
+# "Radio check" / "comms check" / "how copy" - each lancemate, about the RADIO (2026-10-13)
+[checkin_radio]
+{callsign}, loud and clear.
+{callsign}, (five by five|five by five, Commander).
+{callsign}, reading you Lima Charlie.
+{callsign} here, (got you|reading you) loud and clear.
+This is {callsign}, (good copy|copy you fine).
+{callsign}, (comms are good|signal's strong).
+{callsign}, (I hear you|reading you) (fine|clear), Commander.
+
+# "How's your heat?" below 40 % / 40-70 % ({percent}); above that status_running_hot
+[status_heat_ok]
+Heat's fine.
+Running cool.
+Heat's good.
+Temperature's good.
+
+[status_heat_level]
+Heat at {percent} percent.
+(Heat's|Sitting) at {percent} percent.
+{percent} percent heat.
+
+# Added after "How many?" / "Any contacts?" when one is in sight: the nearest. {enemy} {clock} {range}
+[answer_how_many_nearest]
+Nearest is (a|the) {enemy}, your {clock}, {range}.
+Closest (one|contact) is (a|the) {enemy}, {range} at your {clock}.
+(Nearest|Closest) (one's|is) the {enemy}, your {clock}, {range}.
+(A|The) {enemy}'s (closest|nearest), your {clock}, {range}.
+
+# ---- who's firing on you + patch-through (build 2026-10-06c) ----
+
+# "Can anyone see who's firing on me?" - a lancemate sees it. {enemy} {clock} {range}
+[answer_firing_seen]
+{@pool_intro} (I've got|I have) (a visual|eyes on it). (Looks like|It's) (a|the) {enemy}, your {clock}, {range}.
+{@pool_intro} (got it|eyes on), (a|the) {enemy} at your {clock}, {range}. (That's who's on you|It's got you targeted).
+{@pool_intro} it's (a|the) {enemy}, your {clock}, {range}. (I've got visual|I can see it).
+
+# The same when you named the weapon. {weapon} = "LRM fire", "Arrow IV fire", "laser fire" ...
+[answer_firing_seen_wpn]
+{@pool_intro} I have a visual. (Looks like|It's) (a|the) {enemy}, your {clock}, {range}. That's your {weapon}.
+{@pool_intro} (got it|eyes on), that {weapon}'s coming from (a|the) {enemy}, your {clock}, {range}.
+{@pool_intro} the {weapon} is from (a|the) {enemy}, your {clock}, {range}. I've got eyes on it.
+
+# Added after either: the offer ("yes" / "patch it through" within 15 s puts it on your screen)
+[answer_firing_offer]
+Want me to patch it through?
+(Want|Should) I patch it through to you?
+I can patch it through, commander.
+Patch it through to you?
+
+# Nobody sees it - only where it comes from. {clock}
+[answer_firing_unseen]
+{@pool_intro} no visual, but it's coming from your {clock}.
+{@pool_intro} (can't see the shooter|nobody's got eyes on it). (Fire's|It's) coming from your {clock}.
+{@pool_intro} negative visual. Something at your {clock} has you targeted.
+
+[answer_firing_unseen_wpn]
+{@pool_intro} no visual on the shooter, but that {weapon}'s coming from your {clock}.
+{@pool_intro} negative, can't see it. The {weapon} is from your {clock}.
+{@pool_intro} (can't see who|no eyes on who)'s (throwing|firing) it, but the {weapon} is (coming in|inbound) from your {clock}.
+{@pool_intro} (no visual|negative visual). That {weapon} (is coming|is inbound) from your {clock}.
+{@pool_intro} the {weapon} is from your {clock}, (can't see the shooter|shooter's out of sight).
+{@pool_intro} (no eyes on it|can't spot it), but your {clock} is where that {weapon}'s coming from.
+
+# Nobody has you targeted
+[answer_firing_none]
+{@pool_intro} (I don't see|can't see) anyone on you, commander.
+{@pool_intro} nobody's got you targeted (that I can see|right now).
+{@pool_intro} negative. (No idea|Can't tell) where it's coming from.
+
+# "Patch it through" - done. {enemy}
+[answer_patch_done]
+{@pool_intro} patching it through. {enemy} is on your screen.
+{@pool_intro} (sending|patching) it (over|through) now. (You should have it|It's yours).
+{@pool_intro} done. {enemy}'s on your board.
+
+[answer_patch_lost]
+{@pool_intro} lost it, can't patch it through.
+{@pool_intro} negative, it's gone off my screen.
+{@pool_intro} (I've lost|lost) (the track|contact|my lock on it), (can't|unable to) patch it through.
+{@pool_intro} (it's gone|it dropped off|it slipped off) my (scope|screen|board). (Sorry|Negative), commander.
+{@pool_intro} (no track|nothing) to send (anymore|now), it's (gone|off my scope).
+
+# "Negative" / "never mind" to the offer
+[answer_patch_cancel]
+{@pool_intro} copy, standing by.
+{@pool_intro} (roger|understood), (holding|never mind).
+{@pool_intro} copy.
+
+# Nobody has eyes on it, but it is on the lance's radar (lancecontrol-12). {enemy} {clock} {range}; the offer follows
+[answer_firing_radar]
+{@pool_intro} no visual, but I've got it on radar. (Looks like|Reads as) (a|the) {enemy}, your {clock}, {range}.
+{@pool_intro} (can't see it|no eyes on it), (it's on my scope|scope has it). (A|The) {enemy}, your {clock}, {range}.
+{@pool_intro} radar contact, (a|the) {enemy} at your {clock}, {range}. No visual.
+
+[answer_firing_radar_wpn]
+{@pool_intro} no visual, but radar has the {weapon} coming from (a|the) {enemy}, your {clock}, {range}.
+{@pool_intro} (can't see it|no eyes on it), but it's on my scope. (A|The) {enemy}, your {clock}, {range}. That's your {weapon}.
+
+# You named a weapon, and nobody known to carry it is on you - the best guess, said as one (loadout unknown, past the scan). {enemy} {clock} {range} {weapon}
+[answer_firing_guess]
+{@pool_intro} can't confirm who's throwing that {weapon}. Best guess, (a|the) {enemy}, your {clock}, {range}.
+{@pool_intro} no read on its loadout, but (a|the) {enemy} at your {clock}, {range} (has you targeted|is on you).
+
+# You named a weapon and nobody on you carries it. {weapon}
+[answer_firing_none_wpn]
+{@pool_intro} nobody on (scope|my scope) is (carrying|throwing) that {weapon}. Could be from out past the scan.
+{@pool_intro} (can't find|no idea) who's throwing that {weapon}, commander.
+
+# Traced fire: a second shooter of the same kind, nearly as busy (after the first's line). {enemy} {clock} {range}
+[answer_firing_second]
+There's a second one, (a|the) {enemy} at your {clock}, {range}.
+(And|Also) (a|the) {enemy} at your {clock}, {range}, (same thing|throwing the same).
+Second shooter, (a|the) {enemy}, your {clock}, {range}.
+
+[answer_firing_second_anon]
+There's a second one at your {clock}, {range}.
+(And|Also) another at your {clock}, {range}.
+(Second|Another) shooter at your {clock}, {range}.
+(Plus|And) one more at your {clock}, {range}, (same thing|throwing the same).
+(Watch|Also watch) your {clock} too, {range}, (second one|another shooter) there.
+
+# ---- 2026-10-06g ----
+
+# The pilot on the air has urgent news itself: it cuts its own line short with this, then the news (its callsign
+# left off). A line ending in "," runs on into the news; "..." makes a short pause.
+[callout_self_correct]
+Uh... actually,
+Wait...
+Hold on...
+Scratch that...
+Uh, correction,
+Wait, wait...
+
+# Patch-through refused: the unit is not on your scope (your tracker will not take it). {enemy}
+[answer_patch_offscope]
+{@pool_intro} it's dropped off your scope, can't patch it through.
+{@pool_intro} negative, the {enemy}'s not on your scope (anymore|right now).
+{@pool_intro} (lost it off your scope|it's off your scope), commander.
+
+# Patch-through: your lock is already on it. {enemy}
+[answer_patch_already]
+{@pool_intro} you've already got it, commander.
+{@pool_intro} the {enemy}'s already your target.
+
+# Patch-through sent, but your lock did not change within 1.5 s. {enemy}
+[answer_patch_failed]
+{@pool_intro} no joy, can't get it on your board.
+{@pool_intro} negative, it won't take. (Sorry|Try again), commander.
+{@pool_intro} couldn't patch the {enemy} through.
+
+# "Patch it through" with nothing to patch
+[answer_patch_nothing]
+{@pool_intro} nothing to patch through, commander.
+{@pool_intro} patch what through? I've got nothing.
+
+# Chatter 3: the missile warning names who launched (traced rounds). {enemy} {clock} {range}
+[callout_missiles_from]
+{callsign}, missiles inbound! (Launched by|From) (a|the) {enemy}, your {clock}, {range}!
+{callsign}, (incoming missiles|you've got missiles) from (a|the) {enemy} at your {clock}, break lock!
+{callsign}, missile lock on you, (a|the) {enemy}, your {clock}, {range}!
+
+[callout_missiles_from_anon]
+{callsign}, missiles inbound from your {clock}, {range}!
+{callsign}, incoming missiles, launched from your {clock}! Break lock!
+
+# ---- corrections (2026-10-07a): "actually ..." / "wait, no ..." / "scratch that ..." ----
+
+# The reply to a correction from ONE lancemate. {callsign}, {reply} = the new order's reply
+[reply_correction]
+{@pool_intro} (copy|roger), scratch that. {reply}.
+{@pool_intro} (disregarding last|belay last), {reply}.
+{@pool_intro} (copy|understood), change of plan. {reply}.
+{@pool_intro} (got it|roger), new orders. {reply}.
+{@pool_intro} (correction copied|copy the correction), {reply}.
+{@pool_intro} (scratch that|forget that), {reply}.
+(Copy|Roger), {callsign}. (Scratch that|Disregard last), {reply}.
+
+# The same when SEVERAL were corrected (said once, by the first)
+[reply_correction_lance]
+(Copy|Roger), scratch that. {reply}.
+Lance copies, (belay last|disregard last). {reply}.
+(Understood|Copy), change of plan. {reply}.
+(All|Lance), new orders copied. {reply}.
+
+# "Belay that" / "as you were" with no new order. One lancemate
+[reply_cancel]
+{@pool_intro} (copy|roger), (disregarding|belaying that|scratching that).
+{@pool_intro} (understood|copy), as you were.
+{@pool_intro} (copy|roger), (cancelled|order cancelled).
+{@pool_intro} (copy|roger), (standing down|calling it off).
+
+# ... several
+[reply_cancel_lance]
+Lance copies, (disregarding|belaying that).
+(Copy|Roger), as you were.
+(Understood|Copy), (order cancelled|calling it off).
+
+# An enemy close BEHIND it - urgent, it steps on other lines (lancecontrol-21). {enemy}
+[callout_flanked]
+{callsign}, this {enemy} is flanking me!
+{callsign}, (I've got|got) a {enemy} (on my six|hitting my rear|behind me)!
+{callsign}, someone get this {enemy} off my (back|ass)!
+{callsign}, {enemy} (on my six|behind me)! (Need help|Get it off me)!
+{callsign}, (that|a) {enemy} (got behind me|is on my tail)!
+
+# An enemy close behind it, not identified
+[callout_flanked_unknown]
+{callsign}, (I've got|got) one on my six!
+{callsign}, (something's|someone's) (behind me|on my tail)!
+{callsign}, I'm being flanked!
+{callsign}, someone get this thing off my (back|ass)!
+
+# "Any heavies?" / "Any turrets?" - how many of that kind. {list} ("two heavies") - the nearest is added after
+[answer_class]
+{@pool_intro} (I've got|I see|got) {list}.
+{@pool_intro} {list} (on scope|in sight|out there).
+{@pool_intro} (yes|affirmative), {list}.
+
+# "Any heavies?" - none of that kind seen. {class} ("heavies")
+[answer_class_none]
+{@pool_intro} no {class} (in sight|on scope).
+{@pool_intro} negative, no {class}.
+{@pool_intro} (haven't seen|not seeing) any {class}.
+
+# Reply to "move to Nav Alpha" (a reply piece, as order_move). {nav} = "Nav Alpha"
+[order_nav_move]
+moving to {nav}
+(heading for|on my way to|en route to) {nav}
+{nav}, (on my way|moving)
+
+# Reply to "hold at Nav Alpha". {nav}
+[order_nav_hold]
+moving to {nav}, (will hold|holding) there
+(heading for|on my way to) {nav}, (I'll|will) hold (there|at the mark)
+
+# Reply to "fall back to Nav Alpha". {nav}
+[order_nav_fall_back]
+falling back to {nav}
+(pulling|moving) back to {nav}
+
+# Reply to "advance to Nav Alpha" (advance, fall back to you on contact). {nav}
+[order_nav_advance]
+advancing (on|to) {nav}
+pushing (up|on) to {nav}
+
+# Reply to "indirect fire at Nav Alpha". {nav}
+[order_nav_indirect]
+moving to {nav}, (holding for|ready for) indirect fire
+
+# No such nav point (not in the mission, or not marked). {nav}
+[problem_no_nav]
+(I don't have|There's no) {nav} on my map, commander.
+(Negative|Unable), no {nav} (on the map|marked).
+
+# "Where is Nav Alpha?" {nav} {clock} {range}
+[answer_nav_where]
+{@pool_intro} {nav} is (at|off) your {clock}, {range}.
+{@pool_intro} {nav}: your {clock}, {range}.
+{@pool_intro} (bearing|it's) your {clock} for {nav}, {range}.
+
+# "Where is Nav Alpha?" - it is not on the map. {nav}
+[answer_nav_none]
+{@pool_intro} (no|I don't have a) {nav} on my map.
+{@pool_intro} negative, {nav} isn't marked.
+
+# A nav point you marked on TacOps, acknowledged by a lancemate. {nav} = "Nav Charlie"
+[nav_marked]
+{@pool_intro} copy, {nav} marked.
+{@pool_intro} (got it|roger), {nav} (on the map|marked).
+{@pool_intro} {nav} (marked|logged), (copy|roger).
+
+# A nav point you removed on TacOps, acknowledged by a lancemate. {nav}
+[nav_cleared]
+{@pool_intro} copy, {nav} cleared.
+{@pool_intro} {nav} (cleared|off the map), (copy|roger).

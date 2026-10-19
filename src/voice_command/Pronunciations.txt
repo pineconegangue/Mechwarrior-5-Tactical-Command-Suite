@@ -1,0 +1,46 @@
+# Pronunciations.txt - words Kokoro says wrong, respelled the way they should sound.
+# One per line:  word = sounds like   (whole words, any case; a capital stays a capital)
+# A * in front also matches inside longer words:  *mech = mek  covers Mechs, BattleMech, MechWarrior.
+# Saved changes are used within a second. Try spellings like a stranger would read them aloud.
+
+
+*mech = mek
+# starter list, 2026-10-10 - best guesses, not yet heard: listen and adjust
+# factions and people
+Kurita = Kooreeta
+Davion = Dayveeon
+Steiner = Styner
+Marik = Mairick
+Kerensky = Kerrenskee
+Liao = Leeyow
+
+# chassis
+Daishi = Dyeshee
+Kintaro = Kintarro
+Hatamoto-Chi = Hahtahmoetoe Chee
+*jager = Yayger
+Eisenfaust = Eyezenfowst
+Helepolis = Heleppolis
+Bellerophon = Bellairofon
+Koschei = Koshay
+Duan Gung = Dwahn Goong
+Hetzer = Hetser
+Von Luckner = Fon Looknair
+Nightgyr = Nightjur
+Schrek = Shrek
+
+# weapons and numerals
+Gauss = Gowss
+NARC = Nark
+# (Roman numerals - Mk II, Atlas III, Hunchback IIC - are said by VoiceCommand itself)
+
+# high-risk chassis names
+Alfar = Allfar
+Belial = Beelyal
+Fwltur = Fooltur
+Katzenwulf = Katsenvoolf
+Naga = Nahga
+Nyx = Nicks
+Po = Poe
+Primus Pilus = Preemus Peelus
+Reconquista = Ray con keesta

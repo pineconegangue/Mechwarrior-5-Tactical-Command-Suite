@@ -1,0 +1,210 @@
+# RoundTripNames.txt - the unit names VoiceCommand --roundtrip tries (one per line, # comments).
+# The chassis in MW5 (from the paperdoll set and the 2026-10-10 Sarna sweep), with their alternate names.
+Adder
+Alfar
+Annihilator
+Anubis
+Archer
+Arctic Cheetah
+Arctic Wolf
+Assassin
+Assassin II
+Atlas
+Atlas III
+Awesome
+Bane
+Kraken
+Banshee
+Barrage
+Battlelord
+BattleMaster
+Behemoth
+Belial
+Bellerophon
+Beowulf
+Black Python
+Viper
+Blackheart
+Blackjack
+Black Knight
+Black Watch
+Blitzkrieg
+Blood Asp
+Bombard
+Bulldog
+Bullshark
+Bushwacker
+Cannon Imp
+Cataphract
+Catapult
+Catapult II
+Centurion
+Champion
+Charger
+Cicada
+Elemental
+Clint
+Colossus
+Commando
+Condor
+Corsair
+Crab
+Crusader
+Cutthroat
+Cyclops
+Daemon
+Defiance
+Demolisher
+Dervish
+Devastator
+Dire Wolf
+Daishi
+Dragon
+Dragon II
+Drillson
+Duan Gung
+Ebon Jaguar
+Eisenfaust
+Emperor
+Enforcer
+Executioner
+Gladiator
+Falcon Hawk
+Fire Moth
+Firestarter
+Flashman
+Flea
+Foxfire
+Fwltur
+Galahad
+Gargoyle
+Garm
+Grand Dragon
+Grasshopper
+Grendel
+Griffin
+Guardian
+Gun
+Gunsmith
+Hammerhands
+Hatamoto-Chi
+Hatchetman
+Hellbringer
+Loki
+Hellfire
+Helepolis
+Heritage
+Hermes II
+Hetzer
+Highlander
+Hitman
+Hollander
+Hoplite
+Hornet
+Hunchback
+Hunchback IIC
+Huntsman
+Ice Ferret
+Igor
+Incubus
+Jackalope
+Jackdaw
+JagerMech
+Javelin
+J. Edgar
+Jenner
+Jenner IIC
+Junior
+Katzenwulf
+King Crab
+Kintaro
+Kit Fox
+Uller
+Kodiak
+Koschei
+Lancelot
+Lancer
+Legacy
+Legionnaire
+Linebacker
+Locust
+Longbow
+Longshot
+Mad Cat Mk II
+Mad Dog
+Vulture
+Maelstrom
+Manticore
+Marauder
+Marauder II
+Marauder IIC
+Mastodon
+Mauler
+Mercury
+Mist Lynx
+Mongoose
+Mongoose II
+Mongoose III
+Naga
+Nightgyr
+Nightstar
+Nova
+Black Hawk
+Nova Cat
+Nyx
+Ontos
+Orion
+Owens
+Pacifier
+Panther
+Partisan
+Phoenix Hawk
+Po
+Primus Pilus
+Quickdraw
+Raven
+Reconquista
+Revenant
+Rifleman
+Rifleman IIC
+Roughneck
+Schrek
+Scorpion
+Shadow Cat
+Shadow Hawk
+Shadow Hawk IIC
+Spider
+Stalker
+Stone Rhino
+Stormcrow
+Ryoken
+Strider
+Striker
+Summoner
+Thor
+Sunder
+Sun Spider
+Super Hussar
+Supernova
+Talos
+Thorn
+Thunderbolt
+Timber Wolf
+Mad Cat
+Toro
+Trebuchet
+UrbanMech
+Vapor Eagle
+Victor
+Vindicator
+Von Luckner
+Vulcan
+Warhammer
+Warhammer IIC
+Warhawk
+Masakari
+Warrior
+Wolfhound
+Wolfhound II
+Wolverine
+Zeus

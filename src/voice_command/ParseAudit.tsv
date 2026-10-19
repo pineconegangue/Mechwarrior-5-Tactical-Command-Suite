@@ -1,0 +1,31 @@
+﻿utterance	expected
+Three, back up to my two o'clock, 200.	#1 move to my 2 o'clock, NOT support Two
+Lance, help, two of them are on me.	#1 NOT support Two
+Three, back up Two.	#1 support Two (still works)
+Two, help Three out.	#1 support Three (still works)
+Four, follow Two.	#6 support Two
+Lance, follow me.	#6 form on me
+Two, follow.	#6 nothing (bare follow)
+Two, go to nav Alpha and hold fire.	#3 move to nav Alpha + hold fire
+Two, hold at nav Bravo.	#3 hold at nav Bravo (unchanged)
+Lasers only, hold position.	#4 lasers only + hold position (no callsign: lance)
+Two, hold lasers.	#4 hold lasers (unchanged)
+Lance, attack my target, it's a turret.	#5 attack my target
+Two, take out that tank.	#5 attack the nearest tank once
+Lance, take out the turrets.	#5 turret sweep
+Two, kill the Atlas tank.	#5 attack the Atlas (named)
+Two, legs on the Atlas, weapons free.	#7 called shot legs on Atlas + weapons free
+Lance, take out the turrets, lasers only.	#7 turret sweep + lasers only
+Two, move to nav Foxtrot and run cool.	#7 move to nav Foxtrot + run cool
+Lance, hold fire, take out the turrets.	#9 hold fire + turret sweep (starts paused)
+Lance, hit the heavies.	#10 heavy sweep
+Two, kill the heavy.	#10 attack the nearest heavy once
+Lance, keep the lights busy.	#10 light sweep
+Two, get behind the Atlas.	D NOT attack the Atlas
+Two, go get the Atlas.	D attack the Atlas (still)
+Two, get his legs.	called shot legs (still)
+Two, get up on that hill, hold fire.	hill offer + hold fire
+Two, take the high ground near nav Alpha.	#8 hill offer near Nav Alpha
+Lance, get on a hill by nav Bravo, hold fire.	#8 hill near Nav Bravo + hold fire
+Three, move to nav X-ray.	 NATO: move to Nav X-ray
+Two, advance to nav Whiskey.	 NATO: move to Nav Whiskey

@@ -1,0 +1,113 @@
+# RoundTripNew.txt (2026-10-14) - VoiceCommand.exe --roundtrip3 <min> <inst> <threads> RoundTripNew.txt: ONLY these.
+# The orders and phrases added 2026-10-13/14, judged "same" (understood as the typed sentence is).
+voices = bm_george, bm_lewis, bm_daniel, bm_fable, bf_isabella, bf_alice, am_michael, am_fenrir, af_bella, af_nicole
+names = RoundTripNames15.txt
+
+same | Two, move to nav Alpha.
+same | Three, advance to nav Alpha.
+same | Four, hold at nav Alpha.
+same | Three, move to nav Bravo.
+same | Four, advance to nav Bravo.
+same | Lance, hold at nav Bravo.
+same | Four, move to nav Charlie.
+same | Lance, advance to nav Charlie.
+same | Two, hold at nav Charlie.
+same | Lance, move to nav Delta.
+same | Two, advance to nav Delta.
+same | Three, hold at nav Delta.
+same | Two, move to nav Echo.
+same | Three, advance to nav Echo.
+same | Four, hold at nav Echo.
+same | Three, move to nav Foxtrot.
+same | Four, advance to nav Foxtrot.
+same | Lance, hold at nav Foxtrot.
+same | Four, move to nav Golf.
+same | Lance, advance to nav Golf.
+same | Two, hold at nav Golf.
+same | Lance, move to nav Hotel.
+same | Two, advance to nav Hotel.
+same | Three, hold at nav Hotel.
+same | Two, move to nav India.
+same | Three, advance to nav India.
+same | Four, hold at nav India.
+same | Three, move to nav Juliet.
+same | Four, advance to nav Juliet.
+same | Lance, hold at nav Juliet.
+same | Four, move to nav Lima.
+same | Lance, advance to nav Lima.
+same | Two, hold at nav Lima.
+same | Lance, move to nav Mike.
+same | Two, advance to nav Mike.
+same | Three, hold at nav Mike.
+same | Two, move to nav November.
+same | Three, advance to nav November.
+same | Four, hold at nav November.
+same | Three, move to nav Oscar.
+same | Four, advance to nav Oscar.
+same | Lance, hold at nav Oscar.
+same | Four, move to nav Papa.
+same | Lance, advance to nav Papa.
+same | Two, hold at nav Papa.
+same | Lance, move to nav Quebec.
+same | Two, advance to nav Quebec.
+same | Three, hold at nav Quebec.
+same | Two, move to nav Romeo.
+same | Three, advance to nav Romeo.
+same | Four, hold at nav Romeo.
+same | Three, move to nav Sierra.
+same | Four, advance to nav Sierra.
+same | Lance, hold at nav Sierra.
+same | Four, move to nav Tango.
+same | Lance, advance to nav Tango.
+same | Two, hold at nav Tango.
+same | Lance, move to nav Uniform.
+same | Two, advance to nav Uniform.
+same | Three, hold at nav Uniform.
+same | Two, move to nav Whiskey.
+same | Three, advance to nav Whiskey.
+same | Four, hold at nav Whiskey.
+same | Three, move to nav X-ray.
+same | Four, advance to nav X-ray.
+same | Lance, hold at nav X-ray.
+same | Four, move to nav Yankee.
+same | Lance, advance to nav Yankee.
+same | Two, hold at nav Yankee.
+same | Lance, move to nav Zulu.
+same | Two, advance to nav Zulu.
+same | Three, hold at nav Zulu.
+same | Three, make a run for it!
+same | Two, get out of there!
+same | Four, bug out!
+same | Lance, disengage!
+same | Two, break off!
+same | Three, make a break for it!
+same | Four, get clear!
+same | Two, pull out!
+same | Lance, let's get out of here!
+same | Three, run for it!
+same | Two, go give Four some support.
+same | Three, back up Two.
+same | Four, assist Three.
+same | Two, help Three out.
+same | Three, support Four.
+same | Four, go help Two.
+same | Lance, radio check.
+same | Comms check.
+same | Three, how copy?
+same | Lance, how copy?
+same | Two, get up on that hill.
+same | Lance, take the high ground.
+same | Three, find some high ground.
+same | Four, get on that ridge.
+same | Two, take that hill.
+same | Lance, get up on that ridge.
+same | Lance, take out the turrets.
+same | Two, kill the tanks first.
+same | Three, go for the VTOLs.
+same | Four, hit the vehicles.
+same | Lance, knock out those turrets.
+same | Two, take down the helicopters.
+same | Three, focus on the armour.
+same | Four, go after the choppers.
+same | Lance, destroy the tanks.
+same | Two, engage the turrets.

@@ -1,0 +1,16 @@
+{
+   "displayName" : "EnhancedImaging",
+   "version" : "1.0",
+   "buildNumber" : 2,
+   "description" : "Enhanced Imaging vision mode post-process (scene edges, units, wave) for the MW5 Tactical Command Suite.",
+   "author" : "MW5 Tactical Command Suite",
+   "authorURL" : "",
+   "defaultLoadOrder" : 10000,
+   "gameVersion" : "1.15.72",
+   "manifest" : [
+      
+   ],
+   "steamPublishedFileId" : 0,
+   "steamLastSubmittedBuildNumber" : 0,
+   "steamModVisibility" : "Private"
+}

@@ -1,0 +1,5 @@
+# HeardAs.ignore.txt - misheard names VoiceCommand --roundtrip3 does not record (user: alpha stays alpha)
+alpha
+alpha are
+alpha r
+alphaar

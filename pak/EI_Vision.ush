@@ -1,0 +1,87 @@
+// =====================================================================================================
+// EI_Vision.ush - the Enhanced Imaging vision mode as an Unreal 4.26 post-process (MW5 mod .pak).
+// THE ONE SOURCE: build_ei_materials.py pastes this file, verbatim, into the Custom node of both
+// materials (M_EI_Vision_BT = Before Translucency, M_EI_Vision_AT = After Tonemapping). Edit it here,
+// re-run the script, re-cook. Version: EI_PAK 1 (keep CameraCapture's kEiPakVersion in step).
+//
+// What the engine gives us (no guessing): scene depth in cm for THIS view (index 1 = PPI_SceneDepth),
+// the scene colour (index 14 = PPI_PostProcessInput0), the view's own UVs (any buffer padding /
+// screen percentage / upscaler / VR eye handled by the engine).
+//
+// Custom node: Output Type = CMOT Float3. Inputs (names must match - the script wires them):
+//   UnitsTex  : TextureObject  - CameraCapture's units-only depth capture (cm in R, the VIEW's shape)
+//   Opacity   : scalar 0..1    - the whole effect (0 = the game, untouched)
+//   WaveOn    : scalar 0/1     - 1 while the wave is opening / closing
+//   Front     : scalar cm      - the wave front's distance
+//   Band      : scalar cm      - the glow band at the front
+//   Fade      : scalar cm      - the fade band trailing the front
+//   Ripple    : scalar         - ripple strength (0.006 = the current look)
+//   UnitsOn   : scalar 0/1     - draw the units outlines (0 while the capture is not running)
+//   EdgeCol   : vector3        - scene edge colour       (0.33, 1.00, 0.54)
+//   UnitCol   : vector3        - units outline colour    (0.62, 1.00, 0.72)
+//   GlowCol   : vector3        - wave front glow colour  (0.33, 1.00, 0.54)
+//   BgCol     : vector3        - vision background       (0.03, 0.055, 0.055)
+//   EdgeGain  : scalar         - scene edge brightness   (1.0)
+//   Exposure  : scalar         - from an EyeAdaptation node (BT only; AT feeds 1) - cancels auto exposure
+//   SceneKeep : float4         - a SceneTexture:SceneDepth node: its presence is what lets SceneTextureLookup
+//                                read the scene buffers in a Custom node (4.26); its value is not used
+// =====================================================================================================
+
+// ---- where we are ------------------------------------------------------------------------------------
+float2 BufUV = GetDefaultSceneTextureUV(Parameters, 1);   // this pixel in the scene buffers
+float2 VpUV  = GetViewportUV(Parameters);                  // 0..1 over the visible picture only
+float2 Tex   = View.BufferSizeAndInvSize.zw;               // one buffer texel
+float2 VpToBuf = View.ViewSizeAndInvSize.xy * View.BufferSizeAndInvSize.zw; // viewport UV -> buffer UV scale
+
+// ---- scene depth: silhouettes (jumps) and creases (folds) - the same maths as kDepthEdgePs ------------
+float c = SceneTextureLookup(BufUV,                       1, false).r;
+float l = SceneTextureLookup(BufUV - float2(Tex.x, 0),    1, false).r;
+float r = SceneTextureLookup(BufUV + float2(Tex.x, 0),    1, false).r;
+float u = SceneTextureLookup(BufUV - float2(0, Tex.y),    1, false).r;
+float b = SceneTextureLookup(BufUV + float2(0, Tex.y),    1, false).r;
+float nearD  = max(min(min(c, l), min(min(r, u), b)), 50.0);
+float jump   = max(max(abs(c - l), abs(c - r)), max(abs(c - u), abs(c - b))) / nearD;
+float crease = (abs(l + r - 2 * c) + abs(u + b - 2 * c)) / max(c, 50.0);
+float fold   = smoothstep(0.015, 0.045, crease);
+float sil    = smoothstep(0.04, 0.12, jump);
+float fade   = lerp(1.0, 0.35, saturate(nearD / 150000.0));
+float nearDim = lerp(0.22, 0.6, saturate((nearD - 3000.0) / 37000.0));
+float sceneA = saturate(sil + fold * 0.33) * fade * nearDim * EdgeGain;
+float3 vision = lerp(BgCol, EdgeCol, saturate(sceneA));
+
+// ---- units: our units-only capture, in the view's own UVs, visible where nothing nearer hides it -----
+if (UnitsOn > 0.5)
+{
+    uint uw, uh;
+    UnitsTex.GetDimensions(uw, uh);
+    float2 ut = float2(1.0 / max(uw, 1u), 1.0 / max(uh, 1u));
+    float2 off[5] = { float2(0, 0), float2(-ut.x, 0), float2(ut.x, 0), float2(0, -ut.y), float2(0, ut.y) };
+    bool vis[5];
+    for (int k = 0; k < 5; ++k)
+    {
+        float2 vp = VpUV + off[k];
+        float ud = Texture2DSampleLevel(UnitsTex, UnitsTexSampler, vp, 0).r;
+        float sd = SceneTextureLookup(BufUV + off[k] * VpToBuf, 1, false).r;
+        vis[k] = ud > 1.0 && ud <= 5000000.0 && ud <= sd * 1.01 + 30.0;
+    }
+    bool edgeIn  = vis[0] && !(vis[1] && vis[2] && vis[3] && vis[4]);
+    bool edgeOut = !vis[0] && (vis[1] || vis[2] || vis[3] || vis[4]);
+    float ua = (edgeIn || edgeOut) ? 1.0 : (vis[0] ? smoothstep(0.02, 0.07, jump) * 0.85 : 0.0);
+    vision = lerp(vision, UnitCol, saturate(ua));
+}
+
+vision /= max(Exposure, 1e-4); // BT: the tonemapper's auto exposure would otherwise lift / crush the look
+
+// ---- the wave: the vision spreads out through the world by depth, a glowing front, a ripple ----------
+float3 game = SceneTextureLookup(BufUV, 14, false).rgb;
+float3 outc = vision;
+if (WaveOn > 0.5)
+{
+    float d    = c - Front;                                   // < 0: the front has passed this pixel
+    float edge = saturate(1.0 - abs(d) / max(Band, 1.0));
+    float2 rip = edge * Ripple * float2(sin(VpUV.y * 140.0 + Front * 0.0007), cos(VpUV.x * 140.0 + Front * 0.0007));
+    float3 gameR = SceneTextureLookup(BufUV + rip * VpToBuf, 14, false).rgb;
+    float inside = saturate(-d / max(Fade, 1.0));             // 0 at the front, full Fade behind it
+    outc = lerp(gameR, vision, inside) + GlowCol * edge * edge / max(Exposure, 1e-4);
+}
+return lerp(game, outc, saturate(Opacity)) + SceneKeep.x * 0.0;
