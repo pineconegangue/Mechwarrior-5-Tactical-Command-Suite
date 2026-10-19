@@ -2,7 +2,7 @@
 
 UEVR plugins and companion apps for MechWarrior 5: Mercenaries in VR (UEVR + the
 [MechWarriorVR](https://www.nexusmods.com/mechwarrior5mercenaries/mods/1009) mod). Grew out of
-[MW5-UEVR-Plugins](https://github.com/sicsix) by Tim Butler (MIT).
+[MW5-UEVR-Plugins](https://github.com/sicsix/MW5-UEVR-Plugins) by sicsix (MIT).
 
 Players: download the release package and follow its `README.txt`.
 
@@ -43,6 +43,21 @@ Everything needed is in this repository except whisper.cpp:
   Without it VoiceCommand still builds, but with the fixed Windows phrases only (no free speech).
 - Optional: the [Vulkan SDK](https://vulkan.lunarg.com/) lets Whisper run on the graphics card
   (`VC_WHISPER_VULKAN`, on by default when the SDK is found); without it Whisper is CPU only.
+
+## Models (not in the repository - too large for GitHub)
+
+VoiceCommand needs two downloads to speak and to understand speech; `package_release.ps1` will not run
+without them. Players get both inside the release zip.
+
+- **Whisper speech recognition**: `ggml-base.en.bin` (148 MB) from
+  [ggerganov/whisper.cpp on Hugging Face](https://huggingface.co/ggerganov/whisper.cpp/blob/main/ggml-base.en.bin)
+  (or whisper.cpp's `models\download-ggml-model.cmd base.en`). Put it at `models\ggml-base.en.bin`.
+  SHA-1 `137c40403d78fd54d454da0f9bd998f78703390c`.
+- **Kokoro voices**: sherpa-onnx's
+  [kokoro-multi-lang-v1_0.tar.bz2](https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kokoro-multi-lang-v1_0.tar.bz2)
+  (350 MB). Unpack it so that `kokoro-82m\kokoro-multi-lang-v1_0\model.onnx` exists.
+
+To run from the build folder instead, point GlobalSettings > VOICE COMMAND at those two places.
 
 ## Packaging
 

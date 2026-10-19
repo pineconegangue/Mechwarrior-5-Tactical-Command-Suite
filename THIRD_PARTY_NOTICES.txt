@@ -16,7 +16,7 @@ Code
   sherpa-onnx (k2-fsa / Xiaomi Corp.)       Apache-2.0              apps\sherpa-onnx-c-api.dll (Kokoro voices)
   ONNX Runtime (Microsoft)                  MIT                     apps\onnxruntime.dll,
                                                                     apps\onnxruntime_providers_shared.dll
-  MW5-UEVR-Plugins (Tim Butler / sicsix)    MIT                     the project this one grew from (LICENSE.txt)
+  MW5-UEVR-Plugins (sicsix)                 MIT                     the project this one grew from (LICENSE.txt)
 
 Models and data
   Whisper base.en model (OpenAI), ggml conversion          MIT          apps\models\ggml-base.en.bin
