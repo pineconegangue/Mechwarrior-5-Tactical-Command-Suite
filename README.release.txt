@@ -43,7 +43,9 @@ First run: the game is unchanged until you say so
   The shipped settings keep MW5 exactly as it is without the suite. Turn on what you want in
   GlobalSettings.exe:
     - LANCE CONTROL > Allies: Vanilla / Insane / Impossibly strong lancemates, and muting the game's own
-      lancemate voices (when you use VoiceCommand's pilots instead).
+      lancemate voices (when you use VoiceCommand's pilots instead). Lancemates the suite fires for (insane
+      allies, or custom fire settings) hold their TAG on the target, and punch / swing melee weapons at an
+      enemy already within arm's reach in front of them (melee always on; hold fire stops it too).
     - HUD > PANELS ON HUDDISPLAY: which game HUD panels move off the game's screen onto the MFD pages.
     - HUD > ENHANCED IMAGING VISION > Vision mode key (or say "activate enhanced imaging").
     - VOICE COMMAND > LISTENING FOR ORDERS > Push-to-talk key. Voice orders are push-to-talk by default
@@ -67,6 +69,11 @@ More than one MFD screen (HUDDisplay profiles)
   Each profile is saved in apps\ as MFDDisplay_<name>.cfg (log: HUDDisplay_<name>.log). Copy a
   .cfg to a new name to start a new profile from an existing layout; delete one to reset it.
   Don't run two windows with the SAME profile name - they share one file and the last to close wins.
+  Easier ways to make one:
+    - In a HUDDisplay window's edit mode: SAVE AS..., type a name, Enter - it saves this layout as a new
+      profile and makes a "HUDDisplay - <name>" shortcut beside HUDDisplay.exe; OPEN IT starts it.
+    - GlobalSettings > HUD PROFILES: NEW PROFILE, and per profile LAUNCH / RENAME / SHORTCUT / REMOVE,
+      plus OPEN ALL MY SCREENS. A profile that is running cannot be renamed or removed.
 
 Hotkeys (HUDDisplay, default layout - every one can be changed in edit mode)
 --------------------------------------------------------------------------
@@ -90,6 +97,8 @@ TacOps map (Num8, or the in-game overlay)
                              or a lancemate detects it (line of sight or sensors),
                            called shot > legs, arms, side torsos, either leg / arm / torso, centre torso,
                              head, or cancel - for the selected lancemates, who attack it and aim there,
+                           flank - the selected lancemates swing round to its side, firing on the move;
+                           pincer - two or more selected lancemates take a side each,
                            torso: track this target / release
   Right-click a lancemate  its fire settings (and every selected lancemate's)
   Heading compass          a heading strip along the top of the 3D and TacOps maps (turns with your torso; green dots
@@ -129,6 +138,12 @@ Voice orders - cheat sheet
                (if it has none: whoever is hitting it, else the nearest enemy it can see)
                take out the turrets / kill the tanks first / go for the VTOLs - the nearest of that kind,
                then the next, until none are left on the 1 km scan (any new order ends it)
+    Flank      flank my target - two, flank left / flank right (your left / right) - flank the Atlas on his left
+               - flank behind it - flank my target, stay 300 out (stand-off; otherwise the pilot picks the
+               range its weapons do most damage at)
+               two and three, pincer my target / pincer the Atlas - each takes a side (needs two lancemates).
+               They swing round firing on the move, hold that side as the target turns, and keep it.
+               Best for direct-fire mechs - an LRM boat is better left at range.
     Called     aim for the Atlas's left torso - legs on the Atlas - shoot his head - centre torso on my target
     shots      (legs, arms, side torsos, left / right leg, arm or torso, centre torso, head, cockpit)
                cancel called shot

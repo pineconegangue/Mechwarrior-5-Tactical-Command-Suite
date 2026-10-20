@@ -213,6 +213,27 @@ Commander, that's no mech - (there's no|no) {part} to (aim for|shoot at)!
 (uh, Commander|Commander), (that one|that target) (doesn't have|has no) {part}.
 (that's|it's) not a mech, Commander - no {part} on it!
 
+# Reply to a flank order (2026-10-20, lancecontrol-75). {enemy}, {part} = left flank / right flank / rear / flank
+[order_flank]
+flanking the {enemy}
+(swinging|going) round the {enemy}'s {part}
+(copy|on it), (flanking|going round) the {enemy}
+taking the {part} on the {enemy}
+(moving|swinging) (wide|round), (keeping fire on|hitting) the {enemy}
+
+# Reply to a pincer order, one arm of it (2026-10-20). {enemy}, {part} = this lancemate's side
+[order_pincer]
+(pincer|pincer move), (copy|on it) - I've got the {part}
+(taking|I'll take) the {part} on the {enemy}
+(copy|got it), {part} - (closing the pincer|closing in) on the {enemy}
+(on it|moving), I'll hit the {enemy} from the {part}
+
+# A pincer told to one lancemate only (2026-10-20)
+[order_pincer_need_two]
+(negative|can't do that), Commander - a pincer needs two of us
+(Commander|uh, Commander), I need a partner for that
+(one mech can't pincer|I can't pincer alone), Commander - send someone with me
+
 # Reply to cancelling a called shot (2026-10-10)
 [order_called_cancel]
 (copy|got it), (aiming|shooting) anywhere

@@ -78,6 +78,8 @@ static constexpr uint16_t LSM_AttackOrder = 0x020;  // an attack order's unit st
 static constexpr uint16_t LSM_AdvanceFb = 0x040;    // advance / fall back to the player
 static constexpr uint16_t LSM_MoveFire = 0x080;     // move, fire on the move
 static constexpr uint16_t LSM_GameHoldFire = 0x100; // the game's own Hold Fire (obeyed)
+static constexpr uint16_t LSM_Flank = 0x200;        // flanking its attack order's unit (lancecontrol-75)
+static constexpr uint16_t LSM_Pincer = 0x400;       // ... as one arm of a pincer
 
 struct LsSlot
 {

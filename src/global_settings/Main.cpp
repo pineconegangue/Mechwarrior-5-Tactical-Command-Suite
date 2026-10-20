@@ -43,6 +43,7 @@
 #include <thread>
 
 #include "GlobalSettings.h"
+#include "HudProfiles.h" // 2026-10-20: HUD PROFILES page - HUDDisplay windows (MFDDisplay_<name>.cfg + shortcut)
 #include "../common/PaperdollExtract.h" // 2026-10-17: PAPERDOLLS page - the masks from the player's own game files
 #include "../hud_display/ThreatAlarm.h" // TEST ALARM (2026-10-13): the same synthesiser HUDDisplay uses
 
@@ -82,6 +83,7 @@ enum Kind
     K_Pilots,  // PilotVoices.txt: one row per pilot
     K_Action,  // a button doing something (A_*)
     K_Tick,    // a compact tick box (the callout list)
+    K_Profiles, // 2026-10-20: the HUDDisplay profiles, one row each, and the new-name box
 };
 
 enum Action
@@ -631,6 +633,20 @@ static std::vector<Page> BuildPages()
         p.push_back(g);
     }
     {
+        // 2026-10-20 (user): HUDDisplay windows - one profile per screen (MFDDisplay_<name>.cfg beside HUDDisplay.exe),
+        // each with a "HUDDisplay - <name>" shortcut. HUDDisplay's edit mode has SAVE AS for the same thing.
+        Page g{L"HUD PROFILES", L"", {}, false};
+        g.Items = {
+            HH(L"HUD PROFILES", L"Each HUDDisplay window is a profile: its own position, size, page, bezel labels and keys, "
+                                L"kept in MFDDisplay_<name>.cfg beside HUDDisplay.exe. Every profile gets a shortcut "
+                                L"\"HUDDisplay - <name>\" in the same folder - copy those to your desktop or Startup folder. "
+                                L"A new profile starts as a copy of \"default\"; set it up in its own edit mode. In HUDDisplay's "
+                                L"edit mode, SAVE AS makes a profile from that window's settings."),
+            Sp(K_Profiles, L"", L"", L""),
+        };
+        p.push_back(g);
+    }
+    {
         // 2026-10-12 (lancecontrol-41): debug probes, read by LanceControl straight from the ini. Both off by default.
         Page g{L"DEBUG", L"", {}, false};
         g.Items = {
@@ -663,7 +679,8 @@ struct Hit
 enum HitId
 {
     HI_None, HI_Tab, HI_Sub, HI_Check, HI_Minus, HI_Plus, HI_Drop, HI_DropPick, HI_Rebind, HI_Clear, HI_Browse, HI_Open,
-    HI_PilotDrop, HI_PilotDel, HI_PilotTest, HI_PilotPage, HI_Test, HI_Action, HI_Reset, HI_StartVc, HI_VSpeed
+    HI_PilotDrop, HI_PilotDel, HI_PilotTest, HI_PilotPage, HI_Test, HI_Action, HI_Reset, HI_StartVc, HI_VSpeed,
+    HI_ProfName, HI_ProfNew, HI_ProfLaunch, HI_ProfRename, HI_ProfLnk, HI_ProfDel, HI_ProfAll, HI_ProfPage // 2026-10-20
 };
 
 class App
@@ -740,6 +757,11 @@ public:
     gs::Watch                     PvWatch{gs::Dir() + L"PilotVoices.txt"};
     std::vector<std::pair<std::wstring, std::wstring>> Pilots; // PilotVoices.txt
     int                           PilotTop = 0;
+    // 2026-10-20 (user): HUD PROFILES page
+    std::vector<std::wstring>     Profs;      // as last drawn (clicks index this)
+    std::wstring                  ProfName;   // the name box
+    bool                          ProfTyping = false;
+    int                           ProfTop = 0;
     bool                          VoiceHeads = false;      // the VOICES table's column titles are drawn
     std::wstring                  PilotArmed, PilotDrop;   // the pilot a FORGET confirmation / an open dropdown is for (by name)
     std::map<std::wstring, std::wstring> Cache;            // "sec/key" -> value, emptied when the file changes
@@ -1424,6 +1446,9 @@ public:
             case K_Pilots:
                 y = DrawPilots(x, y);
                 break;
+            case K_Profiles:
+                y = DrawProfiles(x, y);
+                break;
             }
         }
     }
@@ -1461,6 +1486,202 @@ public:
             y += 26.0f;
         }
         return y;
+    }
+
+    // ---- HUD PROFILES (2026-10-20, user) ----
+    float DrawProfiles(float x, float y)
+    {
+        const std::wstring dir = hudprof::ExeDir();
+        Profs = hudprof::List(dir);
+        // the name box: NEW uses it, and RENAME on a row
+        Text(x, y, 56.0f, 22.0f, L"Name", UiCol::PanelDim);
+        {
+            const D2D1_RECT_F r = D2D1::RectF(x + 60.0f, y, x + 300.0f, y + 22.0f);
+            if (ProfTyping)
+            {
+                Col(UiCol::Warn, 0.12f);
+                Rt->FillRectangle(r, Br.Get());
+            }
+            Col(ProfTyping ? UiCol::Warn : (Hover(x + 60.0f, y, 240.0f, 22.0f) ? UiCol::PanelText : UiCol::PanelEdge), 1.0f);
+            Rt->DrawRectangle(r, Br.Get(), 1.2f);
+            const std::wstring shown = ProfTyping ? ProfName + L"_" : (ProfName.empty() ? L"(click, then type a name)" : ProfName);
+            Text(x + 66.0f, y, 230.0f, 22.0f, shown, ProfTyping ? UiCol::Warn : (ProfName.empty() ? UiCol::PanelDim : UiCol::PanelText));
+            AddHit(x + 60.0f, y, 240.0f, 22.0f, HI_ProfName);
+        }
+        Button(x + 308.0f, y, 120.0f, 22.0f, L"NEW PROFILE", HI_ProfNew, 0, 0, false, !ProfName.empty());
+        HelpMark(x + 436.0f, y, L"Letters, digits, - and _ (a space becomes _), up to 24. NEW PROFILE makes it as a copy of "
+                                L"\"default\", makes its shortcut and starts it. RENAME on a row gives that profile this name.");
+        y += 34.0f;
+        if (Profs.empty())
+        {
+            Text(x, y, 700.0f, 18.0f, L"No profiles yet - HUDDisplay makes MFDDisplay_default.cfg the first time it saves.", UiCol::PanelDim);
+            return y + 24.0f;
+        }
+        Text(x, y, 150.0f, 18.0f, L"PROFILE", UiCol::PanelDim);
+        Text(x + 156.0f, y, 170.0f, 18.0f, L"STATE", UiCol::PanelDim);
+        y += 22.0f;
+        const int rows = 8;
+        ProfTop = std::max(0, std::min(ProfTop, (int)Profs.size() - rows));
+        for (int k = ProfTop; k < (int)Profs.size() && k < ProfTop + rows; ++k)
+        {
+            const std::wstring &n = Profs[(size_t)k];
+            const bool run = hudprof::Running(n), lnk = hudprof::Exists(hudprof::LnkPath(dir, n));
+            Text(x, y, 150.0f, 22.0f, n, UiCol::PanelText);
+            Text(x + 156.0f, y, 170.0f, 22.0f, std::wstring(run ? L"running" : L"not running") + (lnk ? L"" : L", no shortcut"),
+                 run ? UiCol::CheckOn : UiCol::PanelDim);
+            Button(x + 330.0f, y, 70.0f, 22.0f, L"LAUNCH", HI_ProfLaunch, k, 0, false, !run);
+            Button(x + 406.0f, y, 74.0f, 22.0f, L"RENAME", HI_ProfRename, k, 0, false, !run && !ProfName.empty());
+            Button(x + 486.0f, y, 86.0f, 22.0f, L"SHORTCUT", HI_ProfLnk, k);
+            const bool armed = Armed(HI_ProfDel, k);
+            Button(x + 578.0f, y, 80.0f, 22.0f, armed ? L"SURE?" : L"REMOVE", HI_ProfDel, k, 0, armed, !run,
+                   armed ? UiCol::Warn : UiCol::PanelText);
+            y += 26.0f;
+        }
+        if ((int)Profs.size() > rows)
+        {
+            wchar_t b[64];
+            swprintf(b, 64, L"%d-%d of %d", ProfTop + 1, std::min((int)Profs.size(), ProfTop + rows), (int)Profs.size());
+            Button(x, y, 60.0f, 22.0f, L"UP", HI_ProfPage, -1, 0, false, ProfTop > 0);
+            Text(x + 64.0f, y, 120.0f, 22.0f, b, UiCol::PanelDim, 1.0f, true);
+            Button(x + 188.0f, y, 60.0f, 22.0f, L"DOWN", HI_ProfPage, 1, 0, false, ProfTop + rows < (int)Profs.size());
+            y += 26.0f;
+        }
+        y += 8.0f;
+        Button(x, y, 220.0f, 24.0f, L"OPEN ALL MY SCREENS", HI_ProfAll, 0, 0, false, true);
+        HelpMark(x + 228.0f, y + 1.0f, L"Starts every profile that is not running yet. REMOVE moves a profile's config and shortcut "
+                                       L"into the _to_delete folder beside HUDDisplay.exe (nothing is deleted). A running profile "
+                                       L"cannot be renamed or removed - close that window first.");
+        return y + 30.0f;
+    }
+
+    void ProfChar(wchar_t c)
+    {
+        if (c == L'\b')
+        {
+            if (!ProfName.empty())
+                ProfName.pop_back();
+        }
+        else if (c == L' ' && ProfName.size() < hudprof::kMaxName)
+            ProfName.push_back(L'_');
+        else if (hudprof::NameChar(c) && ProfName.size() < hudprof::kMaxName)
+            ProfName.push_back(c);
+    }
+
+    // The name box's name, checked: "" (and a note) when it cannot be a new profile.
+    std::wstring ProfNewName()
+    {
+        const std::wstring n = hudprof::Clean(ProfName);
+        if (n.empty())
+        {
+            Note(L"Type a name in the box first.", true);
+            return L"";
+        }
+        if (hudprof::Exists(hudprof::CfgPath(hudprof::ExeDir(), n)))
+        {
+            Note(L"There is already a profile called " + n + L".", true);
+            return L"";
+        }
+        return n;
+    }
+
+    void ProfClick(const Hit &h, bool wasArmed)
+    {
+        const std::wstring dir = hudprof::ExeDir();
+        const std::wstring name = h.A >= 0 && h.A < (int)Profs.size() ? Profs[(size_t)h.A] : std::wstring();
+        switch (h.Id)
+        {
+        case HI_ProfName:
+            ProfTyping = true;
+            Note(L"Type the name (Enter or a click elsewhere when done).");
+            break;
+        case HI_ProfNew:
+        {
+            const std::wstring n = ProfNewName();
+            if (n.empty())
+                return;
+            // a copy of "default" (else of the first profile there is) - HUDDisplay seeds its defaults when there is none
+            std::wstring from = hudprof::CfgPath(dir, L"default");
+            if (!hudprof::Exists(from) && !Profs.empty())
+                from = hudprof::CfgPath(dir, Profs.front());
+            if (hudprof::Exists(from) && !CopyFileW(from.c_str(), hudprof::CfgPath(dir, n).c_str(), TRUE))
+            {
+                Note(L"Could not write MFDDisplay_" + n + L".cfg.", true);
+                return;
+            }
+            const bool lnk = hudprof::MakeShortcut(dir, n);
+            hudprof::Launch(dir, n, Wnd);
+            ProfName.clear();
+            Note(L"Profile " + n + L" made" + (lnk ? L" (shortcut \"HUDDisplay - " + n + L"\")" : std::wstring(L" - the shortcut failed")) +
+                 L" and started. Move it and set it up in its own edit mode.");
+            break;
+        }
+        case HI_ProfLaunch:
+            if (hudprof::Running(name))
+                Note(name + L" is already running.");
+            else if (hudprof::Launch(dir, name, Wnd))
+                Note(L"Starting " + name + L"...");
+            else
+                Note(L"Could not start HUDDisplay.exe (is it in this folder?).", true);
+            break;
+        case HI_ProfRename:
+        {
+            if (hudprof::Running(name))
+            {
+                Note(L"Close the " + name + L" window first.", true);
+                return;
+            }
+            const std::wstring n = ProfNewName();
+            if (n.empty())
+                return;
+            if (!MoveFileW(hudprof::CfgPath(dir, name).c_str(), hudprof::CfgPath(dir, n).c_str()))
+            {
+                Note(L"Could not rename MFDDisplay_" + name + L".cfg.", true);
+                return;
+            }
+            hudprof::MoveAside(dir, hudprof::LnkPath(dir, name)); // the old shortcut points at the old name
+            const bool lnk = hudprof::MakeShortcut(dir, n);
+            ProfName.clear();
+            Note(name + L" is now " + n + (lnk ? L" (new shortcut made)." : L" - the shortcut failed."));
+            break;
+        }
+        case HI_ProfLnk:
+            if (hudprof::MakeShortcut(dir, name))
+                Note(L"Shortcut \"HUDDisplay - " + name + L"\" made beside HUDDisplay.exe.");
+            else
+                Note(L"Could not make the shortcut.", true);
+            break;
+        case HI_ProfDel:
+            if (hudprof::Running(name))
+            {
+                Note(L"Close the " + name + L" window first.", true);
+                return;
+            }
+            if (!wasArmed)
+            {
+                Arm(HI_ProfDel, h.A);
+                Note(L"Click SURE? to remove " + name + L" (moved to _to_delete, not deleted).", true);
+                return;
+            }
+            if (hudprof::MoveAside(dir, hudprof::CfgPath(dir, name)) && hudprof::MoveAside(dir, hudprof::LnkPath(dir, name)))
+                Note(name + L" removed - its files are in the _to_delete folder.");
+            else
+                Note(L"Could not move " + name + L"'s files.", true);
+            break;
+        case HI_ProfAll:
+        {
+            int started = 0;
+            for (auto &n : hudprof::List(dir))
+                if (!hudprof::Running(n) && hudprof::Launch(dir, n, Wnd))
+                    ++started;
+            Note(started ? L"Starting " + std::to_wstring(started) + L" screen(s)..." : std::wstring(L"Every profile is already running."));
+            break;
+        }
+        case HI_ProfPage:
+            ProfTop += h.A * 8;
+            break;
+        default:
+            break;
+        }
     }
 
     void Render()
@@ -1619,6 +1840,8 @@ public:
                 h = &*it;
                 break;
             }
+        if (ProfTyping && !(h && h->Id == HI_ProfName)) // 2026-10-20: a click elsewhere ends typing the name
+            ProfTyping = false;
         if (DropItem >= 0)
         {
             if (h && h->Id == HI_DropPick)
@@ -1645,6 +1868,14 @@ public:
             return;
         const bool wasArmed = Armed(h->Id, h->A);
         ArmedId = 0; // any click disarms (a confirming one is checked above)
+        if (h->Id >= HI_ProfName && h->Id <= HI_ProfPage) // 2026-10-20: HUD PROFILES
+        {
+            if ((h->Id == HI_ProfLaunch || h->Id == HI_ProfRename || h->Id == HI_ProfLnk || h->Id == HI_ProfDel) &&
+                (h->A < 0 || h->A >= (int)Profs.size()))
+                return;
+            ProfClick(*h, wasArmed);
+            return;
+        }
         switch (h->Id)
         {
         case HI_Tab:
@@ -2317,8 +2548,22 @@ public:
                 InvalidateRect(h, nullptr, FALSE);
             }
             return 0;
+        case WM_CHAR: // 2026-10-20: the HUD PROFILES name box
+            if (a->ProfTyping)
+            {
+                a->ProfChar((wchar_t)w);
+                InvalidateRect(h, nullptr, FALSE);
+                return 0;
+            }
+            break;
         case WM_KEYDOWN:
         case WM_SYSKEYDOWN:
+            if (a->ProfTyping && (w == VK_RETURN || w == VK_ESCAPE))
+            {
+                a->ProfTyping = false;
+                InvalidateRect(h, nullptr, FALSE);
+                return 0;
+            }
             if (a->KeyPressed((int)w))
             {
                 InvalidateRect(h, nullptr, FALSE);

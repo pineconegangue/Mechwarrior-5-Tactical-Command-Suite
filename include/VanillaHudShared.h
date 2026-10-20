@@ -338,6 +338,12 @@ struct VanillaExportBlock
         // target mech's own). Pad[1]: 1 = the PLAYER's current lock (Loc ignored), 0 = the unit nearest Loc (40 m) or the exact unit (kTacLocActor).
         // The aim applies to that unit only, until it dies, a cancel, another called shot, or a new mission.
         TCO_CalledShot,
+        // lancecontrol-75 (appended - no layout change): FLANK lancemate Slot round a unit, firing on the move, then attack it.
+        // Pad[0] & 7 the side: 0 the nearer of its sides, 1 / 2 the PLAYER's left / right (the line player -> target),
+        // 3 / 4 the TARGET's own left / right, 5 behind it; Pad[0] & 8 = one arm of a pincer. Pad[1] & 1 = the player's lock
+        // (Loc ignored), Pad[1] >> 1 = the stand-off in 10 m (0 = the distance with the most damage in range). Loc: the unit
+        // nearest Loc (40 m) or the exact unit (kTacLocActor).
+        TCO_Flank,
     };
     // TCO_LockTarget (lancecontrol-13), TCO_Attack and TCO_CalledShot (lancecontrol-61) with Loc[2] == kTacLocActor: Loc[0] / Loc[1] carry the unit's address
     // (low / high 32 bits, copied bit for bit) instead of a position - the exact unit, not the nearest one.

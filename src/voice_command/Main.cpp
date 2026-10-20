@@ -1552,8 +1552,12 @@ enum CmdType
     C_Support,     // SUPPORT (2026-10-13, user): "Two, go give Four some support" - A = the lancemate to support: attack
                    // its target, or (none) whoever last hit it
     C_Hill,        // HIGH GROUND (2026-10-14, user): "get up on that hill" - 3-4 hilltops marked as nav points, "which hill?"
-    C_AttackClass  // TARGET CLASSES (2026-10-14, user): "take out the turrets" - A = 1 turrets, 2 tanks / vehicles, 3 VTOLs;
+    C_AttackClass, // TARGET CLASSES (2026-10-14, user): "take out the turrets" - A = 1 turrets, 2 tanks / vehicles, 3 VTOLs;
                    // the nearest of that kind, then the next, until none are left on the scan
+    C_Flank,       // FLANK (2026-10-20, user; lancecontrol-75): A = the side (TCO_Flank Pad[0]), B = stand-off m (0 auto);
+                   // the unit named (QueryName), else your lock
+    C_Pincer       // PINCER (2026-10-20): A = 1 its own flanks (else your left / right / rear), B = stand-off m; C / D = this
+                   // lancemate's place / how many were named (PincerSlot) - the whole lance counts itself in Execute
 };
 struct Cmd
 {
@@ -1604,6 +1608,10 @@ void BuildPhrases()
     AddOrder(L"get out of there", C_Move, 200, 5, 4);
     AddOrder(L"attack my target", C_Attack);
     AddOrder(L"engage my target", C_Attack);
+    AddOrder(L"flank my target", C_Flank); // FLANK / PINCER (2026-10-20): on your lock (Whisper takes names, sides, stand-off)
+    AddOrder(L"flank left", C_Flank, 1);
+    AddOrder(L"flank right", C_Flank, 2);
+    AddOrder(L"pincer my target", C_Pincer);
     AddOrder(L"hold position", C_Hold);
     AddOrder(L"hold here", C_Hold);
     AddOrder(L"indirect fire only", C_Indirect);
@@ -2009,6 +2017,9 @@ void ViOrderIntent(int s, const Cmd &c, const wchar_t *reply, const std::wstring
     else if (r == L"order_called_shot" || r == L"order_called_shot_named")
         t = L"called shot: " + part + (enemy.empty() ? L" on your target" : L" on the " + enemy);
     else if (r == L"order_called_cancel") t = L"called shot cancelled";
+    else if (r == L"order_flank") t = L"flank the " + enemy + L" - " + part + L" (fire on the move)";
+    else if (r == L"order_pincer") t = L"pincer the " + enemy + L" - " + part + L" (fire on the move)";
+    else if (r == L"order_pincer_need_two") t = L"a pincer needs two lancemates";
     else if (r == L"order_attack_named") t = (c.Type == C_Attack ? L"attack your target - the " : L"attack the ") + enemy;
     else if (r == L"order_attack") t = L"attack your target";
     else if (r == L"order_hold") t = c.Type == C_Move ? L"move " + ViMoveText(c) + L", then hold" : L"hold here";
@@ -2052,7 +2063,7 @@ void Execute(const Cmd &c)
             Say(0, c.Who ? Line(L"problem_no_answer", 0, {{L"callsign", NumberName(c.Who)}}) : Line(L"problem_no_lancemates", 0));
         return;
     }
-    if (c.Type == C_Attack && LockedCount() == 0)
+    if ((c.Type == C_Attack || ((c.Type == C_Flank || c.Type == C_Pincer) && g_execName.empty())) && LockedCount() == 0)
     {
         Say(to[0]->Slot, Line(L"problem_no_lock", to[0]->Slot));
         return;
@@ -2263,6 +2274,57 @@ void Execute(const Cmd &c)
                 replyEnemy = LockedEnemyName();
             }
             reply = replyEnemy.empty() ? L"order_called_shot" : L"order_called_shot_named";
+            break;
+        }
+        case C_Flank: // FLANK / PINCER (2026-10-20, user; lancecontrol-75): round to one side of the unit, firing on the move
+        case C_Pincer:
+        {
+            int side = c.A;
+            const bool pin = c.Type == C_Pincer;
+            if (pin)
+            {
+                int idx = c.C, cnt = c.D; // named lancemates: their place, how many (PincerSlot); the lance: its order here
+                if (c.Who == 0)
+                {
+                    idx = (int)(std::find(to.begin(), to.end(), u) - to.begin());
+                    cnt = (int)to.size();
+                }
+                if (cnt < 2)
+                {
+                    reply = L"order_pincer_need_two";
+                    break;
+                }
+                static const int kOur[] = {1, 2, 5}, kIts[] = {3, 4, 5};
+                side = idx < 3 ? (c.A ? kIts[idx] : kOur[idx]) : (c.A ? 3 : 1) + (idx % 2);
+            }
+            const uint8_t pad0 = (uint8_t)((side & 7) | (pin ? 8 : 0));
+            const uint8_t pad1 = (uint8_t)((std::max(0, std::min(127, (c.B + 5) / 10))) << 1);
+            if (!g_execName.empty())
+            {
+                float p[3];
+                std::wstring said;
+                uint32_t nlo = 0, nhi = 0;
+                if (!FindNamedUnit(g_execName, p, said, &nlo, &nhi))
+                {
+                    std::wstring nm = g_execName;
+                    if (!nm.empty())
+                        nm[0] = (wchar_t)towupper(nm[0]);
+                    Say(s, Line(L"answer_where_named_none", s, {{L"enemy", nm}}));
+                    continue;
+                }
+                SendUnit(VanillaExportBlock::TCO_Flank, s, p, nlo, nhi, pad0, pad1); // the exact unit
+                replyEnemy = said;
+            }
+            else
+            {
+                Send(VanillaExportBlock::TCO_Flank, s, nullptr, pad0, (uint8_t)(pad1 | 1)); // your lock, resolved in the game
+                replyEnemy = LockedEnemyName();
+            }
+            if (replyEnemy.empty())
+                replyEnemy = L"target";
+            static const wchar_t *kSide[] = {L"flank", L"left flank", L"right flank", L"left flank", L"right flank", L"rear", L"flank", L"flank"};
+            replyPart = kSide[side & 7]; // {part}: where it goes
+            reply = pin ? L"order_pincer" : L"order_flank";
             break;
         }
         case C_Attack:
@@ -3940,7 +4002,7 @@ bool ParseOrder(const std::vector<std::wstring> &w, std::vector<Cmd> &out, std::
                                          L"strike", L"alpha", L"focus", L"waste", L"take"};
         static const wchar_t *kMove[] = {L"move", L"advance", L"push", L"go", L"follow", L"chase", L"charge", L"rush", L"run",
                                          L"pursue", L"get", L"head", L"leave", L"retreat", L"fall", L"break", L"pull", L"bug",
-                                         L"climb", L"support", L"help", L"assist", L"flank", L"come"};
+                                         L"climb", L"support", L"help", L"assist", L"flank", L"pincer", L"come"};
         for (size_t k = 0; k < w.size(); ++k)
         {
             if (used[k])
@@ -3975,7 +4037,7 @@ bool ParseOrder(const std::vector<std::wstring> &w, std::vector<Cmd> &out, std::
         static const wchar_t *kEnd[] = {L"and", L"then", L"but", L"instead", L"move", L"go", L"hold", L"advance", L"attack", L"kill",
                                         L"take", L"engage", L"push", L"run", L"support", L"assist", L"help", L"follow", L"focus",
                                         L"hit", L"destroy", L"get", L"head", L"fall", L"form", L"stay", L"wait", L"climb", L"find",
-                                        L"break", L"pull", L"bug", L"regroup", L"rally", L"retreat", L"cover", L"flank", L"charge",
+                                        L"break", L"pull", L"bug", L"regroup", L"rally", L"retreat", L"cover", L"flank", L"pincer", L"charge",
                                         L"weapons", L"open", L"fire", L"shoot"};
         for (size_t k = 0; k < w.size(); ++k)
         {
@@ -4098,6 +4160,161 @@ bool ParseOrder(const std::vector<std::wstring> &w, std::vector<Cmd> &out, std::
         out.push_back(c);
         add(L"status");
     }
+    // ---- FLANK / PINCER (2026-10-20, user; lancecontrol-75 TCO_Flank). "flank the Atlas", "flank left on that Atlas" (YOUR
+    // left - the line you -> it), "flank that Atlas on his left" / "flank the Atlas's left" (ITS own left), "get behind it" is
+    // not this - only "flank ... behind / from the rear". "stay 300 out" sets the stand-off (else the most damage in range).
+    // "Two, three, set up a pincer on the Atlas": the lancemates go left / right (/ rear) of it as YOU see it; "on his flanks"
+    // = its own sides. No name: your lock. Fire settings in the same sentence were read above and stay.
+    {
+        size_t fAt = w.size();
+        bool pincer = false;
+        for (size_t k = 0; k < w.size(); ++k)
+        {
+            if (used[k] || negated[k])
+                continue;
+            const std::wstring &x = w[k];
+            if (x == L"pincer" || x == L"pincers" || x == L"pincher" || x == L"pinchers" || x == L"pinch")
+            {
+                fAt = k;
+                pincer = true;
+                break;
+            }
+            // only the order itself: "it's flanking us" / "on our left flank" are reports, not orders
+            if (fAt == w.size() && (x == L"flank" || x == L"outflank") &&
+                !(k > 0 && (w[k - 1] == L"our" || w[k - 1] == L"my" || w[k - 1] == L"your" || w[k - 1] == L"left" || w[k - 1] == L"right" ||
+                            w[k - 1] == L"us" || w[k - 1] == L"the")))
+                fAt = k;
+        }
+        if (fAt < w.size())
+        {
+            used[fAt] = true;
+            auto isPoss = [&](size_t k) {
+                return k < w.size() && (w[k] == L"his" || w[k] == L"her" || w[k] == L"its" || w[k] == L"their");
+            };
+            // the unit named (Whisper's "Atlas's" -> "atlass")
+            std::vector<std::wstring> known;
+            {
+                std::lock_guard<std::mutex> lk(g_namesMx);
+                known = g_knownNames;
+            }
+            std::wstring found;
+            size_t nAt = 0, nLen = 0;
+            bool named = FindNameInWords(w, &used, known, found, nAt, nLen);
+            if (!named)
+            {
+                std::vector<std::wstring> w2 = w;
+                for (auto &x : w2)
+                    if (x.size() > 3 && x.back() == L's')
+                        x.pop_back();
+                named = FindNameInWords(w2, &used, known, found, nAt, nLen);
+            }
+            if (named)
+                for (size_t k = 0; k < nLen; ++k)
+                    used[nAt + k] = true;
+            // the side
+            int side = 0, sides = 0; // sides (pincer): 1 = its own flanks
+            for (size_t k = 0; k < w.size() && !side; ++k)
+            {
+                if (used[k])
+                    continue;
+                const std::wstring &x = w[k];
+                const bool its = (k > 0 && isPoss(k - 1)) || (named && k == nAt + nLen);
+                if (x == L"left" || x == L"right")
+                {
+                    side = (its ? 3 : 1) + (x == L"right" ? 1 : 0);
+                    used[k] = true;
+                    if (k > 0 && isPoss(k - 1))
+                        used[k - 1] = true;
+                }
+                // "his six" only - a bare "six" is a number ("stay six hundred out" was read as behind it + 100 m, 2026-10-20 test)
+                else if (x == L"behind" || x == L"rear" || (x == L"six" && k > 0 && isPoss(k - 1)) || x == L"backside" ||
+                         (x == L"back" && k > 0 && (isPoss(k - 1) || w[k - 1] == L"the" || w[k - 1] == L"from" || w[k - 1] == L"around")))
+                {
+                    side = 5;
+                    used[k] = true;
+                    if (k > 0 && isPoss(k - 1))
+                        used[k - 1] = true;
+                }
+                else if (pincer && (x == L"flanks" || x == L"flank" || x == L"sides" || x == L"side") &&
+                         (its || (k > 0 && w[k - 1] == L"both" && k > 1 && isPoss(k - 2))))
+                {
+                    sides = 1;
+                    used[k] = true;
+                    if (k > 0 && isPoss(k - 1))
+                        used[k - 1] = true;
+                }
+            }
+            // the stand-off: "stay 300 out", "at three hundred metres", "keep 250 off it"
+            int dist = 0;
+            for (size_t i = 0; i < w.size() && !dist; ++i)
+            {
+                if (used[i])
+                    continue;
+                static const wchar_t *kUnit[] = {L"zero", L"one", L"two", L"three", L"four", L"five", L"six", L"seven", L"eight", L"nine",
+                                                 L"ten", L"eleven", L"twelve", L"thirteen", L"fourteen", L"fifteen", L"sixteen",
+                                                 L"seventeen", L"eighteen", L"nineteen"};
+                static const wchar_t *kTen[] = {L"twenty", L"thirty", L"forty", L"fifty", L"sixty", L"seventy", L"eighty", L"ninety"};
+                int v = 0, cur = 0;
+                size_t j = i;
+                if (iswdigit(w[i][0]))
+                {
+                    for (wchar_t ch : w[i])
+                        if (iswdigit(ch) && v < 100000)
+                            v = v * 10 + (ch - L'0');
+                    j = i + 1;
+                }
+                else
+                {
+                    for (; j < w.size() && !used[j]; ++j)
+                    {
+                        int u = -1, t = -1;
+                        for (int k = 0; k < 20; ++k)
+                            if (w[j] == kUnit[k])
+                                u = k;
+                        for (int k = 0; k < 8; ++k)
+                            if (w[j] == kTen[k])
+                                t = 20 + 10 * k;
+                        if (u >= 0)
+                            cur += u;
+                        else if (t >= 0)
+                            cur += t;
+                        else if (w[j] == L"hundred")
+                            cur = (cur ? cur : 1) * 100;
+                        else if (w[j] == L"a" && j + 1 < w.size() && w[j + 1] == L"hundred")
+                            continue;
+                        else
+                            break;
+                    }
+                    v = cur;
+                }
+                if (v >= 50 && v <= 1200)
+                {
+                    dist = v;
+                    for (size_t k = i; k < j; ++k)
+                        used[k] = true;
+                    if (j < w.size() && (w[j] == L"metres" || w[j] == L"meters" || w[j] == L"m"))
+                        used[j] = true;
+                }
+            }
+            takeAny({L"set up a", L"set up", L"stay", L"keep", L"out", L"off", L"away", L"back", L"on", L"at", L"the", L"that",
+                     L"this", L"him", L"it", L"them", L"my target", L"target", L"attack", L"around", L"go", L"and"});
+            Cmd c{};
+            c.Type = pincer ? C_Pincer : C_Flank;
+            c.A = pincer ? sides : side;
+            c.B = dist;
+            out.push_back(c);
+            g_parsedName = named ? found : std::wstring();
+            static const wchar_t *kSide[] = {L"the nearer side", L"your left", L"your right", L"its left", L"its right", L"behind it"};
+            std::wstring d = pincer ? std::wstring(L"pincer ") + (named ? L"the " + found : std::wstring(L"your target")) +
+                                          (sides ? L" (its flanks)" : L" (your left / right)")
+                                    : std::wstring(L"flank ") + (named ? L"the " + found : std::wstring(L"your target")) + L", " + kSide[side];
+            if (dist)
+                d += L", stand-off " + std::to_wstring(dist) + L" m";
+            add(d.c_str());
+            return true;
+        }
+    }
+
     // ---- SUPPORT (2026-10-13, user): "Two, go give Four some support" / "help Sledge out" / "back up three" - a
     // support word plus ANOTHER lancemate (number or pilot name) somewhere after the addressee.
     {
@@ -5161,6 +5378,20 @@ std::wstring     g_lastOrdersName; // bug sweep 17 (2026-10-18): the unit name t
 // What a correction corrects (2026-10-07d). A status request is not an order to correct: it leaves the
 // last orders (and who got them) as they were - "two, move 200 north" / "lance, status" / "actually, 300".
 // bug sweep 17: name = the unit named in those orders (g_parsedName is overwritten by every later probe parse).
+// PINCER (2026-10-20): each NAMED lancemate's place in the pincer (C: 0 left, 1 right, 2 rear, ...) and how many were named
+// (D) - "Two, three, pincer the Atlas". The whole lance ("lance, pincer it") is counted in Execute instead.
+void PincerSlot(Cmd &c, const std::vector<int> &who, int slot)
+{
+    if (c.Type != C_Pincer || slot == 0)
+        return;
+    std::vector<int> u;
+    for (int x : who)
+        if (x && std::find(u.begin(), u.end(), x) == u.end())
+            u.push_back(x);
+    c.C = (int)(std::find(u.begin(), u.end(), slot) - u.begin());
+    c.D = (int)u.size();
+}
+
 void RememberOrders(const std::vector<int> &who, const std::vector<Cmd> &cmds, const std::wstring &name)
 {
     g_lastWho = who; // "then hold position" with no callsign still goes to whoever was just spoken to
@@ -5401,7 +5632,7 @@ void HandleSpoken(const std::wstring &text, bool pttHeld, double secs)
                                              L"push", L"run", L"support", L"assist", L"help", L"follow", L"focus", L"hit",
                                              L"destroy", L"bug", L"break", L"pull", L"make", L"find", L"climb", L"head", L"knock",
                                              L"keep", L"back", L"fall", L"form", L"stay", L"wait", L"weapons", L"open", L"cease",
-                                             L"report", L"status", L"flank", L"charge", L"rush", L"shoot", L"fire", L"clear",
+                                             L"report", L"status", L"flank", L"pincer", L"charge", L"rush", L"shoot", L"fire", L"clear",
                                              L"retreat", L"regroup", L"rally", L"indirect", L"target", L"strip", L"aim", L"legs",
                                              L"light", L"lasers", L"missiles", L"run", L"alpha", L"come", L"advanced", L"moved",
                                              L"hit", L"deal", L"wipe", L"smash", L"neutralize", L"eliminate", L"cover", L"sound",
@@ -6003,8 +6234,10 @@ void HandleSpoken(const std::wstring &text, bool pttHeld, double secs)
                     a.C.Who = slot;
                     a.Correct = !asWell; // "as well": a plain order, nothing of theirs is replaced
                     a.Partial = partial;
-                    if (parsed[k].Type == C_AttackNamed || parsed[k].Type == C_Shadow || parsed[k].Type == C_CalledShot)
+                    if (parsed[k].Type == C_AttackNamed || parsed[k].Type == C_Shadow || parsed[k].Type == C_CalledShot ||
+                        parsed[k].Type == C_Flank || parsed[k].Type == C_Pincer)
                         a.QueryName = g_parsedName;
+                    PincerSlot(a.C, cwho, slot);
                     g_actions.push_back(a);
                 }
             }
@@ -6171,8 +6404,9 @@ void HandleSpoken(const std::wstring &text, bool pttHeld, double secs)
                     SpokenAction a;
                     a.C = pc;
                     a.C.Who = slot;
-                    if (pc.Type == C_AttackNamed || pc.Type == C_Shadow || pc.Type == C_CalledShot)
+                    if (pc.Type == C_AttackNamed || pc.Type == C_Shadow || pc.Type == C_CalledShot || pc.Type == C_Flank || pc.Type == C_Pincer)
                         a.QueryName = g_parsedName;
+                    PincerSlot(a.C, who, slot);
                     g_actions.push_back(a);
                 }
             }
@@ -13118,7 +13352,7 @@ static bool RtJudge(const std::wstring &ex, const std::vector<SpokenAction> &act
                                            L"heat", L"weapons only", L"hold weapons", L"all weapons", L"reset fire", L"fall back move",
                                            L"status", L"attack nearest", L"fire settings", L"attack named", L"shadow", L"nav",
                                            L"vision", L"called shot", L"support", L"hill",
-                                           L"attack class"};
+                                           L"attack class", L"flank", L"pincer"};
             const int ct = (int)a.C.Type;
             g = std::wstring(ct >= 0 && ct < (int)(sizeof(kCn) / sizeof(kCn[0])) ? kCn[ct] : L"order ?") + L" -> " +
                 (a.C.Who ? std::to_wstring(a.C.Who) : std::wstring(L"lance")) + (a.QueryName.empty() ? L"" : L" (" + a.QueryName + L")") +
@@ -14220,7 +14454,8 @@ namespace // the IN-GAME TEST: in the same (anonymous) namespace as Line(), whic
 // "lockwait <s>" (until you have a lock). Lines starting with # are notes. Checks, space separated, all must hold:
 //   order=<move|beeline|attack|follow|fallback|hold|indirect|lock>  each slot got that order (LSE_OrderReceived;
 //                              2026-10-13: move = fire on the move, beeline / run = the straight TCO_Move)
-//   noorder                    no order reached any lancemate          mode=<hold|fallback|indirect|attack|movefire|free>
+//   noorder                    no order reached any lancemate          mode=<hold|fallback|indirect|attack|movefire|flank|pincer|free>
+//   (order=flank / order=pincer: TCO_Flank, 2026-10-20)
 //   disc=<0..2> heat=<0..3> mask=<0..255>   the slot's fire settings  target=lock | target=<name> | class=<0..3>
 //   move=<metres>@<my|your|c><degrees>   the slot's new move point, measured from you (my: 0 = where you look,
 //                              c = compass) or from the lancemate (your: 0 = where it faces); +-20 deg, +-30 %
@@ -14405,6 +14640,7 @@ static int GtOrderCode(const std::wstring &n)
     if (n == L"indirect") return VanillaExportBlock::TCO_IndirectCover;
     if (n == L"lock") return VanillaExportBlock::TCO_LockTarget;
     if (n == L"attackmy") return VanillaExportBlock::TCO_AttackMyTarget;
+    if (n == L"flank" || n == L"pincer") return VanillaExportBlock::TCO_Flank; // 2026-10-20 (lancecontrol-75)
     return -1;
 }
 static std::vector<std::wstring> GtSplit(const std::wstring &s, wchar_t sep)
@@ -14573,7 +14809,8 @@ static int GtCheckOne(const std::wstring &tok, bool final, std::wstring &why)
         {
             const uint16_t f = haveLs ? ls.Mode : 0;
             const uint16_t want = v == L"hold" ? LSM_Hold : v == L"fallback" ? LSM_FallBack : v == L"indirect" ? LSM_IndirectHold
-                                : v == L"attack" ? LSM_AttackOrder : v == L"movefire" ? LSM_MoveFire : 0; // movefire: 2026-10-13
+                                : v == L"attack" ? LSM_AttackOrder : v == L"movefire" ? LSM_MoveFire
+                                : v == L"flank" ? LSM_Flank : v == L"pincer" ? LSM_Pincer : 0; // movefire: 2026-10-13; flank / pincer: 2026-10-20
             sn.ModeSeen |= f; // 2026-10-16: latched - a mode that came and went between polls still passes ('free': live)
             r = want ? ((sn.ModeSeen & want) != 0) : ((f & (LSM_Hold | LSM_FallBack | LSM_IndirectHold)) == 0);
             swprintf_s(b, L"slot %d mode 0x%03x (seen 0x%03x)", s, (unsigned)f, (unsigned)sn.ModeSeen);

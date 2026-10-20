@@ -49,6 +49,7 @@
 #include "VoiceIntentShared.h" // 2026-10-19: V-LNC - VoiceCommand's orders in words, open questions, who talks
 #include "LanceStatusShared.h" // 2026-10-12: TacOps "lock this enemy" - who detects what (read only)
 #include "GlobalSettings.h" // 2026-10-07f: the lance switches live in GlobalSettings.ini (all windows)
+#include "HudProfiles.h"   // 2026-10-20: edit mode SAVE AS - a new profile (config + shortcut)
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -589,6 +590,10 @@ class HUDDisplay
     int selectedSlot = -1;
     bool capturingKey = false;
     bool editingText = false;
+    // 2026-10-20 (user): SAVE AS - typing a new profile's name (editingText is on too, so the keyboard is ours).
+    bool namingProfile = false;
+    std::wstring savedAsName;   // the last profile saved as - OPEN IT starts it
+    ULONGLONG savedAsMs = 0;
     std::wstring textBuffer;
     // Tracks what we've actually told Windows, so registration can be made idempotent
     // instead of relying on every Begin/End pair to balance by hand.
@@ -3030,7 +3035,11 @@ class HUDDisplay
                        TMI_NavMark, TMI_NavUnmark,
                        // 2026-10-12: on an enemy - your lock on it (only when the lance detects it), and the called-shot
                        // submenu; TMI_Cs0 + part = TCO_CalledShot's part (0 cancel, 1 legs ... 11 head)
-                       TMI_Lock, TMI_CalledShotMenu, TMI_Cs0, TMI_CsLast = TMI_Cs0 + 11 };
+                       TMI_Lock, TMI_CalledShotMenu, TMI_Cs0, TMI_CsLast = TMI_Cs0 + 11,
+                       // 2026-10-20 (lancecontrol-75): flank it (each selected lancemate, the nearer side) / a pincer on it
+                       // (the selected lancemates: your left, your right, behind it)
+                       TMI_Flank, TMI_Pincer };
+    static bool TacFlItem(int i) { return i == TMI_Flank || i == TMI_Pincer; }
     static bool TacCsItem(int i) { return i >= TMI_Cs0 && i <= TMI_CsLast; }
     static bool TacTorsoItem(int i) { return i >= TMI_TorsoAngle && i <= TMI_TorsoRelease; }
     static bool TacFsItem(int i) { return i >= TMI_FsFree && i <= TMI_FsReset; }
@@ -3294,7 +3303,10 @@ class HUDDisplay
             w.PointMatters = pm;
             w.NamesTarget = nt;
         };
-        if (md & LSM_IndirectHold)
+        if (md & LSM_Flank) // 2026-10-20 (lancecontrol-75): swinging round its attack order's unit, firing
+            set((md & LSM_Pincer) ? L"PINCER - FLANKING {T}" : L"FLANKING {T}", (md & LSM_Pincer) ? L"PINCER {T}" : L"FLANKING {T}",
+                0xFF7A5A, false, true);
+        else if (md & LSM_IndirectHold)
             set(farAway ? L"MOVING - INDIRECT FIRE, THEN HOLD" : L"HOLD POSITION - INDIRECT FIRE ONLY",
                 farAway ? L"TO HOLD - INDIRECT" : L"HOLD - INDIRECT", 0xFFC04D, true, false);
         else if (md & LSM_Hold) // lancecontrol-10: a hold at a point walks there fire-on-the-move (FomOn), then holds
@@ -4869,6 +4881,8 @@ class HUDDisplay
             tacMenuDisabled[tacMenuCount] = TacDetected(tacMenuLoc, tacMenuActorLo, tacMenuActorHi, tacMenuSpotter) != 1;
             tacMenuItems[tacMenuCount++] = TMI_Lock;
             tacMenuItems[tacMenuCount++] = TMI_CalledShotMenu;
+            tacMenuItems[tacMenuCount++] = TMI_Flank;  // 2026-10-20 (lancecontrol-75)
+            tacMenuItems[tacMenuCount++] = TMI_Pincer;
             tacMenuItems[tacMenuCount++] = TMI_TorsoTarget;
             tacMenuItems[tacMenuCount++] = TMI_TorsoRelease;
         }
@@ -5111,6 +5125,30 @@ class HUDDisplay
                 ++sent;
             }
             TacSay(sent ? std::wstring(TacCsText(part)) : std::wstring(L"Select a lancemate first"));
+            return;
+        }
+        if (TacFlItem(item)) // 2026-10-20 (lancecontrol-75): FLANK / PINCER on that unit, each selected lancemate
+        {
+            float ex[3];
+            const float *tl = TacTargetLoc(tacMenuTarget, tacMenuLoc, ex); // the exact unit (lc61)
+            int mates[8], m = 0;
+            for (int i = 0; i < n; ++i)
+                if (!tacLocal[slots[i]].IsPlayer) // your own mech is yours to drive
+                    mates[m++] = slots[i];
+            if (!m || (item == TMI_Pincer && m < 2))
+            {
+                TacSay(!m ? L"Select a lancemate first" : L"A pincer needs two lancemates selected");
+                return;
+            }
+            static const uint8_t kPin[3] = {1, 2, 5}; // your left, your right, behind it (then left / right again)
+            for (int i = 0; i < m; ++i)
+            {
+                tacLocal[mates[i]].WpCount = 0;
+                tacLocal[mates[i]].Order = TOS_Attack;
+                const uint8_t side = item == TMI_Pincer ? (uint8_t)(i < 3 ? kPin[i] : 1 + (i % 2)) | 8 : 0;
+                TacSend(VanillaExportBlock::TCO_Flank, mates[i], tl, side, 0);
+            }
+            TacSay(item == TMI_Pincer ? L"Pincer - left, right" + std::wstring(m > 2 ? L", rear" : L"") : std::wstring(L"Flank it"));
             return;
         }
         if (item == TMI_Focus)
@@ -5641,7 +5679,8 @@ class HUDDisplay
                 tacMenuRect[i] = D2D1::RectF(mx, my + ih * (float)i, mx + mw, my + ih * (float)(i + 1));
                 SetUiColor(0x05080A, 0.93f);
                 d2dCtx->FillRectangle(tacMenuRect[i], uiBrush.Get());
-                const bool cs = TacCsItem(tacMenuItems[i]) || tacMenuItems[i] == TMI_Lock || tacMenuItems[i] == TMI_CalledShotMenu;
+                const bool cs = TacCsItem(tacMenuItems[i]) || tacMenuItems[i] == TMI_Lock || tacMenuItems[i] == TMI_CalledShotMenu ||
+                                TacFlItem(tacMenuItems[i]);
                 const bool enemy = (tacMenuItems[i] >= TMI_Attack && tacMenuItems[i] <= TMI_Engage) || cs;
                 const bool off = tacMenuDisabled[i]; // greyed out (2026-10-12)
                 const bool torso = TacTorsoItem(tacMenuItems[i]); // yours, not the lance's: its own colour
@@ -5654,6 +5693,8 @@ class HUDDisplay
                                                                                : std::wstring(L"Remove Nav ") + VhudNavName(tacMenuNav))
                                         : tacMenuItems[i] == TMI_Lock ? std::wstring(off ? L"Lock (not detected)" : L"Lock this enemy")
                                         : tacMenuItems[i] == TMI_CalledShotMenu ? std::wstring(L"Called shot >")
+                                        : tacMenuItems[i] == TMI_Flank ? std::wstring(L"Flank it")
+                                        : tacMenuItems[i] == TMI_Pincer ? std::wstring(L"Pincer it (2+ selected)")
                                         : TacCsItem(tacMenuItems[i]) ? std::wstring(TacCsText(tacMenuItems[i] - TMI_Cs0))
                                               : std::wstring();
                 DrawPanelText(mx + 8.0f, tacMenuRect[i].top + 2.0f, mw - 12.0f, (fire || nav || cs) ? ft.c_str() : kItem[tacMenuItems[i]],
@@ -6412,7 +6453,7 @@ class HUDDisplay
 
             // While a legend is being typed, show the live buffer on the button itself -
             // the panel alone gave no feedback on the thing actually being labelled.
-            const bool liveEdit = editingText && (int)i == selectedSlot;
+            const bool liveEdit = editingText && !namingProfile && (int)i == selectedSlot;
             const std::wstring &shown = liveEdit ? textBuffer : m.Text;
 
             // A button with no legend is an empty outline: enough to see it and click it,
@@ -6507,7 +6548,8 @@ class HUDDisplay
     {
         MH_None = 0, MH_Label, MH_Page, MH_Text, MH_Rebind, MH_ClearKey, MH_Borderless, MH_OvOpM, MH_OvOpP,
         MH_OvSizeM, MH_OvSizeP, MH_OvReset, MH_NorthUp, MH_SpanM, MH_SpanP, MH_Layer, MH_Smooth, MH_RangeM,
-        MH_RangeP, MH_VolM, MH_VolP, MH_Save, MH_Revert, MH_Undo, MH_ResetBezel, MH_InsaneAllies, MH_MuteVoices
+        MH_RangeP, MH_VolM, MH_VolP, MH_Save, MH_Revert, MH_Undo, MH_ResetBezel, MH_InsaneAllies, MH_MuteVoices,
+        MH_SaveAs, MH_OpenNew // 2026-10-20: a new profile from these settings, and starting it
     };
     struct MenuHit
     {
@@ -6819,7 +6861,10 @@ class HUDDisplay
             menuExitArmed = false;
         std::wstring status;
         UINT32 sc = UiCol::Warn;
-        if (menuExitArmed)
+        if (namingProfile)
+            status = L"New profile name: " + textBuffer + L"_   Enter / SAVE AS saves it, Esc cancels" +
+                     (ovOn ? L" (Alt+Tab here to type)" : L"");
+        else if (menuExitArmed)
             status = L"Unsaved changes - press Esc again to discard them, or click SAVE";
         else if (ovOn && (editingText || capturingKey))
             status = L"Typing needs this window focused: Alt+Tab to it (the game has the keyboard)";
@@ -6838,6 +6883,11 @@ class HUDDisplay
         wchar_t ub[32];
         swprintf_s(ub, L"UNDO (%d)", (int)menuUndo.size());
         MenuButton(198.0f, 668.0f, 96.0f, 26.0f, ub, MH_Undo, 0, false, !menuUndo.empty());
+        // 2026-10-20 (user): these settings as a NEW profile - its own config file and a "HUDDisplay - <name>" shortcut
+        MenuButton(302.0f, 668.0f, 110.0f, 26.0f, namingProfile ? L"SAVE IT" : L"SAVE AS...", MH_SaveAs, 0, namingProfile, true,
+                   namingProfile ? UiCol::Warn : UiCol::PanelEdge);
+        if (!savedAsName.empty() && now - savedAsMs < 30000)
+            MenuButton(420.0f, 668.0f, 102.0f, 26.0f, L"OPEN IT", MH_OpenNew, 0, false, !hudprof::Running(savedAsName));
         const bool armed = resetArmed && (now - resetArmedAt) < 4000;
         if (!armed)
             resetArmed = false;
@@ -6899,9 +6949,10 @@ class HUDDisplay
         LabelSlot &s = labels[selectedSlot];
         float ry = y + 26.0f;
         MenuText(x, ry, 64.0f, 22.0f, L"Legend", UiCol::PanelDim);
-        const std::wstring shown = editingText ? (textBuffer + L"_") : (s.Text.empty() ? L"(blank)" : s.Text);
-        MenuText(x + 66.0f, ry, 170.0f, 22.0f, shown.c_str(), editingText ? UiCol::Warn : UiCol::PanelText);
-        MenuButton(x + w - 90.0f, ry, 90.0f, 22.0f, editingText ? L"DONE" : L"EDIT", MH_Text, 0, editingText);
+        const bool legendEdit = editingText && !namingProfile;
+        const std::wstring shown = legendEdit ? (textBuffer + L"_") : (s.Text.empty() ? L"(blank)" : s.Text);
+        MenuText(x + 66.0f, ry, 170.0f, 22.0f, shown.c_str(), legendEdit ? UiCol::Warn : UiCol::PanelText);
+        MenuButton(x + w - 90.0f, ry, 90.0f, 22.0f, legendEdit ? L"DONE" : L"EDIT", MH_Text, 0, legendEdit);
         ry += 26.0f;
         MenuText(x, ry, 64.0f, 22.0f, L"Key", UiCol::PanelDim);
         MenuText(x + 66.0f, ry, 150.0f, 22.0f, capturingKey ? L"press a key..." : KeyName(s.Key, s.Mods).c_str(),
@@ -7022,8 +7073,8 @@ class HUDDisplay
             return false;
         const int id = h->Id, arg = h->Arg;
         // Anything but the text / key buttons themselves ends a pending edit first.
-        if (id != MH_Text && editingText)
-            EndTextEdit(true);
+        if (id != MH_Text && id != MH_SaveAs && editingText)
+            EndTextEdit(true); // (a profile name is cancelled by this - only Enter / SAVE IT saves it)
         if (id != MH_Rebind && capturingKey)
             EndKeyCapture(false, 0);
         if (id != MH_ResetBezel)
@@ -7112,6 +7163,21 @@ class HUDDisplay
             break;
         case MH_Save:
             MenuSave();
+            break;
+        case MH_SaveAs:
+            if (namingProfile)
+                EndProfileName(true);
+            else
+                BeginProfileName();
+            break;
+        case MH_OpenNew:
+            if (!savedAsName.empty() && !hudprof::Running(savedAsName))
+            {
+                if (hudprof::Launch(hudprof::ExeDir(), savedAsName, hwnd))
+                    MenuSay((L"Starting profile " + savedAsName).c_str());
+                else
+                    MenuSay(L"Could not start HUDDisplay.exe");
+            }
             break;
         case MH_Revert:
             MenuRevert();
@@ -7536,8 +7602,71 @@ class HUDDisplay
         SyncHotkeys();
     }
 
+    // ---- SAVE AS (2026-10-20, user): these settings as a new profile ----
+    void BeginProfileName()
+    {
+        if (capturingKey)
+            EndKeyCapture(false, 0);
+        if (editingText)
+            EndTextEdit(true);
+        namingProfile = true;
+        editingText = true; // the keyboard is ours (hotkeys down) while the name is typed
+        textBuffer.clear();
+        editStatus.clear();
+        SyncHotkeys();
+    }
+
+    void EndProfileName(bool commit)
+    {
+        const std::wstring name = hudprof::Clean(textBuffer);
+        namingProfile = false;
+        editingText = false;
+        textBuffer.clear();
+        SyncHotkeys();
+        if (!commit)
+        {
+            MenuSay(L"Save as cancelled");
+            return;
+        }
+        if (name.empty())
+        {
+            MenuSay(L"Type a name first - letters, digits, - and _");
+            return;
+        }
+        const std::wstring dir = hudprof::ExeDir();
+        if (hudprof::SameName(name, WidenLabel(profileName)) || hudprof::Exists(hudprof::CfgPath(dir, name)))
+        {
+            MenuSay((L"A profile called " + name + L" already exists - pick another name").c_str());
+            return;
+        }
+        // The current settings (as they stand in the menu, saved or not) go into the new profile's file;
+        // this window stays on its own profile, which is left as it was.
+        MenuTrack();
+        const std::string keep = profileName;
+        profileName = std::string(name.begin(), name.end()); // ASCII after Clean
+        WriteConfig();
+        profileName = keep;
+        if (!hudprof::Exists(hudprof::CfgPath(dir, name)))
+        {
+            MenuSay(L"Could not write the new profile's config file");
+            return;
+        }
+        const bool lnk = hudprof::MakeShortcut(dir, name);
+        savedAsName = name;
+        savedAsMs = GetTickCount64();
+        MenuSay((L"Saved as profile " + name + (lnk ? L" + shortcut \"HUDDisplay - " + name + L"\" - OPEN IT starts it"
+                                                    : std::wstring(L" (the shortcut could not be made) - OPEN IT starts it")))
+                    .c_str());
+        Log("Saved as new profile '" + std::string(name.begin(), name.end()) + "'" + (lnk ? " + shortcut" : " (no shortcut)"));
+    }
+
     void EndTextEdit(bool commit)
     {
+        if (namingProfile) // any other way out of the name box cancels it
+        {
+            EndProfileName(false);
+            return;
+        }
         if (commit && selectedSlot >= 0 && selectedSlot < (int)labels.size())
         {
             labels[selectedSlot].Text = textBuffer;
@@ -7555,6 +7684,19 @@ class HUDDisplay
 
     void TextEditChar(wchar_t c)
     {
+        if (namingProfile)
+        {
+            if (c == L'\b')
+            {
+                if (!textBuffer.empty())
+                    textBuffer.pop_back();
+            }
+            else if (c == L' ' && textBuffer.size() < hudprof::kMaxName)
+                textBuffer.push_back(L'_');
+            else if (hudprof::NameChar(c) && textBuffer.size() < hudprof::kMaxName)
+                textBuffer.push_back(c);
+            return;
+        }
         if (c == L'\b')
         {
             if (!textBuffer.empty())
@@ -7965,7 +8107,12 @@ class HUDDisplay
                     if (wParam == VK_ESCAPE)
                         display->EndTextEdit(false);
                     else if (wParam == VK_RETURN)
-                        display->EndTextEdit(true);
+                    {
+                        if (display->namingProfile)
+                            display->EndProfileName(true);
+                        else
+                            display->EndTextEdit(true);
+                    }
                     return 0;
                 }
 

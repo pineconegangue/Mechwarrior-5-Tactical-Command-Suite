@@ -144,7 +144,7 @@ class LanceControl final : public PluginExtension
     void on_initialize() override
     {
         LogInfo("%s %s initialized", Name, Version);
-        LogInfo("BUILD=lancecontrol-74 (QUIET SLOW LINES 2026-10-18: one-by-one slow: lines only with [debug] verbose_log, hitches over 50 ms always; 60 s summary kept) (lancecontrol-73 QUIET LOG 2026-10-18: periodic profiles / status lines only with GlobalSettings [debug] verbose_log = 1) (lancecontrol-72 BUG SWEEP 2 2026-10-18: the render thread looks for the cockpit only while its tick is not reaching us; the death latch is trusted only while the unit keeps being checked; class caches and pending moves reset per mission) (lancecontrol-71 BUG SWEEP 2026-10-17: the cached death test checks the unit and its living component still exist (the lc63 crash path); a held indirect-fire order gets its suppression back after a takeover) (lancecontrol-70 MOVE JOB HOOK KEPT PER FUNCTION: Ally_GoToLocationJob K2_BeginWorker hooked once per function for the session, its own original found by the running function, loop guard - audit item B, no behaviour change, 2026-10-17) (lancecontrol-69 (RANGE ALWAYS CM: a weapon's rated range is WeaponRanges.MaxRange (StatsData.Range / .Ranges) in cm - the under-20000-is-metres rule read a 195 m MG as 19.5 km, 2026-10-17) (lancecontrol-68 (LOOP GUARD on the cockpit tick chain, 2026-10-17) (lancecontrol-67 BATTLE ARMOUR 15 M RULE OFF: the lance fires on Elementals even beside a friendly, user 2026-10-17) (lancecontrol-66 TEAM FALLBACK REMOVED: a suit's team reads as \"TeamID\" like every unit - shipping names ignore case, 2026-10-17) (lancecontrol-65 LIVE LIST CHECKED: Live()'s cached pawns are checked against the object table on every use - a freed pawn is dropped, 2026-10-17) (lancecontrol-64 BATTLE ARMOUR: KelClanElemental suits are combat units (targets, friendly-fire checks, the lance feed); no plugin shot at a suit within 15 m of a friendly (cockpit attacks), 2026-10-17) (lancecontrol-63 LIVING COMPONENT CHECKED TOO: LivingDead checks the mech's living component against the object table before reading it - a component freed during the mech's death crashed the game, 2026-10-16) (lancecontrol-62 OBJECT CHECK: IsDeadUnit first asks the engine's object table whether the pointer is still that object - a pawn freed inside Live()'s 250 ms cache crashed the game in ArcBlocked's friendly check, 2026-10-16; self-tested on your pawn, off if that fails) (lancecontrol-61 EXACT UNIT FOR NAMED ORDERS: TCO_Attack / TCO_CalledShot accept the unit's address (Loc[2] == kTacLocActor, as the patch-through lock) - named attacks and called shots go to that unit, not the one nearest its point (a dropship turret beside a King Crab), 2026-10-16) (lancecontrol-60 ATTACK ORDER 10 S: an attack order (and its called shot) ends when no lancemate has seen the unit for 10 s - lost or never seen - was 1 s, user 2026-10-16) (lancecontrol-59 NO STALE AIM POINTS: the insane-allies aim spread keeps the part and side, not the aim hint pointer, and looks the hint up again on the target every call; vanilla called shots check the cached hint is still on the target every frame - a destroyed part's hint was freed while cached and crashed the game, 2026-10-16) (lancecontrol-58 HOLD FIRE KEPT ACROSS ORDERS: ending an indirect hold no longer hands firing back to the game while insane allies / fire settings hold it) (lancecontrol-57 NAV NAMES NATO: Alpha, Bravo, Charlie... - Kilo and Victor never given out) (lancecontrol-56 Greek skips, retired) (lancecontrol-55 NAV LETTERS REUSED: a nav point takes the lowest letter not in use - VoiceCommand's hill candidates are marked and unmarked) (lancecontrol-54 ADVANCE (FALL BACK TO ME) RETIRED: AfbTick and the order removed; TCO_AdvanceFallback is ignored (slot reserved)) (lancecontrol-53 FORMAT CALLS TRUNCATE: every swprintf_s / sprintf_s into a fixed buffer is _snwprintf_s / _snprintf_s with _TRUNCATE - a long game name was a fast-fail crash (insane allies target-switch note, why[64], UTL_VOL_Industrial_Military_SphericalTank_C)) (lancecontrol-52b world gravity from WorldSettings / PhysicsSettings) (lancecontrol-52 WEAPON STATS FROM StatsData + LEAD AND DROP: kinds / speed / burst / beam duration / GravityScale read from the game's StatsData again; projectile weapons aim at our own aim mark (TargetPoint pool) at the lead point raised by the drop over the flight time) (lc51 LSTICK WEAPONS + ENEMIES CACHED: ammo bins listed once per lancemate, ammo / melee / weapon name decided per class, AmmoForWeapon re-run every 64th; enemy pass: cached dead test, team offset, relation-table layout per class) (lc50 IATICK CACHED READS: dead / controller / target / lock / hold flag / team / position by the lc46 cached readers, heat component found once per class and pass, weapon fire checks timed) (lc49 IATICK FRIENDS PER PASS: the friendly-in-line checks of one insane-allies pass share one friendly list (team by cached offset, dead and position by the lc46 reads), the old check re-run every 32nd and differences logged; profile splits setup into map / setup / read) (lc48 IATICK PROFILE: insane allies firing timed by part - setup, target check, lock-on volleys, direct fire, with arc traces / friendly-in-line / reach checks inside - 'iatick profile' / 'iatick content' every 30 s; measuring only) (lc47 LSTICK SLOT FROM THE SCAN: each lancemate line takes dead / position / controller / visible list for the unit and its target from the pass's scan, heat component found once per unit, cached offsets; old calls re-run every 64th run per slot and differences logged as lstick slot check) (lc46 LSTICK SCAN: positions from the unattached root component's RelativeLocation, checked against the game's call per class (5 checks, then every 64th; off by > 0.5 m -> the call for that class); VTOL per class; dead test with cached lookups) (lc45 shared scan reads only hostiles and our lance - friendly / teamless pawns skipped before any costly read) (lc44 LSTICK SHARED SCAN: one snapshot of every pawn per lance-status pass, used by the hostile list and every lancemate's seen-by; property offsets cached per class) (lc43 LSTICK PROFILE: the lance status feed timed by section + what it published, 'lstick profile' / 'lstick content' every 30 s - the A/B baseline) (lc42 VANILLA CALLED SHOTS MOVE THE TARGET'S AI AIM POINT onto the called part, so the game's own per-shot aim lands there too; called shots on non-mechs refused; NO-aim-hint lookup every 2 s, logged once) (lc41 DEBUG PROBES from GlobalSettings [debug], both off by default: ai_probe = the AI probe + ai_probe.log (was always on), aim_probe = the aim-writer probe - what puts the game's aim back during a vanilla called shot) (lc40 lock broadcast: only *Changed / *Acquired delegates, never Destroyed / Lost) (lc39 LOCK -> V-TGT: a patched-through lock also fires the target-changed multicast delegates of your mech / its TargetTracking / its MechViewComponent, so the game's and MWVR's target panels follow it - 'lock probe: delegate' lines; AUTOPILOT: a partial navmesh path ending where you stand is ignored - it went straight instead of arriving at once; PATCH-THROUGH ONLY ON A DETECTED UNIT: a lock (TCO_LockTarget, voice or the TacOps map) is refused unless you or a lancemate detects that unit - line of sight, sensors or relayed; VANILLA CALLED SHOTS: the game's own firing aims at the called part, every frame, only while its target is the called unit; attack orders end when the target dies or no lancemate has seen it for 1 s, then attack the nearest enemy in sight; a move off walkable ground goes to the farthest walkable point on the way; CALLED SHOT ORDERS - TCO_CalledShot: a part on one unit (your lock or named), plus the attack; the ini probe no longer aims; old point spread removed; direct fire aims at the centre torso by default; insane aim spread = a random part per slot, held 2 s; called shot aims direct fire at the aim hint component of the part; per-chassis aim-hint map, clavicle = side torso, part condition read fixed; CALLED SHOT PROBE, the game's own MWAimHintComponents first, bones as fallback: [lance] called_shot_probe = off | legs | arms | ct | head | sides; ally mode [lance] insane_allies 0 vanilla / 1 insane (aim spread, 70 %% hits) / 2 impossibly strong (exact aim); insane allies aim spread: each volley a scattered hit around the middle of the target (normal spread, [lance] ally_scatter) or a near miss (chance 1 - [lance] ally_hit, default 70 %% hits), on the target's AI aim component, lead on top - they cockpitted nearly everything; nav points: the game's nav point is a TravelLocationObjectiveMarker_C (the -26 log; the others are Comms / Blank markers) - taken by that name, distance from you logged; nav points: GetObjectiveMarkerWidget returns the marker's CLASS, so a nav point is told by that class's own name (contains \"Nav\"), not by the class of the class; nav points diagnosed: what the objective indicators are and why each is or is not taken as a nav point, logged when it changes; slow-step timer: any of our per-frame steps over 2 ms logged as 'slow:'; death: the game's own MWLivingActorComponent.bIsDead, latched - a legged mech is dead too; nav points: the mission's nav markers + your TacOps marks, named Nav Alpha / Beta..., published in VHUD v19; nav probe removed; flanked event: an enemy within 100 m in a lancemate's rear arc; new missions told by the game's own mission events (MWSquad OnMissionStart / OnMissionCleanup), the old guesses only if those cannot be hooked; the lance switches read straight from GlobalSettings.ini (found via GlobalSettingsPath.txt) - no app needs to run; the game's voices muted only when that setting says so; mission probe: the game's mission start / cleanup events and your mech's level, logged; lance numbers wait up to 5 s for the game's lance panel; pilot names converted safely; takeover: switching into a lance mech keeps the lance (no new-mission reset); lance numbers and pilot names from the game's V-comms panel (status feed v6); the game's lancemate voice lines muted (HUDDisplay option); probes out; lock probe dumps and blueprint hooks removed - the patch-through lock works; lance status v5: who fires rounds at you, traced by each round's Instigator; lock probe 2: the exact unit; CurrentTarget + selected flag written, target-changed handlers called; units feed: who sees it from each lancemate's own line-of-sight flag, lance / player radar flags, a 10 s summary; lock probe: patch-through lock + target-function dump; units feed: who targets you, which lancemates see it; hold at a point: walks there firing on the move; status feed v4: every hostile position, any range, and whether the lance sees it; exit crash fixed: the [rdt] probe touched a destroyed unit - now off and guarded; attacker in the took-damage event, player-hit / enemy-on-player events; probe: RecentDamageTarget on every unit, [rdt] lines in ai_probe.log; UAV launched event; world clock in the world key, status feed v3: ammo bins by type, recovers from an old block; lance status v2: condition at any distance; sticky lance numbers, attack releases hold fire; world key: controller + level + mech; split from vanillahud-102: TacOps, lance map, insane allies, fire settings, arc and range checks, status feed)");
+        LogInfo("BUILD=lancecontrol-83 (MELEE SWING 2026-10-20: the plugin swings punches / melee weapons when the target is in reach - centre to the nearest point of its collision box within the weapon's own MaxRange - and within 30 deg of the torso; the game's check only for busy / cooldown; no toggle, hold fire applies; no rush in) (lancecontrol-82 (WEAPON CATEGORIES BY WEAPONTYPE 2026-10-20: fire-settings category from the WeaponType tag - flamers in laser slots, ACs in MG slots, SRMediumRifle fixed; plasma / TSEMP = PPC; name rules only without a known tag) (lancecontrol-81 (TAG PAINTS 2026-10-20: TAG known by its WeaponType tag (Weapon.Energy.TAG*), held on the target past the heat / friendly / 3 deg gates - 10 deg allowed) (lancecontrol-80 (FLANK ANGLE FIRST 2026-10-20: no backstep; in position / held at any distance - opening up only while still swinging round, for mechs that can twist past 90) (lancecontrol-79 (FLANK HOLD BOX 2026-10-20: in position only from 0.8x the stand-off out (mechs that can open up) - it flip-flopped hold / swing at 0.53x) (lancecontrol-78 (FLANK HELD 2026-10-20: in position the lancemate holds its side and swings round again when it moves - no attack hand-over, no 120 s limit; far-out hook at least 75 deg off the line) (lancecontrol-77 (HOOK SWINGS EARLY 2026-10-20: well outside the ring (1.5x stand-off) the hook keeps at least 60 deg off the line to the target) (lancecontrol-76 (FLANK STEADIER 2026-10-20: the side bearing smoothed (~4 s), in position only after 3 checks in a row, auto side fixed at the order; WIDE HOOK: outside the ring with 30+ deg to go, straight for a point on the side at 1.3x the stand-off) (lancecontrol-75 (FLANK / PINCER 2026-10-20: TCO_Flank - a lancemate swings round a unit firing on the move, its legs kept inside its own torso twist limit, stand-off = most damage in range or ordered, then attacks it) (lancecontrol-74 (QUIET SLOW LINES 2026-10-18: one-by-one slow: lines only with [debug] verbose_log, hitches over 50 ms always; 60 s summary kept) (lancecontrol-73 QUIET LOG 2026-10-18: periodic profiles / status lines only with GlobalSettings [debug] verbose_log = 1) (lancecontrol-72 BUG SWEEP 2 2026-10-18: the render thread looks for the cockpit only while its tick is not reaching us; the death latch is trusted only while the unit keeps being checked; class caches and pending moves reset per mission) (lancecontrol-71 BUG SWEEP 2026-10-17: the cached death test checks the unit and its living component still exist (the lc63 crash path); a held indirect-fire order gets its suppression back after a takeover) (lancecontrol-70 MOVE JOB HOOK KEPT PER FUNCTION: Ally_GoToLocationJob K2_BeginWorker hooked once per function for the session, its own original found by the running function, loop guard - audit item B, no behaviour change, 2026-10-17) (lancecontrol-69 (RANGE ALWAYS CM: a weapon's rated range is WeaponRanges.MaxRange (StatsData.Range / .Ranges) in cm - the under-20000-is-metres rule read a 195 m MG as 19.5 km, 2026-10-17) (lancecontrol-68 (LOOP GUARD on the cockpit tick chain, 2026-10-17) (lancecontrol-67 BATTLE ARMOUR 15 M RULE OFF: the lance fires on Elementals even beside a friendly, user 2026-10-17) (lancecontrol-66 TEAM FALLBACK REMOVED: a suit's team reads as \"TeamID\" like every unit - shipping names ignore case, 2026-10-17) (lancecontrol-65 LIVE LIST CHECKED: Live()'s cached pawns are checked against the object table on every use - a freed pawn is dropped, 2026-10-17) (lancecontrol-64 BATTLE ARMOUR: KelClanElemental suits are combat units (targets, friendly-fire checks, the lance feed); no plugin shot at a suit within 15 m of a friendly (cockpit attacks), 2026-10-17) (lancecontrol-63 LIVING COMPONENT CHECKED TOO: LivingDead checks the mech's living component against the object table before reading it - a component freed during the mech's death crashed the game, 2026-10-16) (lancecontrol-62 OBJECT CHECK: IsDeadUnit first asks the engine's object table whether the pointer is still that object - a pawn freed inside Live()'s 250 ms cache crashed the game in ArcBlocked's friendly check, 2026-10-16; self-tested on your pawn, off if that fails) (lancecontrol-61 EXACT UNIT FOR NAMED ORDERS: TCO_Attack / TCO_CalledShot accept the unit's address (Loc[2] == kTacLocActor, as the patch-through lock) - named attacks and called shots go to that unit, not the one nearest its point (a dropship turret beside a King Crab), 2026-10-16) (lancecontrol-60 ATTACK ORDER 10 S: an attack order (and its called shot) ends when no lancemate has seen the unit for 10 s - lost or never seen - was 1 s, user 2026-10-16) (lancecontrol-59 NO STALE AIM POINTS: the insane-allies aim spread keeps the part and side, not the aim hint pointer, and looks the hint up again on the target every call; vanilla called shots check the cached hint is still on the target every frame - a destroyed part's hint was freed while cached and crashed the game, 2026-10-16) (lancecontrol-58 HOLD FIRE KEPT ACROSS ORDERS: ending an indirect hold no longer hands firing back to the game while insane allies / fire settings hold it) (lancecontrol-57 NAV NAMES NATO: Alpha, Bravo, Charlie... - Kilo and Victor never given out) (lancecontrol-56 Greek skips, retired) (lancecontrol-55 NAV LETTERS REUSED: a nav point takes the lowest letter not in use - VoiceCommand's hill candidates are marked and unmarked) (lancecontrol-54 ADVANCE (FALL BACK TO ME) RETIRED: AfbTick and the order removed; TCO_AdvanceFallback is ignored (slot reserved)) (lancecontrol-53 FORMAT CALLS TRUNCATE: every swprintf_s / sprintf_s into a fixed buffer is _snwprintf_s / _snprintf_s with _TRUNCATE - a long game name was a fast-fail crash (insane allies target-switch note, why[64], UTL_VOL_Industrial_Military_SphericalTank_C)) (lancecontrol-52b world gravity from WorldSettings / PhysicsSettings) (lancecontrol-52 WEAPON STATS FROM StatsData + LEAD AND DROP: kinds / speed / burst / beam duration / GravityScale read from the game's StatsData again; projectile weapons aim at our own aim mark (TargetPoint pool) at the lead point raised by the drop over the flight time) (lc51 LSTICK WEAPONS + ENEMIES CACHED: ammo bins listed once per lancemate, ammo / melee / weapon name decided per class, AmmoForWeapon re-run every 64th; enemy pass: cached dead test, team offset, relation-table layout per class) (lc50 IATICK CACHED READS: dead / controller / target / lock / hold flag / team / position by the lc46 cached readers, heat component found once per class and pass, weapon fire checks timed) (lc49 IATICK FRIENDS PER PASS: the friendly-in-line checks of one insane-allies pass share one friendly list (team by cached offset, dead and position by the lc46 reads), the old check re-run every 32nd and differences logged; profile splits setup into map / setup / read) (lc48 IATICK PROFILE: insane allies firing timed by part - setup, target check, lock-on volleys, direct fire, with arc traces / friendly-in-line / reach checks inside - 'iatick profile' / 'iatick content' every 30 s; measuring only) (lc47 LSTICK SLOT FROM THE SCAN: each lancemate line takes dead / position / controller / visible list for the unit and its target from the pass's scan, heat component found once per unit, cached offsets; old calls re-run every 64th run per slot and differences logged as lstick slot check) (lc46 LSTICK SCAN: positions from the unattached root component's RelativeLocation, checked against the game's call per class (5 checks, then every 64th; off by > 0.5 m -> the call for that class); VTOL per class; dead test with cached lookups) (lc45 shared scan reads only hostiles and our lance - friendly / teamless pawns skipped before any costly read) (lc44 LSTICK SHARED SCAN: one snapshot of every pawn per lance-status pass, used by the hostile list and every lancemate's seen-by; property offsets cached per class) (lc43 LSTICK PROFILE: the lance status feed timed by section + what it published, 'lstick profile' / 'lstick content' every 30 s - the A/B baseline) (lc42 VANILLA CALLED SHOTS MOVE THE TARGET'S AI AIM POINT onto the called part, so the game's own per-shot aim lands there too; called shots on non-mechs refused; NO-aim-hint lookup every 2 s, logged once) (lc41 DEBUG PROBES from GlobalSettings [debug], both off by default: ai_probe = the AI probe + ai_probe.log (was always on), aim_probe = the aim-writer probe - what puts the game's aim back during a vanilla called shot) (lc40 lock broadcast: only *Changed / *Acquired delegates, never Destroyed / Lost) (lc39 LOCK -> V-TGT: a patched-through lock also fires the target-changed multicast delegates of your mech / its TargetTracking / its MechViewComponent, so the game's and MWVR's target panels follow it - 'lock probe: delegate' lines; AUTOPILOT: a partial navmesh path ending where you stand is ignored - it went straight instead of arriving at once; PATCH-THROUGH ONLY ON A DETECTED UNIT: a lock (TCO_LockTarget, voice or the TacOps map) is refused unless you or a lancemate detects that unit - line of sight, sensors or relayed; VANILLA CALLED SHOTS: the game's own firing aims at the called part, every frame, only while its target is the called unit; attack orders end when the target dies or no lancemate has seen it for 1 s, then attack the nearest enemy in sight; a move off walkable ground goes to the farthest walkable point on the way; CALLED SHOT ORDERS - TCO_CalledShot: a part on one unit (your lock or named), plus the attack; the ini probe no longer aims; old point spread removed; direct fire aims at the centre torso by default; insane aim spread = a random part per slot, held 2 s; called shot aims direct fire at the aim hint component of the part; per-chassis aim-hint map, clavicle = side torso, part condition read fixed; CALLED SHOT PROBE, the game's own MWAimHintComponents first, bones as fallback: [lance] called_shot_probe = off | legs | arms | ct | head | sides; ally mode [lance] insane_allies 0 vanilla / 1 insane (aim spread, 70 %% hits) / 2 impossibly strong (exact aim); insane allies aim spread: each volley a scattered hit around the middle of the target (normal spread, [lance] ally_scatter) or a near miss (chance 1 - [lance] ally_hit, default 70 %% hits), on the target's AI aim component, lead on top - they cockpitted nearly everything; nav points: the game's nav point is a TravelLocationObjectiveMarker_C (the -26 log; the others are Comms / Blank markers) - taken by that name, distance from you logged; nav points: GetObjectiveMarkerWidget returns the marker's CLASS, so a nav point is told by that class's own name (contains \"Nav\"), not by the class of the class; nav points diagnosed: what the objective indicators are and why each is or is not taken as a nav point, logged when it changes; slow-step timer: any of our per-frame steps over 2 ms logged as 'slow:'; death: the game's own MWLivingActorComponent.bIsDead, latched - a legged mech is dead too; nav points: the mission's nav markers + your TacOps marks, named Nav Alpha / Beta..., published in VHUD v19; nav probe removed; flanked event: an enemy within 100 m in a lancemate's rear arc; new missions told by the game's own mission events (MWSquad OnMissionStart / OnMissionCleanup), the old guesses only if those cannot be hooked; the lance switches read straight from GlobalSettings.ini (found via GlobalSettingsPath.txt) - no app needs to run; the game's voices muted only when that setting says so; mission probe: the game's mission start / cleanup events and your mech's level, logged; lance numbers wait up to 5 s for the game's lance panel; pilot names converted safely; takeover: switching into a lance mech keeps the lance (no new-mission reset); lance numbers and pilot names from the game's V-comms panel (status feed v6); the game's lancemate voice lines muted (HUDDisplay option); probes out; lock probe dumps and blueprint hooks removed - the patch-through lock works; lance status v5: who fires rounds at you, traced by each round's Instigator; lock probe 2: the exact unit; CurrentTarget + selected flag written, target-changed handlers called; units feed: who sees it from each lancemate's own line-of-sight flag, lance / player radar flags, a 10 s summary; lock probe: patch-through lock + target-function dump; units feed: who targets you, which lancemates see it; hold at a point: walks there firing on the move; status feed v4: every hostile position, any range, and whether the lance sees it; exit crash fixed: the [rdt] probe touched a destroyed unit - now off and guarded; attacker in the took-damage event, player-hit / enemy-on-player events; probe: RecentDamageTarget on every unit, [rdt] lines in ai_probe.log; UAV launched event; world clock in the world key, status feed v3: ammo bins by type, recovers from an old block; lance status v2: condition at any distance; sticky lance numbers, attack releases hold fire; world key: controller + level + mech; split from vanillahud-102: TacOps, lance map, insane allies, fire settings, arc and range checks, status feed)");
         EnsureBlock();
     }
 
@@ -473,6 +473,7 @@ class LanceControl final : public PluginExtension
         GoToPendTick(pc); SlowT.Step("GoToPendTick");     // moves whose job never (re)started: put on the point directly
         ApTick(pc); SlowT.Step("ApTick");           // the player's autopilot, corner by corner
         LTraceTick(pc); SlowT.Step("LTraceTick");       // discovery: lancemates walking a TacOps move
+        FlankTick(pc); SlowT.Step("FlankTick");      // lancecontrol-75: flank / pincer - the next leg round the target
         FomTick(pc); SlowT.Step("FomTick");          // fire on the move: hold the combat flag off (after LTraceTick's refresh)
         HoldTick(pc); SlowT.Step("HoldTick");         // hold here: Wait on at the point, and a target to shoot
         IcTick(pc); SlowT.Step("IcTick");           // indirect fire from cover: hide when any enemy sees it
@@ -514,6 +515,7 @@ class LanceControl final : public PluginExtension
             IaTgt[s] = nullptr;
             IaOkMs[s] = IaNoneLogMs[s] = 0;
             IcWpns[s].clear();
+            IcMelee[s].clear(); // lancecontrol-83
             IcWpnList[s].clear();
             IcDirFiring[s].clear();
             IcDirFires[s] = IcOwnFires[s] = IcDirectShots[s] = 0;
@@ -1371,9 +1373,12 @@ class LanceControl final : public PluginExtension
             AtkTgt[s] = nullptr;
             AtkByLock[s] = false;
             AtkSinceMs[s] = AtkSeenMs[s] = AtkLockLostMs[s] = 0;
+            FlOn[s] = FlBack[s] = FlGoalSet[s] = false; // lancecontrol-75: flanks are per mission
+            FlTgt[s] = nullptr;
             CsOrdPart[s] = 0; // lancecontrol-32: called shots are per mission
             CsOrdTgt[s] = nullptr;
             IcWpns[s].clear();
+            IcMelee[s].clear(); // lancecontrol-83
             IcWpnList[s].clear();
             IcDirFiring[s].clear();
             IcDirFires[s] = IcOwnFires[s] = IcDirectShots[s] = 0;
@@ -3789,6 +3794,10 @@ class LanceControl final : public PluginExtension
 
     bool TacPost(API::UObject *pc, const VanillaExportBlock::TacCmd &c)
     {
+        if (!FlInternal && c.Slot >= 1 && c.Slot <= VanillaExportBlock::kTacMaxMembers && FlOn[c.Slot])
+            FlEnd(c.Slot, "replaced by a new order"); // lancecontrol-75: any other order ends a flank
+        if (c.Order == VanillaExportBlock::TCO_Flank && c.Slot >= 1 && c.Slot <= VanillaExportBlock::kTacMaxMembers)
+            return FlankOrder(pc, c); // lancecontrol-75: FLANK / PINCER
         if (c.Order == VanillaExportBlock::TCO_CalledShot && c.Slot >= 1 && c.Slot <= VanillaExportBlock::kTacMaxMembers)
             return CsOrder(pc, c); // lancecontrol-32: CALLED SHOTS
         if (c.Order > VanillaExportBlock::TCO_LockTarget || c.Slot < 1 || c.Slot > VanillaExportBlock::kTacMaxMembers)
@@ -3961,7 +3970,8 @@ class LanceControl final : public PluginExtension
         std::memcpy(ctx + TacCTarget, &target, sizeof(void *));
         std::memcpy(ctx + TacCLoc, loc, sizeof(loc));
         pc->process_event(TacPostFn, f);
-        LsEmit(LSE_OrderReceived, c.Slot, target, (float)c.Order);
+        if (!FlInternal) // lancecontrol-75: a flank's own legs and its closing attack are not announced
+            LsEmit(LSE_OrderReceived, c.Slot, target, (float)c.Order);
         // An attack order's unit: insane allies' timer does not switch away from it (vanillahud-87).
         AtkTgt[c.Slot] = order == VanillaExportBlock::TCO_Attack ? target : nullptr;
         AtkByLock[c.Slot] = myTarget; // lancecontrol-34: through your lock - ends when your lock leaves it
@@ -5234,6 +5244,536 @@ class LanceControl final : public PluginExtension
     }
 
     // =====================================================================================
+    // =====================================================================================
+    // FLANK / PINCER (lancecontrol-75, user 2026-10-20). TCO_Flank: the lancemate swings round a unit to one side
+    // of it and attacks it from there, FIRING THE WHOLE WAY - the fire-on-the-move walk (FomOn), its next leg
+    // re-aimed every 2.5 s (or sooner when the leg is nearly walked). The legs are steered so the target is never
+    // more than the mech's own torso twist limit (TorsoStats yaw bounds - 5 deg; the chassis range 60..150, see
+    // out\torso_twist_limits.tsv) off its heading, so the torso - and the guns - can stay on it all the way:
+    //   far out   -> heading 50 deg off the line to the target, easing to the limit (or 90) at the stand-off ring;
+    //   on it     -> 90 deg (circling), or the limit when that is less (a gentle inward drift);
+    //   too close -> past 90 deg, up to the limit, while it swings round: mechs that can twist past 90 open up as they
+    //   go (walking forward, torso back on the target). lancecontrol-80 (user 2026-10-20): the ANGLE comes first - it
+    //   never backs off (the low-twist backstep is gone) and, once on its side, holds there at whatever distance.
+    // Stand-off: the distance (150-600 m) where the most of its working, loaded weapons' damage per second is in
+    // range (full to OptimalRange, falling to nothing at MaxRange; lock-on missiles nothing under 180 m), worked
+    // out again every 5 s - or the order's own (Pad[1] >> 1, x 10 m). Side (Pad[0] & 7): 0 the nearer of the
+    // target's own sides, 1 / 2 OUR left / right (the line you -> target), 3 / 4 ITS left / right (its facing), 5
+    // behind it. Pad[0] & 8: one arm of a pincer (shown as such). Pad[1] & 1: the target is your lock.
+    // In position (within 12 deg of the side, near the ring) -> an attack order on the unit. Ends on any other
+    // order, the target's death or loss (10 s unseen -> the attack order, which handles that), 120 s (-> attack),
+    // or a new mission. Only the order itself is announced (LSE_OrderReceived, Value TCO_Flank); its legs are not.
+    // =====================================================================================
+    bool          FlOn[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    API::UObject *FlTgt[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    uint8_t       FlSide[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    bool          FlPincer[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    float         FlStandCm[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    bool          FlStandOrd[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    float         FlMinCm[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    float         FlLimit[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    int           FlDir[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    bool          FlBack[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    ULONGLONG     FlStartMs[VanillaExportBlock::kTacMaxMembers + 1] = {}, FlNextMs[VanillaExportBlock::kTacMaxMembers + 1] = {},
+                  FlStandMs[VanillaExportBlock::kTacMaxMembers + 1] = {}, FlLegMs[VanillaExportBlock::kTacMaxMembers + 1] = {},
+                  FlSeenMs[VanillaExportBlock::kTacMaxMembers + 1] = {}, FlBackMs[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    int           FlLegs[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    // lancecontrol-76 (user, 2026-10-20 test): the side's bearing is SMOOTHED (a target looking / turning about must not
+    // swing the goal - the test saw 9 -> 58 deg to go in 3 s) and "in position" must hold for 3 checks in a row (2.25 s)
+    // - an incidental line-up as the target turns does not count. Auto side is chosen once, at the order.
+    float         FlGoalX[VanillaExportBlock::kTacMaxMembers + 1] = {}, FlGoalY[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    bool          FlGoalSet[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    int           FlInPos[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    // lancecontrol-78 (user, 2026-10-20): IN POSITION IS HELD - no hand-over to an attack order. It stands and fights on
+    // its side; when the side moves (you strafe, the target turns or walks) out of the box it swings round again. Until
+    // another order, the target's death, or 10 s with nobody seeing it. No 120 s limit.
+    bool          FlHeld[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    bool          FlInternal = false; // TacPost is running one of the flank's own orders (no announcement, no end)
+
+    struct FlWpnStat
+    {
+        float Opt = 0.0f, Max = 0.0f, Dps = 0.0f;
+        bool  Lock = false, Ok = false;
+    };
+    std::vector<std::pair<API::UClass *, FlWpnStat>> FlWpnCache;
+
+    static float FlWrap(float a)
+    {
+        while (a > 180.0f)
+            a -= 360.0f;
+        while (a < -180.0f)
+            a += 360.0f;
+        return a;
+    }
+
+    FlWpnStat FlWeapon(API::UObject *w)
+    {
+        for (auto &e : FlWpnCache)
+            if (e.first == w->get_class())
+                return e.second;
+        FlWpnStat st;
+        API::UObject *da = nullptr;
+        if (FindFn(w, L"GetWeaponDataAsset"))
+            CallRet(w, L"GetWeaponDataAsset", {}, &da, sizeof(da));
+        if (da && da->get_class())
+        {
+            uint8_t *b = reinterpret_cast<uint8_t *>(da);
+            API::UStruct *cls = da->get_class();
+            std::wstring path;
+            float opt = 0.0f, mx = 0.0f, dmg = 0.0f, n = 0.0f, t = 0.0f, cd = 0.0f;
+            WsFindNum(cls, b, 0, L"OptimalRange", opt);
+            WsFindRange(cls, b, 0, false, mx, path);
+            WsFindNum(cls, b, 0, L"Damage", dmg);
+            WsFindNum(cls, b, 0, L"NumberOfProjectiles", n);
+            WsFindNum(cls, b, 0, L"NumberOfTimesToFire", t);
+            WsFindNum(cls, b, 0, L"Cooldown", cd);
+            if (mx > 0.0f)
+            {
+                st.Max = mx;
+                st.Opt = (opt > 0.0f && opt <= mx) ? opt : mx;
+                st.Dps = (dmg > 0.0f ? dmg : 1.0f) * (std::max)(1.0f, n) * (std::max)(1.0f, t) / (std::max)(cd, 0.5f);
+                const wchar_t *how = L"";
+                st.Lock = IcLockWeapon(w, how) == 1;
+                st.Ok = true;
+            }
+            TacLog("tacops: flank - %ls: optimal %.0f m, max %.0f m, %.1f dmg/s%s", ClassName(w).c_str(), st.Opt * 0.01f,
+                   st.Max * 0.01f, st.Dps, st.Lock ? " (lock-on)" : "");
+        }
+        FlWpnCache.push_back({w->get_class(), st});
+        return st;
+    }
+
+    // The stand-off: where the most of its working, loaded weapons' damage per second is in range.
+    float FlStandoffCm(int s, API::UObject *pawn, float &minCm)
+    {
+        std::vector<FlWpnStat> ws;
+        float all = 0.0f, lockDps = 0.0f;
+        for (auto &e : LsWpns[s])
+        {
+            if (!e.W || e.State == LSW_Destroyed || e.State == LSW_NoAmmo || !OnMech(pawn, e.W))
+                continue;
+            const FlWpnStat st = FlWeapon(e.W);
+            if (!st.Ok)
+                continue;
+            ws.push_back(st);
+            all += st.Dps;
+            if (st.Lock)
+                lockDps += st.Dps;
+        }
+        minCm = (all > 0.0f && lockDps > all * 0.5f) ? 18000.0f : 10000.0f;
+        if (ws.empty())
+            return 30000.0f;
+        float best = -1.0f, bestD = 30000.0f;
+        for (float d = 15000.0f; d <= 60001.0f; d += 2500.0f)
+        {
+            float sc = 0.0f;
+            for (auto &w : ws)
+            {
+                float f = d <= w.Opt ? 1.0f : (d >= w.Max ? 0.0f : 1.0f - (d - w.Opt) / (w.Max - w.Opt));
+                if (w.Lock && d < 18000.0f)
+                    f = 0.0f;
+                sc += w.Dps * f;
+            }
+            if (sc > best * 1.02f)
+            {
+                best = sc;
+                bestD = d;
+            }
+            else if (sc >= best * 0.98f)
+                bestD = d; // as good, further out: further out
+        }
+        return (std::max)(bestD, minCm + 3000.0f);
+    }
+
+    // The side's bearing FROM the target, world yaw (deg). UE yaw: +90 is to the right of yaw 0.
+    float FlGoalYaw(int s, const float *T, float tyaw, bool haveYaw, const float *you, float theta)
+    {
+        const int side = FlSide[s];
+        float line = tyaw; // the line you -> target
+        const float ux = T[0] - you[0], uy = T[1] - you[1];
+        if (ux * ux + uy * uy > 100.0f * 100.0f)
+            line = std::atan2(uy, ux) * 57.2957795f;
+        if (side == 1 || side == 2)
+            return FlWrap(line + (side == 1 ? -90.0f : 90.0f));
+        const float face = haveYaw ? tyaw : line;
+        if (side == 3 || side == 4)
+            return FlWrap(face + (side == 3 ? -90.0f : 90.0f));
+        if (side == 5)
+            return FlWrap(face + 180.0f);
+        const float a = FlWrap(face - 90.0f), b = FlWrap(face + 90.0f); // auto: the nearer of its own sides
+        return std::fabs(FlWrap(a - theta)) <= std::fabs(FlWrap(b - theta)) ? a : b;
+    }
+
+    // The next leg's end: from P, at `beta` deg off the line to the target, `len` cm, on walkable ground - else
+    // turned toward the target in 10 deg steps (still inside the twist limit), then shortened.
+    bool FlLegPoint(API::UObject *pc, const float *P, float theta, int dir, float beta, float len, float *out)
+    {
+        for (int k = 0; k < 6; ++k)
+        {
+            const float bt = beta - k * 10.0f;
+            if (bt < 0.0f)
+                break;
+            const float h = (theta + 180.0f - dir * bt) / 57.2957795f;
+            for (float L = len; L >= 2000.0f; L *= 0.6f)
+            {
+                float p[3] = {P[0] + std::cos(h) * L, P[1] + std::sin(h) * L, P[2]};
+                if (TacOnNavMesh(pc, p, true))
+                {
+                    std::memcpy(out, p, sizeof(p));
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    void FlEnd(int s, const char *why)
+    {
+        if (!FlOn[s])
+            return;
+        FlOn[s] = false;
+        if (FlBack[s])
+        {
+            FomRelease(TacUnit[s], s, "flank over");
+            FomFallback[s] = false;
+            FlBack[s] = false;
+        }
+        if (AtkTgt[s] == FlTgt[s] && !AtkSinceMs[s])
+            AtkTgt[s] = nullptr;
+        TacLog("tacops: flank, slot %d - ended (%s) after %.1f s, %d leg(s)", s, why, (GetTickCount64() - FlStartMs[s]) / 1000.0f, FlLegs[s]);
+    }
+
+    // In position (or out of time): an attack order on the unit itself.
+    void FlAttack(API::UObject *pc, int s, const char *why)
+    {
+        API::UObject *tgt = FlTgt[s];
+        FlEnd(s, why);
+        if (!tgt || !IsLive(tgt) || IsDeadUnit(tgt))
+            return;
+        VanillaExportBlock::TacCmd a = {};
+        a.Order = VanillaExportBlock::TCO_Attack;
+        a.Slot = (uint8_t)s;
+        const uint64_t v = (uint64_t)(uintptr_t)tgt;
+        const uint32_t lo = (uint32_t)v, hi = (uint32_t)(v >> 32);
+        std::memcpy(&a.Loc[0], &lo, 4);
+        std::memcpy(&a.Loc[1], &hi, 4);
+        a.Loc[2] = VanillaExportBlock::kTacLocActor;
+        FlInternal = true;
+        const bool ok = TacPost(pc, a);
+        FlInternal = false;
+        TacLog("tacops: flank, slot %d - %s: attacking %ls (%s)", s, why, ClassName(tgt).c_str(), ok ? "sent" : "FAILED");
+    }
+
+    // Its next leg as the fire-on-the-move point.
+    void FlSendLeg(API::UObject *ctl, int s, const float *W, ULONGLONG now)
+    {
+        if (!FomOn[s])
+        {
+            FomOn[s] = true;
+            FomFallback[s] = false;
+            FomStartMs[s] = now;
+            FomForced[s] = 0;
+            FomTarget[s] = nullptr;
+            FomFace[s] = nullptr;
+            FomFaceMs[s] = FomLostMs[s] = FomLosNextMs[s] = 0;
+            FomKept[s] = FomResent[s] = 0;
+        }
+        std::memcpy(FomGoal[s], W, sizeof(float) * 3);
+        std::memcpy(TacLastMove[s], W, sizeof(float) * 3);
+        FomProgMs[s] = 0;
+        uint8_t res = 0xFF;
+        SendToPoint(ctl, W, &res);
+        FlLegMs[s] = now;
+        ++FlLegs[s];
+    }
+
+    bool FlankOrder(API::UObject *pc, const VanillaExportBlock::TacCmd &c)
+    {
+        const int s = c.Slot;
+        const ULONGLONG now = GetTickCount64();
+        TacRefreshMap(pc, now);
+        API::UObject *me = API::get()->get_local_pawn(0);
+        API::UObject *pawn = TacUnit[s];
+        if (!pawn || !IsLive(pawn) || IsDeadUnit(pawn))
+        {
+            TacLog("tacops: flank for slot %d - no lancemate in that slot", s);
+            return false;
+        }
+        API::UObject *tgt = nullptr;
+        if (c.Pad[1] & 1)
+        {
+            API::UObject *tt = me ? ObjProp(me, L"TargetTracking") : nullptr;
+            tgt = tt ? ObjProp(tt, L"CurrentTarget") : nullptr;
+        }
+        else
+            tgt = TacTargetOf(pc, c.Loc);
+        if (!tgt || tgt == pawn || !IsLive(tgt) || IsDeadUnit(tgt))
+        {
+            TacLog("tacops: flank for slot %d - no target (%s)", s, (c.Pad[1] & 1) ? "you have no lock" : "nothing there");
+            return false;
+        }
+        float P[3] = {}, T[3] = {}, rot[3] = {}, you[3] = {};
+        if (!CallRet(pawn, L"K2_GetActorLocation", {}, P, sizeof(P)) || !CallRet(tgt, L"K2_GetActorLocation", {}, T, sizeof(T)))
+            return false;
+        const bool haveYaw = CallRet(tgt, L"K2_GetActorRotation", {}, rot, sizeof(rot));
+        if (!me || !CallRet(me, L"K2_GetActorLocation", {}, you, sizeof(you)))
+            std::memcpy(you, P, sizeof(you));
+        if (FlOn[s])
+            FlEnd(s, "replaced by a new flank");
+        FlTgt[s] = tgt;
+        FlSide[s] = (uint8_t)(c.Pad[0] & 7);
+        FlPincer[s] = (c.Pad[0] & 8) != 0;
+        float mn = 10000.0f;
+        const float autoCm = FlStandoffCm(s, pawn, mn);
+        const int said = (c.Pad[1] >> 1) & 0x7F;
+        FlStandOrd[s] = said > 0;
+        FlMinCm[s] = mn;
+        FlStandCm[s] = said > 0 ? (std::max)(said * 1000.0f, mn) : autoCm;
+        float tw[2] = {};
+        TwistBoundsV tb = {};
+        float lim = 90.0f;
+        const bool twOk = TorsoRead(pawn, tw, &tb);
+        if (twOk)
+            lim = tb.YawUnbound ? 180.0f : (std::min)(std::fabs(tb.Low[0]), std::fabs(tb.High[0]));
+        if (!(lim > 10.0f && lim <= 360.0f))
+            lim = 90.0f;
+        FlLimit[s] = (std::min)(lim, 175.0f) - 5.0f;
+        const float dx = P[0] - T[0], dy = P[1] - T[1];
+        const float theta = std::atan2(dy, dx) * 57.2957795f, r = std::sqrt(dx * dx + dy * dy);
+        const float goal = FlGoalYaw(s, T, rot[1], haveYaw, you, theta);
+        if (FlSide[s] == 0) // auto: the nearer of its own sides NOW - kept for the whole flank (lancecontrol-76)
+            FlSide[s] = (haveYaw && FlWrap(goal - rot[1]) < 0.0f) ? 3 : 4;
+        FlDir[s] = FlWrap(goal - theta) >= 0.0f ? 1 : -1;
+        FlGoalX[s] = std::cos(goal / 57.2957795f);
+        FlGoalY[s] = std::sin(goal / 57.2957795f);
+        FlGoalSet[s] = true;
+        FlInPos[s] = 0;
+        FlHeld[s] = false;
+        // The first leg goes out as an ordinary fire-on-the-move order (ending whatever it was doing).
+        float W[3] = {};
+        if (!FlLegPoint(pc, P, theta, FlDir[s], (std::min)(FlLimit[s], 60.0f), (std::max)(3000.0f, (std::min)(r * 0.35f, 8000.0f)), W))
+        {
+            TacLog("tacops: flank for slot %d - no walkable ground to swing round on", s);
+            return false;
+        }
+        VanillaExportBlock::TacCmd m = c;
+        m.Order = VanillaExportBlock::TCO_MoveFire;
+        m.Pad[0] = m.Pad[1] = 0;
+        std::memcpy(m.Loc, W, sizeof(W));
+        FlInternal = true;
+        const bool ok = TacPost(pc, m);
+        FlInternal = false;
+        if (!ok)
+            return false;
+        FlOn[s] = true;
+        FlBack[s] = false;
+        FlStartMs[s] = FlStandMs[s] = FlLegMs[s] = FlSeenMs[s] = now;
+        FlNextMs[s] = now + 750;
+        FlLegs[s] = 1;
+        AtkTgt[s] = tgt; // insane allies: no switching away while it lives
+        AtkSinceMs[s] = 0; // (the attack-order watch stays off - the flank watches its own target)
+        if (API::UObject *ctl = ObjProp(pawn, L"Controller"))
+            if (ResolveSetTarget(ctl))
+            {
+                API::UObject *aw = nullptr;
+                bool kn = false;
+                GiveTarget(ctl, pawn, tgt, aw, kn);
+            }
+        LsEmit(LSE_OrderReceived, s, tgt, (float)VanillaExportBlock::TCO_Flank);
+        static const char *kSide[8] = {"the nearer side", "your left", "your right", "its left", "its right", "behind it", "?", "?"};
+        TacLog("tacops: FLANK%s -> slot %d on %ls, %s; %.0f m away, stand-off %.0f m (%s), hard minimum %.0f m, twist limit %.0f "
+               "(usable %.0f%s), going %s",
+               FlPincer[s] ? " (PINCER)" : "", s, ClassName(tgt).c_str(), kSide[FlSide[s]], r * 0.01f, FlStandCm[s] * 0.01f,
+               said > 0 ? "ordered" : "most damage in range", FlMinCm[s] * 0.01f, lim, FlLimit[s], twOk ? "" : ", NOT READ - 90 assumed",
+               FlDir[s] > 0 ? "anticlockwise" : "clockwise");
+        return true;
+    }
+
+    void FlankTick(API::UObject *pc)
+    {
+        bool any = false;
+        for (int s = 1; s <= VanillaExportBlock::kTacMaxMembers; ++s)
+            any |= FlOn[s];
+        if (!any)
+            return;
+        const ULONGLONG now = GetTickCount64();
+        TacRefreshMap(pc, now);
+        API::UObject *me = API::get()->get_local_pawn(0);
+        for (int s = 1; s <= VanillaExportBlock::kTacMaxMembers; ++s)
+        {
+            if (!FlOn[s] || now < FlNextMs[s])
+                continue;
+            FlNextMs[s] = now + 750;
+            API::UObject *pawn = TacUnit[s], *tgt = FlTgt[s];
+            if (!pawn || !IsLive(pawn) || IsDeadUnit(pawn))
+            {
+                FlEnd(s, "lancemate gone");
+                continue;
+            }
+            if (!tgt || !IsLive(tgt) || IsDeadUnit(tgt))
+            {
+                FlEnd(s, "target down or gone");
+                continue;
+            }
+            API::UObject *ctl = ObjProp(pawn, L"Controller");
+            if (!ctl)
+                continue;
+            // Lost: no lancemate has seen it for 10 s - the attack order takes over (it drops it the same way).
+            bool seen = false;
+            for (int k = 1; k <= VanillaExportBlock::kTacMaxMembers && !seen; ++k)
+                if (TacUnit[k] && IsLive(TacUnit[k]) && !IsDeadUnit(TacUnit[k]))
+                    if (API::UObject *c2 = ObjProp(TacUnit[k], L"Controller"))
+                        seen = AiGameVisible(c2, tgt) == 1;
+            if (seen)
+                FlSeenMs[s] = now;
+            else if (now - FlSeenMs[s] > 10000)
+            {
+                FlAttack(pc, s, "lost sight of it for 10 s");
+                continue;
+            }
+            float P[3] = {}, T[3] = {}, rot[3] = {}, you[3] = {};
+            if (!CallRet(pawn, L"K2_GetActorLocation", {}, P, sizeof(P)) || !CallRet(tgt, L"K2_GetActorLocation", {}, T, sizeof(T)))
+                continue;
+            const bool haveYaw = CallRet(tgt, L"K2_GetActorRotation", {}, rot, sizeof(rot));
+            if (!me || !CallRet(me, L"K2_GetActorLocation", {}, you, sizeof(you)))
+                std::memcpy(you, P, sizeof(you));
+            if (!FlStandOrd[s] && now - FlStandMs[s] > 5000)
+            {
+                FlStandMs[s] = now;
+                float mn = FlMinCm[s];
+                const float d = FlStandoffCm(s, pawn, mn);
+                if (std::fabs(d - FlStandCm[s]) > 2000.0f)
+                    TacLog("tacops: flank, slot %d - stand-off now %.0f m (was %.0f m)", s, d * 0.01f, FlStandCm[s] * 0.01f);
+                FlStandCm[s] = d;
+                FlMinCm[s] = mn;
+            }
+            // Its target, kept: the flank's unit is its combat target the whole way.
+            if (ObjProp(ctl, L"CombatTarget") != tgt && ResolveSetTarget(ctl))
+            {
+                API::UObject *aw = nullptr;
+                bool kn = false;
+                GiveTarget(ctl, pawn, tgt, aw, kn);
+            }
+            AtkTgt[s] = tgt;
+            const float dx = P[0] - T[0], dy = P[1] - T[1];
+            const float r = std::sqrt(dx * dx + dy * dy), theta = std::atan2(dy, dx) * 57.2957795f;
+            // the side's bearing, smoothed (time constant ~4 s at one check per 750 ms)
+            float goal = FlGoalYaw(s, T, rot[1], haveYaw, you, theta);
+            {
+                const float gx = std::cos(goal / 57.2957795f), gy = std::sin(goal / 57.2957795f);
+                if (!FlGoalSet[s])
+                {
+                    FlGoalX[s] = gx;
+                    FlGoalY[s] = gy;
+                    FlGoalSet[s] = true;
+                }
+                else
+                {
+                    FlGoalX[s] += (gx - FlGoalX[s]) * 0.18f;
+                    FlGoalY[s] += (gy - FlGoalY[s]) * 0.18f;
+                }
+                if (FlGoalX[s] * FlGoalX[s] + FlGoalY[s] * FlGoalY[s] > 1e-4f)
+                    goal = std::atan2(FlGoalY[s], FlGoalX[s]) * 57.2957795f;
+            }
+            float rem = FlWrap(goal - theta) * FlDir[s];
+            if (rem < -20.0f) // overshot, or the target turned: the short way round from here
+            {
+                FlDir[s] = FlWrap(goal - theta) >= 0.0f ? 1 : -1;
+                rem = std::fabs(FlWrap(goal - theta));
+            }
+            rem = std::fabs(rem);
+            const float rd = FlStandCm[s], lim = FlLimit[s], ratio = r / (std::max)(rd, 1000.0f);
+            // In position - or as far round as a mech that cannot open up will get without crowding it.
+            // ... for 3 checks in a row (2.25 s): a line-up while the target turns about is not "in position"
+            // lancecontrol-80 (user, 2026-10-20): THE ANGLE COMES FIRST, NOT THE DISTANCE - in position at any distance inside
+            // 1.3x the stand-off; nobody backs off or opens up to keep the stand-off (the stand-off only shapes the approach).
+            const bool inBox = (rem < 12.0f && ratio < 1.3f) || (lim < 91.0f && ratio < 0.75f && rem < 45.0f);
+            if (FlHeld[s])
+            {
+                // Holding its side: stays while the side is still about here (wider box - no fidgeting), else swings again.
+                const bool stillOk = (rem < 25.0f && ratio < 1.45f) || (lim < 91.0f && ratio < 0.85f && rem < 55.0f);
+                if (stillOk)
+                    continue;
+                FlHeld[s] = false;
+                FlInPos[s] = 0;
+                FlLegMs[s] = 0; // a fresh leg now
+                TacLog("tacops: flank, slot %d +%.1fs - the side moved (%.0f deg to go, %.0f m out): swinging round again", s,
+                       (now - FlStartMs[s]) / 1000.0f, rem, r * 0.01f);
+            }
+            else if (inBox)
+            {
+                if (++FlInPos[s] >= 3)
+                {
+                    FlHeld[s] = true;
+                    uint8_t res = 0xFF;
+                    SendToPoint(ctl, P, &res); // stop here and fight (fire on the move stays armed, its point = here)
+                    std::memcpy(FomGoal[s], P, sizeof(P));
+                    std::memcpy(TacLastMove[s], P, sizeof(P));
+                    TacLog("tacops: flank, slot %d +%.1fs - in position (%.0f deg off the side, %.0f m out): holding it", s,
+                           (now - FlStartMs[s]) / 1000.0f, rem, r * 0.01f);
+                    continue;
+                }
+            }
+            else
+                FlInPos[s] = 0;
+            // (lancecontrol-80: the emergency backstep for low-twist mechs is gone - no backing up; LRM boats are not meant
+            // to be told to flank.)
+            // The angle off the line to the target, eased by distance (never past the twist limit).
+            const float lim90 = (std::min)(lim, 90.0f);
+            float beta;
+            if (ratio > 1.15f)
+            {
+                const float k = (std::max)(0.0f, (std::min)(1.0f, (2.0f - ratio) / 0.85f));
+                beta = lim90 < 50.0f ? lim90 : 50.0f + (lim90 - 50.0f) * k;
+            }
+            else if (ratio >= 0.9f)
+                beta = lim90;
+            else // inside the ring, still swinging round: a mech that can twist past 90 opens up as it goes (walking forward,
+                 // torso back on the target - never reversing); one that cannot circles at the distance it has
+                beta = (std::min)(lim, 90.0f + 40.0f * (std::max)(0.0f, (std::min)(1.0f, (0.9f - ratio) / 0.4f)));
+            if (rem < 25.0f && ratio > 1.0f)
+                beta = (std::min)(beta, 60.0f); // nearly round: head in for the side itself
+            // lancecontrol-76 (user, 2026-10-20): THE WIDE HOOK. Outside the ring with 30+ deg to go: straight for a point
+            // on the side at 1.3x the stand-off (it stays outside the ring all the way - no spiral creeping round), the
+            // target kept inside the twist limit (else the limit). Within 30 deg / at the ring: the rules above.
+            float hookCm = 0.0f;
+            if (ratio > 1.0f && rem >= 30.0f)
+            {
+                // the aim point's bearing: the side itself, or a quarter turn round when it is further (a side straight
+                // behind it would put the line through the target)
+                const float g = (theta + FlDir[s] * (std::min)(rem, 90.0f)) / 57.2957795f;
+                const float ax = T[0] + std::cos(g) * rd * 1.3f, ay = T[1] + std::sin(g) * rd * 1.3f;
+                const float hA = std::atan2(ay - P[1], ax - P[0]) * 57.2957795f;
+                float b = -FlWrap(hA - (theta + 180.0f)) * FlDir[s]; // off the line to the target, toward the side
+                // lancecontrol-77 (user, 2026-10-20 test 2): from far out the straight line pointed mostly AT the target
+                // (28-46 deg off it) - it closed first and swung late. Well outside the ring (1.5x+): at least 60 deg off
+                // the line (or its twist limit, if less) - sideways at once, turning in near the ring.
+                if (ratio > 1.5f)
+                    b = (std::max)(b, (std::min)(75.0f, lim)); // lancecontrol-78: 75 (was 60) - sideways first
+                b = (std::max)(0.0f, (std::min)(b, lim));
+                beta = b;
+                hookCm = std::sqrt((ax - P[0]) * (ax - P[0]) + (ay - P[1]) * (ay - P[1]));
+            }
+            const float gx = FomGoal[s][0] - P[0], gy = FomGoal[s][1] - P[1];
+            if (FomOn[s] && FlLegMs[s] && now - FlLegMs[s] < 2500 && gx * gx + gy * gy > 3500.0f * 3500.0f)
+                continue; // the current leg is still good
+            float len = (std::max)(3000.0f, (std::min)(r * 0.35f, 8000.0f));
+            if (hookCm > 0.0f)
+                len = (std::max)(3000.0f, (std::min)(hookCm, 8000.0f));
+            float W[3] = {};
+            if (!FlLegPoint(pc, P, theta, FlDir[s], beta, len, W))
+            {
+                if (FlLegs[s] < 200)
+                    TacLog("tacops: flank, slot %d - no walkable ground for the next leg (%.0f m out, %.0f deg to go)", s, r * 0.01f, rem);
+                continue;
+            }
+            FlSendLeg(ctl, s, W, now);
+            if (FlLegs[s] <= 60)
+                TacLog("tacops: flank, slot %d +%.1fs - %.0f m out (stand-off %.0f), %.0f deg to go, heading %.0f deg off it%s", s,
+                       (now - FlStartMs[s]) / 1000.0f, r * 0.01f, rd * 0.01f, rem, beta, hookCm > 0.0f ? " (hook)" : "");
+        }
+    }
+
     // HOLD POSITION, INDIRECT FIRE ONLY (TCO_IndirectCover; vanillahud-70, cover seeking removed in
     // 76). The lancemate walks to the point and holds there (Wait). For the whole order the game's
     // own firing is suppressed and the plugin fires its lock-on weapons (IcOwnFire: lock, the
@@ -5644,6 +6184,7 @@ class LanceControl final : public PluginExtension
     };
 
     std::vector<IcWpn> IcWpns[VanillaExportBlock::kTacMaxMembers + 1];
+    std::vector<API::UObject *> IcMelee[VanillaExportBlock::kTacMaxMembers + 1]; // lancecontrol-83: punches / melee weapons
 
     int     IcMaskOld[VanillaExportBlock::kTacMaxMembers + 1] = {};   // the game's hold-fire flag before we took over
 
@@ -5790,6 +6331,7 @@ class LanceControl final : public PluginExtension
     void IcMaskOn(int s, API::UObject *pawn, bool quiet = false)
     {
         IcWpns[s].clear();
+        IcMelee[s].clear(); // lancecontrol-83
         if (!quiet)
             IcDirectShots[s] = 0;
         API::UObject *ws = ObjProp(pawn, L"WeaponSystemComponent");
@@ -5820,7 +6362,10 @@ class LanceControl final : public PluginExtension
                                     w = nullptr;
                                 if (w && IsMeleeWeapon(w))
                                 {
-                                    list += L" | " + ClassName(w) + L": melee - not fired by the plugin";
+                                    // lancecontrol-83: swung by the plugin only in reach (IcMeleeFire), never by its fire check
+                                    if (std::find(IcMelee[s].begin(), IcMelee[s].end(), w) == IcMelee[s].end())
+                                        IcMelee[s].push_back(w);
+                                    list += L" | " + ClassName(w) + L": melee - swung by the plugin in reach";
                                     continue;
                                 }
                                 uint32_t g = 0;
@@ -6830,6 +7375,7 @@ class LanceControl final : public PluginExtension
     bool       IcAimSigLogged = false;
 
     static constexpr float kIcAimGateDeg = 3.0f;
+    static constexpr float kIcTagAimGateDeg = 10.0f; // lancecontrol-81: a TAG keeps painting while the torso is within 10 deg
 
     int32_t AimOverrideOff(API::UObject *w)
     {
@@ -8275,6 +8821,148 @@ class LanceControl final : public PluginExtension
         }
     }
 
+    // MELEE (lancecontrol-83, user 2026-10-20): THE SWING ONLY. The game's fire check says a punch is ready whenever
+    // the mech is not mid-sequence ("CannotMeleeAttack" only while its other weapons fire - range never enters it), so
+    // the plugin judges the reach itself and uses the check only for busy / cooldown. A swing needs:
+    //   - in reach: from this mech's centre to the NEAREST POINT of the target's collision box, within the melee
+    //     weapon's own rated range (StatsData.Ranges.MaxRange: fists 17.5 m, claws 18.75, swords / axes 20, lance 22,
+    //     katana 22.5; 17.5 m if unreadable) - an Atlas's centre sits metres inside its hull;
+    //   - in front: the target within kIcMeleeConeDeg of the torso's aim (horizontal);
+    //   - the game's fire check Success (not cooling down / not mid-sequence), no friendly in the line;
+    //   - the arm on the target's side first (both near dead ahead: they take turns); one swing per kIcMeleeGapMs.
+    // No fire-settings toggle (user): hold fire / return fire still apply (IcDirectFire returns before this). No rush
+    // in: only what is already in reach. Heat ignored (melee makes none). Every swing logged with the numbers; a target
+    // within 30 m that is not swung at logs why every 2 s.
+    static constexpr float kIcMeleeConeDeg = 30.0f;
+    static constexpr float kIcMeleeDefaultReachCm = 1750.0f;
+    static constexpr ULONGLONG kIcMeleeGapMs = 500;
+    ULONGLONG IcMeleeMs[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    ULONGLONG IcMeleeLogMs[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    int       IcMeleeAlt[VanillaExportBlock::kTacMaxMembers + 1] = {};
+    int       IcMeleeSwings[VanillaExportBlock::kTacMaxMembers + 1] = {};
+
+    void IcMeleeFire(int s, API::UObject *pawn, API::UObject *tgt, const float *here, ULONGLONG now)
+    {
+        if (IcMelee[s].empty() || !tgt || now - IcMeleeMs[s] < kIcMeleeGapMs)
+            return;
+        float o[3] = {}, ext[3] = {};
+        if (!IcBounds(tgt, o, ext))
+            return;
+        float d2 = 0.0f;
+        for (int i = 0; i < 3; ++i)
+        {
+            const float c = (std::max)(o[i] - ext[i], (std::min)(here[i], o[i] + ext[i]));
+            d2 += (here[i] - c) * (here[i] - c);
+        }
+        const float edge = std::sqrt(d2);
+        if (edge > 3000.0f)
+            return; // nothing near: no work, no log
+        const float cdx = o[0] - here[0], cdy = o[1] - here[1], cdz = o[2] - here[2];
+        const float centre = std::sqrt(cdx * cdx + cdy * cdy + cdz * cdz);
+        float ad[3] = {};
+        if (!CallRet(pawn, L"GetAimDirection", {}, ad, sizeof(ad)))
+            return;
+        const float al = std::sqrt(ad[0] * ad[0] + ad[1] * ad[1]), tl = std::sqrt(cdx * cdx + cdy * cdy);
+        float yaw = 0.0f; // signed: + = the target is to the right (UE: X forward, Y right)
+        if (al > 0.0f && tl > 0.0f)
+        {
+            float c = (ad[0] * cdx + ad[1] * cdy) / (al * tl);
+            c = c > 1.0f ? 1.0f : (c < -1.0f ? -1.0f : c);
+            yaw = std::acos(c) * 57.2958f * ((ad[0] * cdy - ad[1] * cdx) >= 0.0f ? 1.0f : -1.0f);
+        }
+        const bool front = std::fabs(yaw) <= kIcMeleeConeDeg;
+        // Arm order: the target's side first; near dead ahead (under 10 deg) the arms take turns.
+        bool wantRight = yaw > 0.0f;
+        if (std::fabs(yaw) < 10.0f)
+            wantRight = (IcMeleeAlt[s] & 1) != 0;
+        std::vector<API::UObject *> order;
+        for (int pass = 0; pass < 2; ++pass)
+            for (API::UObject *w : IcMelee[s])
+            {
+                if (!w || !OnMech(pawn, w))
+                    continue;
+                std::wstring n = ClassName(w);
+                for (auto &ch : n)
+                    ch = (wchar_t)towlower(ch);
+                const bool isRight = n.find(L"right") != std::wstring::npos;
+                const bool isLeft = n.find(L"left") != std::wstring::npos;
+                const bool pref = (wantRight && isRight) || (!wantRight && isLeft) || (!isRight && !isLeft);
+                if ((pass == 0) == pref)
+                    order.push_back(w);
+            }
+        const char *why = nullptr;
+        float reachLog = -1.0f;
+        for (API::UObject *w : order)
+        {
+            float reach = IcWeaponRangeCm(w);
+            if (!(reach > 0.0f && reach < 10000.0f))
+                reach = kIcMeleeDefaultReachCm;
+            reachLog = (std::max)(reachLog, reach);
+            if (edge > reach)
+            {
+                why = why ? why : "out of reach";
+                continue;
+            }
+            if (!front)
+            {
+                why = "not in front of the torso";
+                continue;
+            }
+            bool busy = false;
+            for (auto &d : IcDirFiring[s])
+                busy |= d.W == w;
+            if (busy)
+            {
+                why = "still swinging";
+                continue;
+            }
+            std::vector<uint8_t> f(AiFrBuf.size(), 0);
+            for (int32_t po : AiFrObjParams)
+                std::memcpy(f.data() + po, &tgt, sizeof(tgt));
+            IaCanFire(w, f.data());
+            if (f[AiFrRet] != 0)
+            {
+                why = "the game's check: busy / cooling down";
+                continue;
+            }
+            if (API::UObject *fr = FriendInLine(s, pawn, here, o))
+            {
+                (void)fr;
+                why = "a friendly in the way";
+                break;
+            }
+            const int32_t off = AimOverrideOff(w);
+            API::UObject *old = nullptr;
+            if (off >= 0)
+            {
+                auto **slot = reinterpret_cast<API::UObject **>(reinterpret_cast<uint8_t *>(w) + off);
+                old = *slot;
+                if (API::UObject *ap = AimPointOf(tgt))
+                    *slot = ap;
+            }
+            if (!IcCallNoArgs(w, L"K2_StartFire"))
+            {
+                if (off >= 0)
+                    *reinterpret_cast<API::UObject **>(reinterpret_cast<uint8_t *>(w) + off) = old;
+                why = "K2_StartFire failed";
+                continue;
+            }
+            IcDirFiring[s].push_back({w, old, now + 250, false, tgt}); // one press: let go in 0.25 s (IcDirStop)
+            IcMeleeMs[s] = now;
+            ++IcMeleeAlt[s];
+            if (++IcMeleeSwings[s] <= 60)
+                TacLog("melee, slot %d - SWING %ls at %ls: centre %.1f m, edge %.1f m, reach %.1f m, %+.0f deg off the torso", s,
+                        ClassName(w).c_str(), ClassName(tgt).c_str(), centre * 0.01f, edge * 0.01f, reach * 0.01f, yaw);
+            return;
+        }
+        if (why && now - IcMeleeLogMs[s] > 2000)
+        {
+            IcMeleeLogMs[s] = now;
+            TacLog("melee, slot %d - no swing at %ls (%s): centre %.1f m, edge %.1f m, reach %.1f m, %+.0f deg off the torso", s,
+                    ClassName(tgt).c_str(), why, centre * 0.01f, edge * 0.01f, reachLog * 0.01f, yaw);
+        }
+    }
+
     void IcDirectFire(int s, API::UObject *pawn, API::UObject *ctl, API::UObject *tgt, const float *here, ULONGLONG now)
     {
         IcDirStop(s, false, now);
@@ -8292,6 +8980,7 @@ class LanceControl final : public PluginExtension
         const bool vis = AiGameVisible(ctl, tgt) == 1;
         if (!vis)
             return;
+        IcMeleeFire(s, pawn, tgt, here, now); // lancecontrol-83: the swing, in reach only (no fire-settings toggle)
         API::UObject *aim = AimPointOf(tgt);
         const wchar_t *aimHow = L"first hint";
         if (API::UObject *ch = IcAimComp(s, tgt, now, aimHow)) // lancecontrol-31e: called shot / spread / CT
@@ -8315,34 +9004,39 @@ class LanceControl final : public PluginExtension
                 err = std::acos(c) * 57.2958f;
             }
         }
+        // lancecontrol-81 (user, 2026-10-20): a TAG keeps PAINTING - it is not held by the heat ceiling (no heat), the
+        // friendly-in-line check (no damage) or the 3 deg aim gate (it allows 10 deg); only by sight, its own fire check
+        // (range ...), a new target, hold fire, or its category being off. Every other weapon: the gates as before.
         const float heat = IcHeatFrac(pawn);
-        if (heat > FsHeatLimit(s))
-            return;
+        const bool heatOk = heat <= FsHeatLimit(s);
         // Aim gate: the torso must be on the target (vanillahud-77: shots started 10-41 deg off
         // right after a spot or a target change, before the torso had turned).
-        if (err < 0.0f || err > kIcAimGateDeg)
+        const bool aimOk = !(err < 0.0f || err > kIcAimGateDeg);
+        const bool tagAimOk = !(err < 0.0f || err > kIcTagAimGateDeg);
+        if (!aimOk && heatOk && now - IcAimLogMs[s] > 2000)
         {
-            if (now - IcAimLogMs[s] > 2000)
-            {
-                IcAimLogMs[s] = now;
-                TacLog("tacops: direct fire, slot %d - sees %ls, %.0f m, aim error %.1f deg - waiting for the torso", s,
-                        ClassName(tgt).c_str(), dist * 0.01f, err);
-            }
-            return;
+            IcAimLogMs[s] = now;
+            TacLog("tacops: direct fire, slot %d - sees %ls, %.0f m, aim error %.1f deg - waiting for the torso%s", s,
+                    ClassName(tgt).c_str(), dist * 0.01f, err, tagAimOk ? " (a TAG may paint)" : "");
         }
         // Friendly fire: no direct shot while a friendly (the player or a lancemate) is near the
         // line from this mech to the aim point.
-        if (API::UObject *fr = FriendInLine(s, pawn, here, ap))
-        {
-            if (now - IcFfLogMs[s] > 2000)
+        bool ffBlock = false;
+        if (heatOk && aimOk)
+            if (API::UObject *fr = FriendInLine(s, pawn, here, ap))
             {
-                IcFfLogMs[s] = now;
-                LsEmit(LSE_FriendlyInLine, s, fr, 0.0f);
-                TacLog("tacops: direct fire, slot %d - HELD: friendly %ls in the line of fire to %ls", s, ClassName(fr).c_str(),
-                        ClassName(tgt).c_str());
+                ffBlock = true;
+                if (now - IcFfLogMs[s] > 2000)
+                {
+                    IcFfLogMs[s] = now;
+                    LsEmit(LSE_FriendlyInLine, s, fr, 0.0f);
+                    TacLog("tacops: direct fire, slot %d - HELD: friendly %ls in the line of fire to %ls", s, ClassName(fr).c_str(),
+                            ClassName(tgt).c_str());
+                }
             }
+        const bool othersOk = heatOk && aimOk && !ffBlock;
+        if (!othersOk && !tagAimOk)
             return;
-        }
         std::wstring started;
         // HEAT BUDGET (vanillahud-92): weapons start in order of damage per heat (from their data),
         // each adding its heat to the projection - no start that would pass the ceiling. A weapon of
@@ -8370,6 +9064,9 @@ class LanceControl final : public PluginExtension
                 continue;
             if (!(FsMask[s] & x.Cat))
                 continue; // not a category it may fire
+            const bool isTag = IsTagWeapon(x.W); // lancecontrol-81: TAG paints past the other gates (see above)
+            if (isTag ? !tagAimOk : !othersOk)
+                continue;
             IcDirShot *busy = nullptr;
             for (auto &d : IcDirFiring[s])
                 if (d.W == x.W)
@@ -8412,7 +9109,7 @@ class LanceControl final : public PluginExtension
             const WStat ws = WeaponStat(x.W);
             if (ws.Kind == WK_AMS)
                 continue; // the game's automatic defence
-            if (hAbs && hmax > 0.0f && ws.Heat > 0.0f && hcur + ws.Heat > hlim * hmax)
+            if (!isTag && hAbs && hmax > 0.0f && ws.Heat > 0.0f && hcur + ws.Heat > hlim * hmax)
                 continue; // would pass the heat ceiling
             const bool cont = ws.Kind == WK_Continuous;
             const bool proj = ws.Kind == WK_Projectile;
@@ -8770,6 +9467,54 @@ class LanceControl final : public PluginExtension
         return FsIsOurs(ectl ? ObjProp(ectl, L"CombatTarget") : nullptr);
     }
 
+    // lancecontrol-81 (user, 2026-10-20): TAG BY ITS WEAPONTYPE. The weapon data asset's WeaponType GameplayTag - every
+    // weapon in the game and in the user's mods has one (checked in the paks: 4,911 mod weapons, none without), and only
+    // TAGs are under Weapon.Energy.TAG (TAG, .Clan, YAW's .Improved / .Light / .Clan.Light, Garrisons' searchlight TAG).
+    // The class name lies (the Raven's TAG is Weapon_Mech_RVN_Torso_Right_EH1_Laser_C) and the firing data cannot tell a
+    // TAG from a modded continuous laser (YAWE's Weapon.Energy.Laser.Standard.*.Continuous). No readable tag: the old
+    // "_tag" in the class / asset name. Per class, logged once.
+    // lancecontrol-82: the WeaponType tag itself, cached per class ("(none)" when it cannot be read), logged once per
+    // class with the data asset's name - WeaponCat sorts every weapon by it (see there).
+    std::vector<std::pair<API::UClass *, std::wstring>> WpnTypeCache;
+    std::wstring WeaponTypeOf(API::UObject *w)
+    {
+        if (!w || !w->get_class())
+            return L"(none)";
+        for (auto &e : WpnTypeCache)
+            if (e.first == w->get_class())
+                return e.second;
+        API::UObject *da = nullptr;
+        if (FindFn(w, L"GetWeaponDataAsset"))
+            CallRet(w, L"GetWeaponDataAsset", {}, &da, sizeof(da));
+        std::wstring wt = da ? AmmoTag(da, L"WeaponType") : L"(none)";
+        if (wt.empty())
+            wt = L"(none)";
+        WpnTypeCache.push_back({w->get_class(), wt});
+        TacLog("weapon type: %ls (%ls) -> %ls", ClassName(w).c_str(), da ? da->get_fname()->to_string().c_str() : L"no data asset", wt.c_str());
+        return wt;
+    }
+
+    // True when the WeaponType tag is `fam` or under it (`fam` + "."), case-insensitive.
+    static bool WtIs(const std::wstring &wt, const wchar_t *fam)
+    {
+        const size_t n = wcslen(fam);
+        return wt.size() >= n && _wcsnicmp(wt.c_str(), fam, n) == 0 && (wt.size() == n || wt[n] == L'.');
+    }
+
+    bool IsTagWeapon(API::UObject *w)
+    {
+        const std::wstring wt = WeaponTypeOf(w);
+        if (wt != L"(none)")
+            return WtIs(wt, L"Weapon.Energy.TAG");
+        API::UObject *da = nullptr; // no readable tag: the old "_tag" in the class / asset name
+        if (w && FindFn(w, L"GetWeaponDataAsset"))
+            CallRet(w, L"GetWeaponDataAsset", {}, &da, sizeof(da));
+        std::wstring lo = (w ? ClassName(w) : L"") + L" " + (da ? ClassName(da) + L" " + da->get_fname()->to_string() : L"");
+        for (auto &ch : lo)
+            ch = (wchar_t)towlower(ch);
+        return lo.find(L"_tag") != std::wstring::npos;
+    }
+
     // The weapon's category: its class name (Weapon_..._EH1_PPC_C, ..._MG_C), its firing data
     // (TraceWeaponData: TAG / MG / flamer / laser) and its data asset (missile data = a missile).
     uint8_t WeaponCat(API::UObject *w, int lockw)
@@ -8790,10 +9535,39 @@ class LanceControl final : public PluginExtension
                 ch = (wchar_t)towlower(ch);
             return lo.find(kl) != std::wstring::npos;
         };
+        // lancecontrol-82 (user, 2026-10-20): BY THE WEAPONTYPE TAG FIRST. The class name is the mech's HARDPOINT slot,
+        // not the weapon in it (EH#_Laser holds flamers / TAGs / PPCs, BH#_MG holds autocannons), so the name rules below
+        // filed flamers as lasers, ACs in MG slots as MGs, SRMediumRifle as a missile. Lock or dumb-fire still comes from
+        // IcLockWeapon (lockw). Plasma rifles / cannons and the TSEMP count as PPCs (user). Artillery / mortars / Arrow IV
+        // keep the lock answer (arcing path = lock missile), else ballistic. AMS, melee, an unknown family or no tag:
+        // the old name rules.
+        {
+            const std::wstring wt = WeaponTypeOf(w);
+            if (wt != L"(none)")
+            {
+                if (WtIs(wt, L"Weapon.Energy.TAG"))
+                    return kFcTAG;
+                if (WtIs(wt, L"Weapon.Missile.NARC"))
+                    return kFcNARC;
+                if (WtIs(wt, L"Weapon.Energy.ParticleCannon") || WtIs(wt, L"Weapon.Energy.PlasmaRifle") ||
+                    WtIs(wt, L"Weapon.Energy.BC-Plasma") || WtIs(wt, L"Weapon.Energy.TSEMP"))
+                    return kFcPPC;
+                if (WtIs(wt, L"Weapon.Energy.Laser"))
+                    return kFcLaser;
+                if (WtIs(wt, L"Weapon.Energy.Flamer") || WtIs(wt, L"Weapon.Ballistic.MG"))
+                    return kFcMGFlamer;
+                if (WtIs(wt, L"Weapon.Missile") || WtIs(wt, L"Weapon.ArtemisMissile"))
+                    return lockw == 1 ? kFcLockMissile : kFcDumbMissile;
+                if (WtIs(wt, L"Weapon.Artillery") || WtIs(wt, L"Weapon.Ballistic.Artillery") || WtIs(wt, L"Weapon.Ballistic.MechMortar"))
+                    return lockw == 1 ? kFcLockMissile : kFcBallistic;
+                if (WtIs(wt, L"Weapon.Ballistic"))
+                    return kFcBallistic;
+            }
+        }
         if (lo.find(L"narc") != std::wstring::npos)
             return kFcNARC;
         const WStat ws = WeaponStat(w);
-        if ((ws.Kind == WK_Continuous && ws.Dur < -0.5f && ws.Dod <= 0.0f) || has(L"_TAG"))
+        if (IsTagWeapon(w)) // no / unknown WeaponType: the "_tag" name rule
             return kFcTAG;
         if (has(L"PPC"))
             return kFcPPC;
@@ -12896,6 +13670,7 @@ class LanceControl final : public PluginExtension
             if (HoldOn[s] && !IcOn[s]) mode |= LSM_Hold;
             if (FomOn[s] && FomFallback[s]) mode |= LSM_FallBack;
             if (FomOn[s] && !FomFallback[s]) mode |= LSM_MoveFire;
+            if (FlOn[s]) mode |= LSM_Flank | (FlPincer[s] ? LSM_Pincer : 0); // lancecontrol-75
             if (AtkTgt[s] && IsLive(AtkTgt[s]) && !LsDeadQ(AtkTgt[s])) mode |= LSM_AttackOrder;
             if (IcMaskSet[s] && IcMaskOld[s] == 1) mode |= LSM_GameHoldFire;
             o.Mode = mode;
