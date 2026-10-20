@@ -2,10 +2,8 @@
 
 Companion app for MechWarrior 5: Mercenaries 
 
-Players: download the release package and follow its `README.txt`.
-
 Description
-DISCLAIMER: AI was used in the making of this mod - source code: https://github.com/pineconegangue/Mechwarrior-5-Tactical-Command-Suite
+DISCLAIMER: AI was used in the making of this mod
 
 Mechwarrior 5 Tactical Command Suite is a companion app that reimagines the way Mechwarrior 5 Mercenaries is played. It did not begin that way - it was a humble app that transferred HUD screens to an external monitor, but things escalated and here we are. There is a lot to unpack here, please be patient, take your time to read through everything so that you have a good understanding of what to expect before proceeding. I will make a video demonstrating thee installation steps in a visual format at a later date, unfortunately I have no time currently - you can subscribe to me at https://www.youtube.com/@Gangue_    to stay up-to-date
 
